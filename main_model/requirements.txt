@@ -1,0 +1,18 @@
+
+
+
+1) WSL
+pip install tensorflow "numpy<2" pandas==2.2.2 wfdb scikit-learn matplotlib scipy biosppy
+
+2) WINDOWS
+
+
+pip install "tensorflow<2.11"
+pip uninstall numpy -y
+pip install "numpy<2"
+pip install wfdb scikit-learn matplotlib scipy
+
+
+3) GOOGLE COLAB
+!pip install tensorflow "numpy<2" pandas==2.2.2 wfdb scikit-learn matplotlib scipy biosppy wfdb seaborn imbalanced-learn
+

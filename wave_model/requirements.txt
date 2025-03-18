@@ -1,0 +1,8 @@
+pip install seaborn imblearn tensorflow "numpy<2" pandas==2.2.2 wfdb scikit-learn matplotlib scipy biosppy
+
+
+database :
+https://www.physionet.org/content/ludb/1.0.1/
+
+window size :
+2000 samples ( 4 seconds )

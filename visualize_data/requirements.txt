@@ -1,0 +1,1 @@
+pip install numpy wfdb PyQt6 matplotlib pyqtgraph pyqt6-tools

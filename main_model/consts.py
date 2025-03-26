@@ -2,11 +2,14 @@ FS=360
 MITDB_PATH = '../databases/mitdb'
 SVDB_PATH = '../databases/svdb'
 WINDOW_SIZE = FS
-FOLDS = 4
+FOLDS = 2
 EPOCHS = 8
-BATCH_SIZE = 16
+BATCH_SIZE = 32
 
 
+MODEL_PATH = "trained_models/v3/model_fold_1.keras"
+RECORD_PATH_2 = '../databases/mitdb/105'
+RECORD_PATH = '../databases/svdb/854'
 
 # --- Annotation map ---
 ANNOTATION_MAP = {

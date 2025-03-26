@@ -16,13 +16,12 @@ import seaborn as sns
 import pandas as pd
 
 from main_model.augmentation import augment_chain, AUGMENTATION_FUNCS
-from main_model.consts import FS, MITDB_PATH, INV_ANNOTATION_MAP, ANNOTATION_MAP, WINDOW_SIZE, FOLDS, EPOCHS, BATCH_SIZE
-
+from main_model.consts import FS, MITDB_PATH, INV_ANNOTATION_MAP, ANNOTATION_MAP, WINDOW_SIZE, FOLDS, EPOCHS, \
+    BATCH_SIZE, RECORD_PATH, MODEL_PATH
+from estimator import predict
 
 import tensorflow as tf
-gpus = tf.config.list_physical_devices('GPU')
-for gpu in gpus:
-    tf.config.experimental.set_memory_growth(gpu, True)
+
 
 
 
@@ -45,11 +44,10 @@ def augment_1d(signal, label, max_chain_len=len(AUGMENTATION_FUNCS)):
     aug_signals = [signal]
 
     if label != ANNOTATION_MAP['N']:
-        num_augs = random.randint(4, 9)
+        num_augs = random.randint(2, 3)
         for _ in range(num_augs):
             aug = augment_chain(signal, AUGMENTATION_FUNCS, max_chain_len)
             aug_signals.append(aug)
-
     return aug_signals
 
 
@@ -91,8 +89,7 @@ def build_dataset():
     y = np.array(y)
     return X[..., np.newaxis], y
 
-X, y = build_dataset()
-y_cat = to_categorical(y, num_classes=len(ANNOTATION_MAP))
+
 
 # --- Model architecture ---
 def build_model():
@@ -119,49 +116,65 @@ def build_model():
     return model
 
 
+def train_model():
+
+    gpus = tf.config.list_physical_devices('GPU')
+    for gpu in gpus:
+        tf.config.experimental.set_memory_growth(gpu, True)
+
+    X, y = build_dataset()
+    y_cat = to_categorical(y, num_classes=len(ANNOTATION_MAP))
 
 
-# --- Training and evaluation ---
-skf = StratifiedKFold(n_splits=FOLDS, shuffle=True, random_state=42)
-fold = 1
-all_y_true, all_y_pred = [], []
+    # --- Training and evaluation ---
+    skf = StratifiedKFold(n_splits=FOLDS, shuffle=True, random_state=42)
+    fold = 1
+    all_y_true, all_y_pred = [], []
 
-for train_idx, test_idx in skf.split(X, y):
-    print(f"\n--- Fold {fold} ---")
-    model = build_model()
+    for train_idx, test_idx in skf.split(X, y):
+        print(f"\n--- Fold {fold} ---")
+        model = build_model()
 
-    X_train, X_test = X[train_idx], X[test_idx]
-    y_train, y_test = y_cat[train_idx], y_cat[test_idx]
+        X_train, X_test = X[train_idx], X[test_idx]
+        y_train, y_test = y_cat[train_idx], y_cat[test_idx]
 
-    log_dir = f"logs/fold_{fold}"
-    os.makedirs(log_dir, exist_ok=True)
+        log_dir = f"logs/fold_{fold}"
+        os.makedirs(log_dir, exist_ok=True)
 
-    callbacks = [
-        CSVLogger(f"{log_dir}/training_log.csv"),
-        EarlyStopping(monitor='val_accuracy', patience=10, restore_best_weights=True),
-        ModelCheckpoint(f"model_fold_{fold}.keras", monitor='val_accuracy', save_best_only=True),
-        TensorBoard(log_dir=log_dir)
-    ]
+        callbacks = [
+            CSVLogger(f"{log_dir}/training_log.csv"),
+            EarlyStopping(monitor='val_accuracy', patience=10, restore_best_weights=True),
+            ModelCheckpoint(f"model_fold_{fold}.keras", monitor='val_accuracy', save_best_only=True),
+            TensorBoard(log_dir=log_dir)
+        ]
 
-    model.fit(X_train, y_train, validation_data=(X_test, y_test),
-              epochs=EPOCHS, batch_size=BATCH_SIZE,
-              callbacks=callbacks, verbose=1)
+        model.fit(X_train, y_train, validation_data=(X_test, y_test),
+                  epochs=EPOCHS, batch_size=BATCH_SIZE,
+                  callbacks=callbacks, verbose=1)
 
-    y_pred = np.argmax(model.predict(X_test), axis=1)
-    y_true = np.argmax(y_test, axis=1)
+        y_pred = np.argmax(model.predict(X_test), axis=1)
+        y_true = np.argmax(y_test, axis=1)
 
-    np.save(f"y_true_fold_{fold}.npy", y_true)
-    np.save(f"y_pred_fold_{fold}.npy", y_pred)
+        print(f"\nClassification Report for Fold {fold}:")
+        print(classification_report(y_true, y_pred, target_names=[INV_ANNOTATION_MAP[i] for i in range(len(ANNOTATION_MAP))]))
 
-    print(f"\nClassification Report for Fold {fold}:")
-    print(classification_report(y_true, y_pred, target_names=[INV_ANNOTATION_MAP[i] for i in range(len(ANNOTATION_MAP))]))
+        plot_conf_matrix(y_true, y_pred, fold)
+        all_y_true.extend(y_true)
+        all_y_pred.extend(y_pred)
+        fold += 1
 
-    plot_conf_matrix(y_true, y_pred, fold)
-    all_y_true.extend(y_true)
-    all_y_pred.extend(y_pred)
-    fold += 1
+    print("\n==== GLOBAL CLASSIFICATION REPORT ====")
+    print(classification_report(all_y_true, all_y_pred, target_names=[INV_ANNOTATION_MAP[i] for i in range(len(ANNOTATION_MAP))]))
+    plot_conf_matrix(all_y_true, all_y_pred, "global")
 
-print("\n==== GLOBAL CLASSIFICATION REPORT ====")
-print(classification_report(all_y_true, all_y_pred, target_names=[INV_ANNOTATION_MAP[i] for i in range(len(ANNOTATION_MAP))]))
-plot_conf_matrix(all_y_true, all_y_pred, "global")
+
+
+def main():
+    predict(RECORD_PATH, MODEL_PATH)
+    #train_model()
+
+
+if __name__ == "__main__":
+    main()
+
 

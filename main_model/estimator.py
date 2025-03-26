@@ -4,49 +4,55 @@ from scipy.signal import resample
 from scipy.interpolate import interp1d
 from ecgdetectors import Detectors
 from tensorflow.keras.models import load_model
+from main_model.consts import FS, WINDOW_SIZE
 
-# --- Ustawienia ---
-WINDOW_SIZE = 360  # np. 1s sygnału po interpolacji
-ANNOTATION_MAP = { 'N': 0, 'V': 1, '/': 2, 'R': 3, 'L': 4, 'A': 5, '!': 6, 'E': 7 }
+
+ANNOTATION_MAP = {
+    'N': 0, 'V': 1, '/': 2, 'R': 3, 'L': 4, 'S': 5, '!': 6, 'E': 7
+}
 INV_ANNOTATION_MAP = {v: k for k, v in ANNOTATION_MAP.items()}
 
-# --- Model ---
-model = load_model("trained_models/v2/model_fold_1.keras")
 
-# --- Preprocessing pojedynczego segmentu ---
-def preprocess_segment(segment):
-    if len(segment) != WINDOW_SIZE:
-        f = interp1d(np.linspace(0, 1, len(segment)), segment, kind='linear')
-        segment = f(np.linspace(0, 1, WINDOW_SIZE))
-    return segment.reshape(1, WINDOW_SIZE, 1).astype(np.float32)
+def extract_beats(record_path):
+    record = wfdb.rdrecord(record_path)
+    annotation = wfdb.rdann(record_path, 'atr')
+    signal = record.p_signal[:, 0]  # use only channel 0
+    beats, labels = [], []
+    for i in range(1, len(annotation.sample) - 1):
+        sym = annotation.symbol[i]
+        if sym in ANNOTATION_MAP:
+            prev = annotation.sample[i - 1] + 20
+            next_ = annotation.sample[i + 1] - 20
+            if prev < next_ and next_ <= len(signal):
+                segment = signal[prev:next_].astype(np.float32)
+                if len(segment) != WINDOW_SIZE:
+                    segment = np.interp(np.linspace(0, len(segment) - 1, WINDOW_SIZE),
+                                        np.arange(len(segment)), segment)
+                beats.append(segment)
+                labels.append(ANNOTATION_MAP[sym])
+    return beats, labels
 
 # --- Pipeline wykrycia beatów i predykcji ---
-def process_ecg_file(record_path, model_sample_rate=360):
-    record = wfdb.rdrecord(record_path)
-    signal = record.p_signal[:, 0]  # Lead II
-    original_fs = record.fs
-
-    # Resampling jeśli potrzeba
-    if original_fs != model_sample_rate:
-        num_samples = int(len(signal) * model_sample_rate / original_fs)
-        signal = resample(signal, num_samples)
-        print(f"[INFO] Resampled from {original_fs} Hz to {model_sample_rate} Hz")
-
-    # QRS detection – Pan Tompkins
-    detectors = Detectors(model_sample_rate)
-    qrs_peaks = detectors.pan_tompkins_detector(signal)
-
+def process_ecg_file(record_path,model):
+    segments , labels = extract_beats(record_path)
     predictions = []
 
-    for i in range(1, len(qrs_peaks) - 1):  # pomijamy pierwszy i ostatni QRS
-        left = qrs_peaks[i - 1] + 20
-        right = qrs_peaks[i + 1] - 20
-        if right > left and right <= len(signal):
-            segment = signal[left:right]
-            beat = preprocess_segment(segment)
-            pred = model.predict(beat, verbose=0)
-            pred_class = np.argmax(pred)
-            predictions.append((i, pred_class, INV_ANNOTATION_MAP[pred_class]))
+    for i in range(1, len(segments) - 1):
+        beat = segments[i].reshape(1, WINDOW_SIZE, 1).astype(np.float32)
+        pred = model.predict(beat, verbose=0)
+        pred_class = np.argmax(pred)
+        is_ok_prediction = pred_class == labels[i]
+        predictions.append((i, pred_class, INV_ANNOTATION_MAP[pred_class], labels[i] , INV_ANNOTATION_MAP[labels[i]] , is_ok_prediction ))
 
-    return predictions  # lista (qrs_index, klasa numeryczna, symbol)
+    return predictions  # lista (qrs_index, klasa numeryczna, symbol, realna klasa)
+
+
+
+
+
+def predict(record_path,model_path):
+    model = load_model(model_path)
+    predictions = process_ecg_file(record_path,model)
+    for i in range(len(predictions)):
+        print(predictions[i])
 

@@ -561,7 +561,7 @@ def load_test_data(num_samples=100):
 
 def plot_predictions(X_test, Y_test, pred_labels, records):
     """Tworzy dwa wykresy: jeden dla rzeczywistych adnotacji, drugi dla predykcji."""
-    os.makedirs("models/v4_sota/predictions", exist_ok=True)
+    os.makedirs("trained_models/v4_sota/predictions", exist_ok=True)
 
     for i in range(len(X_test)):
         fig, axs = plt.subplots(2, 1, figsize=(12, 8), sharex=True)

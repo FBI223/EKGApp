@@ -170,8 +170,11 @@ def train_model():
 
 
 def main():
-    predict(RECORD_PATH, MODEL_PATH)
+    #predict(RECORD_PATH, MODEL_PATH)
     #train_model()
+    print("✅ TF Version:", tf.__version__)
+    print("✅ GPU Devices:", tf.config.list_physical_devices('GPU'))
+
 
 
 if __name__ == "__main__":

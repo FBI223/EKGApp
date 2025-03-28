@@ -9,8 +9,7 @@ import seaborn as sns
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv1D, MaxPooling1D, Flatten, Dense, Dropout, Input, BatchNormalization
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.utils import to_categorical
-from main_model.consts import EPOCHS, BATCH_SIZE, NSRDB_PATH, MITDB_PATH, WINDOW_SIZE
+from consts import EPOCHS, BATCH_SIZE, NSRDB_PATH, MITDB_PATH, WINDOW_SIZE
 import tensorflow as tf
 
 # --- Ekstrakcja beatów z rekordu ---

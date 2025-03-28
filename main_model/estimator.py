@@ -1,10 +1,7 @@
 import wfdb
 import numpy as np
-from scipy.signal import resample
-from scipy.interpolate import interp1d
-from ecgdetectors import Detectors
 from tensorflow.keras.models import load_model
-from main_model.consts import FS, WINDOW_SIZE
+from consts import WINDOW_SIZE
 
 
 ANNOTATION_MAP = {

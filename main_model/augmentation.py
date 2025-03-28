@@ -1,7 +1,7 @@
 import random
 import numpy as np
 from scipy.signal import butter, sosfilt
-from main_model.consts import (
+from consts import (
     FS,
     NOISE_STD_DEFAULT,
     DRIFT_STD,

@@ -16,9 +16,8 @@ import seaborn as sns
 import pandas as pd
 
 from main_model.augmentation import augment_chain, AUGMENTATION_FUNCS
-from main_model.consts import FS, MITDB_PATH, INV_ANNOTATION_MAP, ANNOTATION_MAP, WINDOW_SIZE, FOLDS, EPOCHS, \
-    BATCH_SIZE, RECORD_PATH, MODEL_PATH
-from estimator import predict
+from consts import MITDB_PATH, INV_ANNOTATION_MAP, ANNOTATION_MAP, WINDOW_SIZE, FOLDS, EPOCHS, \
+    BATCH_SIZE
 
 import tensorflow as tf
 

@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from main_model.augmentation import (
     add_gaussian_noise, add_emg_noise, add_baseline_wander
 )
-from main_model.consts import FS, WINDOW_SIZE, NOISE_STD_DEFAULT, DRIFT_STD
+from consts import WINDOW_SIZE, NOISE_STD_DEFAULT, DRIFT_STD
 from main_model.deaugmentation import denoise_pipeline
 
 

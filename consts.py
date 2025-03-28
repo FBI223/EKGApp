@@ -1,10 +1,10 @@
 FS=360
 
-MITDB_PATH = '../databases/mitdb'
-SVDB_PATH = '../databases/svdb'
-INCARTDB_PATH = '../databases/incartdb'
-NSRDB_PATH = '../databases/nsrdb'
-CUDB_PATH = '../databases/cudb'
+MITDB_PATH = 'databases/mitdb'
+SVDB_PATH = 'databases/svdb'
+INCARTDB_PATH = 'databases/incartdb'
+NSRDB_PATH = 'databases/nsrdb'
+CUDB_PATH = 'databases/cudb'
 
 DB_PATHS = [
     '../databases/mitdb',

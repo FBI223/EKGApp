@@ -1,10 +1,10 @@
 FS=360
 
-MITDB_PATH = 'databases/mitdb'
-SVDB_PATH = 'databases/svdb'
-INCARTDB_PATH = 'databases/incartdb'
-NSRDB_PATH = 'databases/nsrdb'
-CUDB_PATH = 'databases/cudb'
+MITDB_PATH = '../databases/mitdb'
+SVDB_PATH = '../databases/svdb'
+INCARTDB_PATH = '../databases/incartdb'
+NSRDB_PATH = '../databases/nsrdb'
+CUDB_PATH = '../databases/cudb'
 
 DB_PATHS = [
     '../databases/mitdb',
@@ -16,7 +16,7 @@ DB_PATHS = [
 
 WINDOW_SIZE = FS
 FOLDS = 2
-EPOCHS = 2
+EPOCHS = 8
 BATCH_SIZE = 32
 
 
@@ -25,14 +25,19 @@ RECORD_PATH_2 = '../databases/mitdb/105'
 RECORD_PATH = '../databases/svdb/854'
 
 # --- Annotation map ---
-ANNOTATION_MAP = {
+ANNOTATION_MAP_V2 = {
     'N': 0, 'L': 0, 'R': 0, 'e': 0, 'j': 0,
     'A': 1, 'a': 1, 'J': 1, 'S': 1,
     'V': 2, 'E': 2,
     'F': 3,
     '/': 4, 'f': 4, 'Q': 4, '!': 4, '|': 4, '~': 4, 'x': 4
 }
+INV_ANNOTATION_MAP_V2 = {v: k for k, v in ANNOTATION_MAP_V2.items()}
+
+
+ANNOTATION_MAP = {'N': 0, 'L': 1, 'R': 2, 'V': 3, 'A': 4}
 INV_ANNOTATION_MAP = {v: k for k, v in ANNOTATION_MAP.items()}
+
 
 
 

@@ -117,6 +117,9 @@ def build_model():
 
 def train_model():
 
+    print("✅ TF Version:", tf.__version__)
+    print("✅ GPU Devices:", tf.config.list_physical_devices('GPU'))
+
     gpus = tf.config.list_physical_devices('GPU')
     for gpu in gpus:
         tf.config.experimental.set_memory_growth(gpu, True)
@@ -170,9 +173,8 @@ def train_model():
 
 def main():
     #predict(RECORD_PATH, MODEL_PATH)
-    #train_model()
-    print("✅ TF Version:", tf.__version__)
-    print("✅ GPU Devices:", tf.config.list_physical_devices('GPU'))
+    train_model()
+
 
 
 

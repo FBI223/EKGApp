@@ -45,7 +45,7 @@ def augment_1d(signal, label, max_chain_len=len(AUGMENTATION_FUNCS)):
     aug_signals = [signal]
 
     if label != ANNOTATION_MAP['N']:
-        num_augs = random.randint(2, 4)
+        num_augs = random.randint(1, 3)
         for _ in range(num_augs):
             aug = augment_chain(signal, AUGMENTATION_FUNCS, max_chain_len)
             aug_signals.append(aug)
@@ -167,7 +167,7 @@ def build_model():
     model.add(MaxPooling1D(2))
 
     model.add(Flatten())
-    model.add(Dense(256, activation='elu'))
+    model.add(Dense(512, activation='elu'))
     model.add(Dropout(0.5))
     model.add(Dense(len(INV_ANNOTATION_MAP), activation='softmax'))
 

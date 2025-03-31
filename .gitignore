@@ -1,2 +1,9 @@
-main_model/mitdb
-main_model/svdb
+/databases/incartdb/
+/databases/mitdb/
+/databases/svdb/
+
+
+
+*.keras
+*.h5
+

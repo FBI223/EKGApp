@@ -22,9 +22,13 @@ CUDB_PATH = '../databases/cudb'
 
 WINDOW_SIZE = FS_TARGET
 FOLDS = 5
-EPOCHS = 8
+EPOCHS = 20
 BATCH_SIZE = 16
 
+
+MODEL_PATH = "trained_models/v3/model_fold_1.keras"
+RECORD_PATH_2 = '../databases/mitdb/105'
+RECORD_PATH = '../databases/svdb/854'
 
 # --- Annotation map ---
 ANNOTATION_MAP = {

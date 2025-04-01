@@ -2,11 +2,58 @@ import os
 import numpy as np
 import wfdb
 import json
-from scipy.signal import find_peaks
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, classification_report
 import tensorflow as tf
 import matplotlib.pyplot as plt
+from tensorflow.keras.utils import to_categorical
+from biosppy.signals import ecg
+import seaborn as sns
+
+def detect_qrs(signal, fs=125):
+    # biosppy wymaga float i fs w Hz
+    out = ecg.ecg(signal=signal, sampling_rate=fs, show=False)
+    r_peaks = out['rpeaks']
+    return r_peaks
+
+
+def plot_confusion_matrix(cm, labels):
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+                xticklabels=labels, yticklabels=labels)
+    plt.xlabel('Predicted')
+    plt.ylabel('True')
+    plt.title('Confusion Matrix')
+    plt.tight_layout()
+    plt.savefig('confusion_matrix.png')
+    plt.close()
+
+def augment_class(X, y, target_class, n_needed):
+    class_indices = np.where(y == target_class)[0]
+    new_samples = []
+    while len(new_samples) < n_needed:
+        i = np.random.choice(class_indices)
+        signal = X[i].copy()
+        noise = np.random.normal(0, 0.05, size=signal.shape)
+        jitter = np.roll(signal, np.random.randint(-2, 3))
+        augmented = jitter + noise
+        new_samples.append(augmented)
+    return np.array(new_samples), np.array([target_class] * n_needed)
+
+def balance_classes(X, y, n_target=10000):
+    X_aug, y_aug = [X], [y]
+    for label in np.unique(y):
+        current_count = np.sum(y == label)
+        if current_count < n_target:
+            X_new, y_new = augment_class(X, y, label, n_target - current_count)
+            X_aug.append(X_new)
+            y_aug.append(y_new)
+    X_balanced = np.concatenate(X_aug, axis=0)
+    y_balanced = np.concatenate(y_aug, axis=0)
+    return X_balanced, y_balanced
+
+
+
 
 # Mapping from MIT-BIH annotation symbols to AAMI classes and label encoding
 aami_mapping = {
@@ -25,12 +72,6 @@ def preprocess_signal(signal):
     return signal
 
 
-def detect_qrs(signal, fs=125):
-    # Minimum distance ~200ms
-    distance = int(0.2 * fs)
-    # Use threshold relative to max value
-    peaks, _ = find_peaks(signal, distance=distance, height=0.5 * np.max(signal))
-    return peaks
 
 
 def extract_beats(signal, r_peaks, window_size=188):
@@ -109,24 +150,54 @@ def plot_history(history):
 
 
 def main():
-    # Załóż, że MITDB znajduje się w ../databases/mitdb
+    # Ścieżka do MIT-BIH
     mitdb_path = '../databases/mitdb'
     X, y = load_data(mitdb_path)
-    print("Liczba uderzeń:", X.shape[0])
-    # Dopasuj wymiar: (num_samples, 188, 1)
+
+    # Augmentacja i balansowanie klas
+    X, y = balance_classes(X, y, n_target=10000)
+    y = to_categorical(y, num_classes=5)
+    print("Liczba uderzeń po augmentacji:", X.shape[0])
+
+    # Dopasowanie kształtu wejścia
     X = X[..., np.newaxis]
 
-    # Podział na zbiór treningowy i testowy
+    # Podział danych
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.1, stratify=y, random_state=42
+        X, y, test_size=0.1, stratify=np.argmax(y, axis=1), random_state=42
     )
 
-    # Budowa modelu CNN
+    # Budowa modelu
     model = build_model(input_shape=(188, 1))
-    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
-                  loss='sparse_categorical_crossentropy',
-                  metrics=['accuracy'])
+    model.compile(
+        optimizer=tf.keras.optimizers.Adam(learning_rate=0.001, decay=0.75),
+        loss='categorical_crossentropy',
+        metrics=['accuracy']
+    )
     model.summary()
+
+    # Callbacks
+    callbacks = [
+        tf.keras.callbacks.ModelCheckpoint(
+            filepath='best_model.keras',
+            monitor='val_accuracy',
+            save_best_only=True,
+            verbose=1
+        ),
+        tf.keras.callbacks.EarlyStopping(
+            monitor='val_loss',
+            patience=10,
+            restore_best_weights=True,
+            verbose=1
+        ),
+        tf.keras.callbacks.ReduceLROnPlateau(
+            monitor='val_loss',
+            factor=0.5,
+            patience=5,
+            min_lr=1e-6,
+            verbose=1
+        )
+    ]
 
     # Trenowanie modelu
     history = model.fit(
@@ -134,25 +205,31 @@ def main():
         epochs=60,
         batch_size=128,
         validation_split=0.1,
+        callbacks=callbacks,
         verbose=1
     )
 
-    # Zapis statystyk treningu
+    # Zapis historii treningu
     with open('training_history.json', 'w') as f:
         json.dump(history.history, f)
     plot_history(history)
 
-    # Ewaluacja na zbiorze testowym
+    # Ewaluacja
     test_loss, test_acc = model.evaluate(X_test, y_test, verbose=0)
     print("Test Accuracy:", test_acc)
+
     y_pred = np.argmax(model.predict(X_test), axis=1)
-    cm = confusion_matrix(y_test, y_pred)
+    y_true = np.argmax(y_test, axis=1)
+
+    cm = confusion_matrix(y_true, y_pred)
+    plot_confusion_matrix(cm, list(label_map.keys()))
     print("Confusion Matrix:\n", cm)
-    report = classification_report(y_test, y_pred, target_names=list(label_map.keys()))
+
+    report = classification_report(y_true, y_pred, target_names=list(label_map.keys()))
     print("Classification Report:\n", report)
 
-    # Zapis modelu
-    model.save('cnn_ecg_model.h5')
+    # Zapis pełnego modelu końcowego
+    model.save('cnn_ecg_model.keras')
 
 
 if __name__ == '__main__':

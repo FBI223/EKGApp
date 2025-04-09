@@ -14,8 +14,8 @@ from scipy.signal import resample
 TARGET_FS=125
 WINDOW_SIZE=188
 CLASS_COUNT=10_000
-BATCH_SIZE=32
-EPOCHS=10
+BATCH_SIZE=64
+EPOCHS=20
 
 def resample_signal(signal, orig_fs, target_fs=TARGET_FS):
     if orig_fs != target_fs:
@@ -138,8 +138,8 @@ def load_data(mitdb_path):
         ann_sample_rescaled = (ann.sample * scale).astype(int)
 
         # Detekcja QRS po resamplingu
-        #r_peaks = detect_qrs(signal, fs=TARGET_FS)
-        r_peaks = ann_sample_rescaled
+        r_peaks = detect_qrs(signal, fs=TARGET_FS)
+        #r_peaks = ann_sample_rescaled
         beats, beat_indices = extract_beats(signal, r_peaks, window_size=WINDOW_SIZE)
 
         for beat, r in zip(beats, beat_indices):

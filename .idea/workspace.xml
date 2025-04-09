@@ -4,12 +4,47 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="added model prediction function">
+    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="added class balance for mohamed model">
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/ECG_PROJ.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ECG_PROJ.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/consts.py" beforeDir="false" afterPath="$PROJECT_DIR$/consts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_model/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/estimator.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_model/inference.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v1/conf_matrix_fold_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v1/model_fold_1.keras" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v1/training_log_fold_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/conf_matrix_fold_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/conf_matrix_fold_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/conf_matrix_fold_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/conf_matrix_fold_4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/conf_matrix_fold_global.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/logs/fold_1/train/events.out.tfevents.1742932379.DESKTOP-9L323PA.24964.0.v2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/logs/fold_1/training_log.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/logs/fold_1/validation/events.out.tfevents.1742932576.DESKTOP-9L323PA.24964.1.v2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/logs/fold_2/train/events.out.tfevents.1742934109.DESKTOP-9L323PA.24964.2.v2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/logs/fold_2/training_log.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/logs/fold_2/validation/events.out.tfevents.1742934306.DESKTOP-9L323PA.24964.3.v2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/logs/fold_3/train/events.out.tfevents.1742935830.DESKTOP-9L323PA.24964.4.v2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/logs/fold_3/training_log.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/logs/fold_3/validation/events.out.tfevents.1742936022.DESKTOP-9L323PA.24964.5.v2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/logs/fold_4/train/events.out.tfevents.1742937545.DESKTOP-9L323PA.24964.6.v2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/logs/fold_4/training_log.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/logs/fold_4/validation/events.out.tfevents.1742937739.DESKTOP-9L323PA.24964.7.v2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/model_fold_1.keras" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/y_pred_fold_1.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/y_pred_fold_2.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/y_pred_fold_3.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/y_pred_fold_4.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/y_true_fold_1.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/y_true_fold_2.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/y_true_fold_3.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/y_true_fold_4.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v3/conf_matrix_fold_val.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v3/consts.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v3/main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mohamed_model/confusion_matrix.png" beforeDir="false" afterPath="$PROJECT_DIR$/mohamed_model/confusion_matrix.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mohamed_model/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/mohamed_model/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mohamed_model/training_accuracy.png" beforeDir="false" afterPath="$PROJECT_DIR$/mohamed_model/training_accuracy.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mohamed_model/training_history.json" beforeDir="false" afterPath="$PROJECT_DIR$/mohamed_model/training_history.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,37 +101,39 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Python.binary (1).executor&quot;: &quot;Run&quot;,
-    &quot;Python.consts.executor&quot;: &quot;Run&quot;,
-    &quot;Python.deaugmentation.executor&quot;: &quot;Run&quot;,
-    &quot;Python.estimator.executor&quot;: &quot;Run&quot;,
-    &quot;Python.gpu_efficiency_test.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main (1).executor&quot;: &quot;Run&quot;,
-    &quot;Python.main (2).executor&quot;: &quot;Run&quot;,
-    &quot;Python.main (3).executor&quot;: &quot;Run&quot;,
-    &quot;Python.main (4).executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main2 (1).executor&quot;: &quot;Run&quot;,
-    &quot;Python.main3 (1).executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_augmentation (1).executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_augmentation (2).executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_augmentation.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/msztu223/PycharmProjects/ECG_PROJ&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Python.binary (1).executor": "Run",
+    "Python.consts.executor": "Run",
+    "Python.deaugmentation.executor": "Run",
+    "Python.estimator.executor": "Run",
+    "Python.gpu_efficiency_test.executor": "Run",
+    "Python.inference.executor": "Run",
+    "Python.main (1).executor": "Run",
+    "Python.main (2).executor": "Run",
+    "Python.main (3).executor": "Run",
+    "Python.main (4).executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.main2 (1).executor": "Run",
+    "Python.main3 (1).executor": "Run",
+    "Python.test_augmentation (1).executor": "Run",
+    "Python.test_augmentation (2).executor": "Run",
+    "Python.test_augmentation.executor": "Run",
+    "Python.validate_model.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "/home/msztu223/PycharmProjects/ECG_PROJ/mohamed_model/inference",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
       <console-settings sdk-home="$PROJECT_DIR$/../../../../Program Files/Python312/python.exe">
@@ -112,11 +149,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/mohamed_model/inference" />
       <recent name="$PROJECT_DIR$/databases" />
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/main_model/trained_models/v3" />
       <recent name="C:\Users\msztu\Documents\ECG_PROJ\databases" />
-      <recent name="C:\Users\msztu\Documents\ECG_PROJ\resources" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/main_model/trained_models/v3" />
@@ -126,8 +163,8 @@
       <recent name="C:\Users\msztu\Documents\ECG_PROJ\main_model\v2" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.main (2)">
-    <configuration name="gpu_efficiency_test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python.validate_model">
+    <configuration name="inference" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ECG_PROJ" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -136,35 +173,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/binary_model" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/mohamed_model/inference" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/gpu_efficiency_test.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="main (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="ECG_PROJ" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/binary_model" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/binary_model/main.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/mohamed_model/inference/inference.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -196,7 +210,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="main (4)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="main (3)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ECG_PROJ" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -205,12 +219,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/wave_model" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/mohamed_model" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/wave_model/main.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/mohamed_model/main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -242,13 +256,36 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="validate_model" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ECG_PROJ" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/mohamed_model/inference" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/mohamed_model/inference/validate_model.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.validate_model" />
+        <item itemvalue="Python.main (3)" />
+        <item itemvalue="Python.inference" />
         <item itemvalue="Python.main (2)" />
         <item itemvalue="Python.main" />
-        <item itemvalue="Python.main (4)" />
-        <item itemvalue="Python.gpu_efficiency_test" />
-        <item itemvalue="Python.main (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -299,6 +336,24 @@
       <workItem from="1743179197155" duration="4269000" />
       <workItem from="1743183604860" duration="2650000" />
       <workItem from="1743416902554" duration="2816000" />
+      <workItem from="1743420464705" duration="1258000" />
+      <workItem from="1743440214847" duration="10000" />
+      <workItem from="1743448954801" duration="998000" />
+      <workItem from="1743450699972" duration="8000" />
+      <workItem from="1743450844766" duration="1000" />
+      <workItem from="1743450895435" duration="275000" />
+      <workItem from="1743451236139" duration="2000" />
+      <workItem from="1743456087708" duration="122000" />
+      <workItem from="1743456239484" duration="601000" />
+      <workItem from="1743459975810" duration="96000" />
+      <workItem from="1743496882124" duration="2000" />
+      <workItem from="1743533037039" duration="6798000" />
+      <workItem from="1743545540147" duration="640000" />
+      <workItem from="1743546280683" duration="816000" />
+      <workItem from="1743547982435" duration="965000" />
+      <workItem from="1743549307183" duration="226000" />
+      <workItem from="1744187910851" duration="4078000" />
+      <workItem from="1744196277194" duration="4152000" />
     </task>
     <task id="LOCAL-00001" summary="quite ok model for recognizing 'N' 'V' 'A' 'S' 'L' 'R' classes">
       <option name="closed" value="true" />
@@ -356,7 +411,31 @@
       <option name="project" value="LOCAL" />
       <updated>1742999340007</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="added main model with supeklasses">
+      <option name="closed" value="true" />
+      <created>1743422204195</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1743422204195</updated>
+    </task>
+    <task id="LOCAL-00009" summary="added mohhamed model without class balance">
+      <option name="closed" value="true" />
+      <created>1743536738294</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1743536738295</updated>
+    </task>
+    <task id="LOCAL-00010" summary="added class balance for mohamed model">
+      <option name="closed" value="true" />
+      <created>1743538146611</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1743538146611</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -381,23 +460,28 @@
     <MESSAGE value="reduce size of repo" />
     <MESSAGE value="reduce size of repo 2" />
     <MESSAGE value="added model prediction function" />
-    <option name="LAST_COMMIT_MESSAGE" value="added model prediction function" />
+    <MESSAGE value="added main model with supeklasses" />
+    <MESSAGE value="added mohhamed model without class balance" />
+    <MESSAGE value="added class balance for mohamed model" />
+    <option name="LAST_COMMIT_MESSAGE" value="added class balance for mohamed model" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ECG_PROJ$main__3_.coverage" NAME="main (3) Coverage Results" MODIFIED="1743184055242" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/image_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$inference.coverage" NAME="inference Coverage Results" MODIFIED="1744199606127" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mohamed_model/inference" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$main__3_.coverage" NAME="main (3) Coverage Results" MODIFIED="1744200408172" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mohamed_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$test_augmentation.coverage" NAME="test_augmentation Coverage Results" MODIFIED="1742916870454" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$main__4_.coverage" NAME="main (4) Coverage Results" MODIFIED="1743418981569" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/wave_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$estimator.coverage" NAME="estimator Coverage Results" MODIFIED="1742994438486" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1743185492480" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/binary_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1743548891909" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/2020_challange_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$deaugmentation.coverage" NAME="deaugmentation Coverage Results" MODIFIED="1742915824582" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$test_augmentation__1_.coverage" NAME="test_augmentation (1) Coverage Results" MODIFIED="1742916994228" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model/data_manipulation" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$gpu_efficiency_test.coverage" NAME="gpu_efficiency_test Coverage Results" MODIFIED="1743418214362" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/binary_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$test_augmentation__2_.coverage" NAME="test_augmentation (2) Coverage Results" MODIFIED="1742918352875" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$main__2_.coverage" NAME="main (2) Coverage Results" MODIFIED="1743419392004" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$main__2_.coverage" NAME="main (2) Coverage Results" MODIFIED="1744190796882" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$binary__1_.coverage" NAME="binary (1) Coverage Results" MODIFIED="1743107922127" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/binary_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$main3__1_.coverage" NAME="main3 (1) Coverage Results" MODIFIED="1742380110082" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/wave_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$validate_model.coverage" NAME="validate_model Coverage Results" MODIFIED="1744200536065" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mohamed_model/inference" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$consts.coverage" NAME="consts Coverage Results" MODIFIED="1742997792711" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$main.coverage" NAME="main Coverage Results" MODIFIED="1743419000482" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/visualize_data" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$main.coverage" NAME="main Coverage Results" MODIFIED="1744189844083" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/visualize_data" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$main2__1_.coverage" NAME="main2 (1) Coverage Results" MODIFIED="1742380131642" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/visualize_data" />
   </component>
 </project>

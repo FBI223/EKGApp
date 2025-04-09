@@ -7,3 +7,4 @@
 *.keras
 *.h5
 
+/databases/challenge2020_data/

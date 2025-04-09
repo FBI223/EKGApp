@@ -9,8 +9,22 @@ import matplotlib.pyplot as plt
 from tensorflow.keras.utils import to_categorical
 from biosppy.signals import ecg
 import seaborn as sns
+from scipy.signal import resample
 
-def detect_qrs(signal, fs=125):
+TARGET_FS=125
+WINDOW_SIZE=188
+CLASS_COUNT=10_000
+BATCH_SIZE=32
+EPOCHS=10
+
+def resample_signal(signal, orig_fs, target_fs=TARGET_FS):
+    if orig_fs != target_fs:
+        new_len = int(len(signal) * target_fs / orig_fs)
+        signal = resample(signal, new_len)
+    return signal
+
+
+def detect_qrs(signal, fs=TARGET_FS):
     # biosppy wymaga float i fs w Hz
     out = ecg.ecg(signal=signal, sampling_rate=fs, show=False)
     r_peaks = out['rpeaks']
@@ -40,7 +54,7 @@ def augment_class(X, y, target_class, n_needed):
         new_samples.append(augmented)
     return np.array(new_samples), np.array([target_class] * n_needed)
 
-def balance_classes(X, y, n_target=10000):
+def balance_classes(X, y, n_target=CLASS_COUNT):
     X_aug, y_aug = [X], [y]
     for label in np.unique(y):
         current_count = np.sum(y == label)
@@ -72,9 +86,25 @@ def preprocess_signal(signal):
     return signal
 
 
+def extract_beats(signal, r_peaks, window_size=WINDOW_SIZE):
+    half_window = window_size // 2
+    beats = []
+    indices = []
+    for r in r_peaks:
+        left = r - half_window
+        right = r + half_window
+        beat = np.zeros(window_size)
+        seg_start = max(0, left)
+        seg_end = min(right, len(signal))
+        seg = signal[seg_start:seg_end]
+        offset = 0 if left >= 0 else -left
+        beat[offset:offset+len(seg)] = seg
+        beats.append(beat)
+        indices.append(r)
+    return np.array(beats), np.array(indices)
 
 
-def extract_beats(signal, r_peaks, window_size=188):
+def extract_beats_classic(signal, r_peaks, window_size=WINDOW_SIZE):
     half_window = window_size // 2
     beats = []
     indices = []
@@ -97,13 +127,23 @@ def load_data(mitdb_path):
         except Exception as e:
             print("Error reading record", rec, e)
             continue
-        # Use first channel and preprocess
-        signal = preprocess_signal(record.p_signal[:, 0])
-        r_peaks = detect_qrs(signal, fs=record.fs)
-        beats, beat_indices = extract_beats(signal, r_peaks, window_size=188)
-        # Associate each beat with the closest annotation
+
+        orig_fs = record.fs
+        signal_raw = record.p_signal[:, 0]
+        signal = resample_signal(signal_raw, orig_fs, target_fs=TARGET_FS)
+        signal = preprocess_signal(signal)
+
+        # Przeskaluj adnotacje do nowej częstotliwości
+        scale = TARGET_FS / orig_fs
+        ann_sample_rescaled = (ann.sample * scale).astype(int)
+
+        # Detekcja QRS po resamplingu
+        #r_peaks = detect_qrs(signal, fs=TARGET_FS)
+        r_peaks = ann_sample_rescaled
+        beats, beat_indices = extract_beats(signal, r_peaks, window_size=WINDOW_SIZE)
+
         for beat, r in zip(beats, beat_indices):
-            diff = np.abs(ann.sample - r)
+            diff = np.abs(ann_sample_rescaled - r)
             idx = np.argmin(diff)
             ann_symbol = ann.symbol[idx]
             if ann_symbol in aami_mapping:
@@ -155,7 +195,7 @@ def main():
     X, y = load_data(mitdb_path)
 
     # Augmentacja i balansowanie klas
-    X, y = balance_classes(X, y, n_target=10000)
+    X, y = balance_classes(X, y, n_target=CLASS_COUNT)
     y = to_categorical(y, num_classes=5)
     print("Liczba uderzeń po augmentacji:", X.shape[0])
 
@@ -168,7 +208,7 @@ def main():
     )
 
     # Budowa modelu
-    model = build_model(input_shape=(188, 1))
+    model = build_model(input_shape=(WINDOW_SIZE, 1))
     model.compile(
         optimizer=tf.keras.optimizers.Adam(learning_rate=0.001, decay=0.75),
         loss='categorical_crossentropy',
@@ -202,8 +242,8 @@ def main():
     # Trenowanie modelu
     history = model.fit(
         X_train, y_train,
-        epochs=60,
-        batch_size=128,
+        epochs=EPOCHS,
+        batch_size=BATCH_SIZE,
         validation_split=0.1,
         callbacks=callbacks,
         verbose=1

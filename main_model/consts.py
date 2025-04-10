@@ -22,8 +22,8 @@ CUDB_PATH = '../databases/cudb'
 
 WINDOW_SIZE = FS_TARGET
 FOLDS = 5
-EPOCHS = 8
-BATCH_SIZE = 16
+EPOCHS = 16
+BATCH_SIZE = 32
 
 
 # --- Annotation map ---

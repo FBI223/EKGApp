@@ -3,26 +3,30 @@ import random
 import numpy as np
 import wfdb
 import matplotlib.pyplot as plt
-from keras.callbacks import TensorBoard
-from sklearn.model_selection import StratifiedKFold
+
 from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.model_selection import train_test_split
+
+from tensorflow.keras.layers import Bidirectional, GRU
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv1D, MaxPooling1D, Flatten, Dense, Dropout, BatchNormalization, Input
+from tensorflow.keras.layers import (
+    Conv1D, MaxPooling1D, GRU, Dense, Dropout, BatchNormalization, Input, Flatten
+)
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.callbacks import EarlyStopping, CSVLogger, ModelCheckpoint
+from tensorflow.keras.callbacks import EarlyStopping, CSVLogger, ModelCheckpoint, TensorBoard
 from tensorflow.keras.utils import to_categorical
+
 from tqdm import tqdm
 import seaborn as sns
 import pandas as pd
-from sklearn.model_selection import train_test_split
-
-from main_model.augmentation import augment_chain, AUGMENTATION_FUNCS
-from consts import MITDB_PATH, INV_ANNOTATION_MAP, ANNOTATION_MAP, WINDOW_SIZE, FOLDS, EPOCHS, BATCH_SIZE, DB_PATHS, FS_TARGET
 from scipy.signal import resample
 
+from main_model.augmentation import augment_chain, AUGMENTATION_FUNCS
+from main_model.consts import (
+    INV_ANNOTATION_MAP, ANNOTATION_MAP, WINDOW_SIZE, EPOCHS, BATCH_SIZE, DB_PATHS, FS_TARGET
+)
+
 import tensorflow as tf
-
-
 
 
 
@@ -45,7 +49,7 @@ def augment_1d(signal, label, max_chain_len=len(AUGMENTATION_FUNCS)):
     aug_signals = [signal]
 
     if label != ANNOTATION_MAP['N']:
-        num_augs = random.randint(2, 4)
+        num_augs = random.randint(3, 5)
         for _ in range(num_augs):
             aug = augment_chain(signal, AUGMENTATION_FUNCS, max_chain_len)
             aug_signals.append(aug)
@@ -150,8 +154,23 @@ def build_dataset():
     return X[..., np.newaxis], y
 
 
+# --- Dataset caching (load or generate) ---
+def load_or_generate_dataset(build_dataset_func, X_path="X.npy", y_path="y.npy"):
+    if os.path.exists(X_path) and os.path.exists(y_path):
+        print("📦 Loading preprocessed data from disk...")
+        X = np.load(X_path)
+        y = np.load(y_path)
+    else:
+        print("⚙️  Generating dataset...")
+        X, y = build_dataset_func()
+        np.save(X_path, X)
+        np.save(y_path, y)
+    return X, y
+
+
+
 # --- Model architecture ---
-def build_model():
+def build_model_old():
     model = Sequential()
     model.add(Input(shape=(WINDOW_SIZE, 1)))
     model.add(Conv1D(64, 5, activation='elu', padding='same'))
@@ -174,6 +193,35 @@ def build_model():
     model.compile(optimizer=Adam(1e-4), loss='categorical_crossentropy', metrics=['accuracy'])
     return model
 
+# --- Model architecture with Bi-GRU ---
+def build_model():
+    model = Sequential()
+    model.add(Input(shape=(WINDOW_SIZE, 1)))
+
+    # Convolutional layers
+    model.add(Conv1D(64, 5, activation='elu', padding='same'))
+    model.add(BatchNormalization())
+    model.add(Conv1D(64, 5, activation='elu', padding='same'))
+    model.add(BatchNormalization())
+    model.add(MaxPooling1D(2))
+
+    model.add(Conv1D(128, 5, activation='elu', padding='same'))
+    model.add(BatchNormalization())
+    model.add(Conv1D(128, 5, activation='elu', padding='same'))
+    model.add(BatchNormalization())
+    model.add(MaxPooling1D(2))
+
+    # Temporal feature extraction
+    model.add(Bidirectional(GRU(64, return_sequences=False)))
+
+    # Dense layers
+    model.add(Dense(128, activation='elu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(len(INV_ANNOTATION_MAP), activation='softmax'))
+
+    model.compile(optimizer=Adam(1e-4), loss='categorical_crossentropy', metrics=['accuracy'])
+    return model
+
 
 def train_model():
     print("✅ TF Version:", tf.__version__)
@@ -185,7 +233,9 @@ def train_model():
         tf.config.experimental.set_memory_growth(gpu, True)
 
     #X, y = build_dataset()
-    X,y = build_dataset_augmented()
+    #X,y = build_dataset_augmented()
+    X, y = load_or_generate_dataset(build_dataset_augmented)
+
     y_cat = to_categorical(y, num_classes=len(INV_ANNOTATION_MAP))
 
     target_names = [INV_ANNOTATION_MAP[i] for i in range(len(INV_ANNOTATION_MAP))]
@@ -196,6 +246,7 @@ def train_model():
     )
 
     model = build_model()
+
 
     callbacks = [
         EarlyStopping(monitor='val_accuracy', patience=3, restore_best_weights=True),
@@ -217,10 +268,9 @@ def train_model():
 
     plot_conf_matrix(y_true, y_pred, fold="val")
 
-def main():
-    train_model()
+
 
 
 if __name__ == "__main__":
-    main()
+    train_model()
 

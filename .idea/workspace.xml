@@ -4,47 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="added class balance for mohamed model">
+    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="changed r_peak_detection mohamed/main.py">
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/ECG_PROJ.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ECG_PROJ.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/estimator.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_model/inference.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v1/conf_matrix_fold_1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v1/model_fold_1.keras" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v1/training_log_fold_1.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/conf_matrix_fold_1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/conf_matrix_fold_2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/conf_matrix_fold_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/conf_matrix_fold_4.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/conf_matrix_fold_global.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/logs/fold_1/train/events.out.tfevents.1742932379.DESKTOP-9L323PA.24964.0.v2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/logs/fold_1/training_log.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/logs/fold_1/validation/events.out.tfevents.1742932576.DESKTOP-9L323PA.24964.1.v2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/logs/fold_2/train/events.out.tfevents.1742934109.DESKTOP-9L323PA.24964.2.v2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/logs/fold_2/training_log.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/logs/fold_2/validation/events.out.tfevents.1742934306.DESKTOP-9L323PA.24964.3.v2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/logs/fold_3/train/events.out.tfevents.1742935830.DESKTOP-9L323PA.24964.4.v2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/logs/fold_3/training_log.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/logs/fold_3/validation/events.out.tfevents.1742936022.DESKTOP-9L323PA.24964.5.v2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/logs/fold_4/train/events.out.tfevents.1742937545.DESKTOP-9L323PA.24964.6.v2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/logs/fold_4/training_log.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/logs/fold_4/validation/events.out.tfevents.1742937739.DESKTOP-9L323PA.24964.7.v2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/model_fold_1.keras" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/y_pred_fold_1.npy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/y_pred_fold_2.npy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/y_pred_fold_3.npy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/y_pred_fold_4.npy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/y_true_fold_1.npy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/y_true_fold_2.npy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/y_true_fold_3.npy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v2/y_true_fold_4.npy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v3/conf_matrix_fold_val.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v3/consts.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/trained_models/v3/main.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mohamed_model/confusion_matrix.png" beforeDir="false" afterPath="$PROJECT_DIR$/mohamed_model/confusion_matrix.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/binary_model/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/binary_model/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/consts.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_model/consts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/augmentation.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_model/augmentation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/inference.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_model/inference.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_model/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/test_augmentation.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_model/test_augmentation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mohamed_model/confusion_matrix.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/mohamed_model/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/mohamed_model/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mohamed_model/training_accuracy.png" beforeDir="false" afterPath="$PROJECT_DIR$/mohamed_model/training_accuracy.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mohamed_model/training_history.json" beforeDir="false" afterPath="$PROJECT_DIR$/mohamed_model/training_history.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mohamed_model/training_accuracy.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mohamed_model/training_history.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tf_cuda_env.yml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -109,6 +82,7 @@
     "Python.deaugmentation.executor": "Run",
     "Python.estimator.executor": "Run",
     "Python.gpu_efficiency_test.executor": "Run",
+    "Python.inference (1).executor": "Run",
     "Python.inference.executor": "Run",
     "Python.main (1).executor": "Run",
     "Python.main (2).executor": "Run",
@@ -124,7 +98,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "/home/msztu223/PycharmProjects/ECG_PROJ/mohamed_model/inference",
+    "last_opened_file_path": "/home/msztu223/PycharmProjects/ECG_PROJ",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -149,21 +123,44 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/mohamed_model/inference" />
       <recent name="$PROJECT_DIR$/databases" />
-      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/main_model/trained_models/v3" />
       <recent name="C:\Users\msztu\Documents\ECG_PROJ\databases" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/main_model/trained_models/v3" />
       <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/main_model" />
+      <recent name="$PROJECT_DIR$/main_model/trained_models/v3" />
       <recent name="C:\Users\msztu\Documents\ECG_PROJ\main_model\trained_models\v3" />
       <recent name="C:\Users\msztu\Documents\ECG_PROJ\main_model\models" />
-      <recent name="C:\Users\msztu\Documents\ECG_PROJ\main_model\v2" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.validate_model">
+  <component name="RunManager" selected="Python.inference (1)">
+    <configuration name="inference (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ECG_PROJ" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/main_model" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main_model/inference.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="inference" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ECG_PROJ" />
       <option name="ENV_FILES" value="" />
@@ -233,29 +230,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="ECG_PROJ" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/visualize_data" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/visualize_data/main.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="validate_model" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ECG_PROJ" />
       <option name="ENV_FILES" value="" />
@@ -281,11 +255,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.inference (1)" />
+        <item itemvalue="Python.main (2)" />
+        <item itemvalue="Python.inference" />
         <item itemvalue="Python.validate_model" />
         <item itemvalue="Python.main (3)" />
-        <item itemvalue="Python.inference" />
-        <item itemvalue="Python.main (2)" />
-        <item itemvalue="Python.main" />
       </list>
     </recent_temporary>
   </component>
@@ -353,7 +327,8 @@
       <workItem from="1743547982435" duration="965000" />
       <workItem from="1743549307183" duration="226000" />
       <workItem from="1744187910851" duration="4078000" />
-      <workItem from="1744196277194" duration="4152000" />
+      <workItem from="1744196277194" duration="7224000" />
+      <workItem from="1744276713504" duration="5965000" />
     </task>
     <task id="LOCAL-00001" summary="quite ok model for recognizing 'N' 'V' 'A' 'S' 'L' 'R' classes">
       <option name="closed" value="true" />
@@ -435,7 +410,23 @@
       <option name="project" value="LOCAL" />
       <updated>1743538146611</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="changes to mahamed model plus added inference.py and valiadte_model.py">
+      <option name="closed" value="true" />
+      <created>1744200651605</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1744200651605</updated>
+    </task>
+    <task id="LOCAL-00012" summary="changed r_peak_detection mohamed/main.py">
+      <option name="closed" value="true" />
+      <created>1744201262164</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1744201262164</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -463,11 +454,14 @@
     <MESSAGE value="added main model with supeklasses" />
     <MESSAGE value="added mohhamed model without class balance" />
     <MESSAGE value="added class balance for mohamed model" />
-    <option name="LAST_COMMIT_MESSAGE" value="added class balance for mohamed model" />
+    <MESSAGE value="changes to mahamed model plus added inference.py and valiadte_model.py" />
+    <MESSAGE value="changed r_peak_detection mohamed/main.py" />
+    <option name="LAST_COMMIT_MESSAGE" value="changed r_peak_detection mohamed/main.py" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ECG_PROJ$inference.coverage" NAME="inference Coverage Results" MODIFIED="1744199606127" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mohamed_model/inference" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$main__3_.coverage" NAME="main (3) Coverage Results" MODIFIED="1744200408172" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mohamed_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$inference__1_.coverage" NAME="inference (1) Coverage Results" MODIFIED="1744305600815" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$inference.coverage" NAME="inference Coverage Results" MODIFIED="1744277107477" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mohamed_model/inference" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$main__3_.coverage" NAME="main (3) Coverage Results" MODIFIED="1744201306246" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mohamed_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$test_augmentation.coverage" NAME="test_augmentation Coverage Results" MODIFIED="1742916870454" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$main__4_.coverage" NAME="main (4) Coverage Results" MODIFIED="1743418981569" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/wave_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$estimator.coverage" NAME="estimator Coverage Results" MODIFIED="1742994438486" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
@@ -476,10 +470,10 @@
     <SUITE FILE_PATH="coverage/ECG_PROJ$test_augmentation__1_.coverage" NAME="test_augmentation (1) Coverage Results" MODIFIED="1742916994228" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model/data_manipulation" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$gpu_efficiency_test.coverage" NAME="gpu_efficiency_test Coverage Results" MODIFIED="1743418214362" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/binary_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$test_augmentation__2_.coverage" NAME="test_augmentation (2) Coverage Results" MODIFIED="1742918352875" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$main__2_.coverage" NAME="main (2) Coverage Results" MODIFIED="1744190796882" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$main__2_.coverage" NAME="main (2) Coverage Results" MODIFIED="1744280941490" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$binary__1_.coverage" NAME="binary (1) Coverage Results" MODIFIED="1743107922127" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/binary_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$main3__1_.coverage" NAME="main3 (1) Coverage Results" MODIFIED="1742380110082" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/wave_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$validate_model.coverage" NAME="validate_model Coverage Results" MODIFIED="1744200536065" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mohamed_model/inference" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$validate_model.coverage" NAME="validate_model Coverage Results" MODIFIED="1744276883137" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mohamed_model/inference" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$consts.coverage" NAME="consts Coverage Results" MODIFIED="1742997792711" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$main.coverage" NAME="main Coverage Results" MODIFIED="1744189844083" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/visualize_data" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$main2__1_.coverage" NAME="main2 (1) Coverage Results" MODIFIED="1742380131642" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/visualize_data" />

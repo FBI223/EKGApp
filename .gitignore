@@ -6,5 +6,6 @@
 
 *.keras
 *.h5
+*.npy
 
 /databases/challenge2020_data/

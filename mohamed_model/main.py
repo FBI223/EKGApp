@@ -13,9 +13,9 @@ from scipy.signal import resample
 
 TARGET_FS=125
 WINDOW_SIZE=188
-CLASS_COUNT=10_000
+CLASS_COUNT=21_370
 BATCH_SIZE=64
-EPOCHS=20
+EPOCHS=60
 
 def resample_signal(signal, orig_fs, target_fs=TARGET_FS):
     if orig_fs != target_fs:

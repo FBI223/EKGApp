@@ -143,5 +143,5 @@ def evaluate_predictions(record_path, distance_thresh=50):
 
 # --- Run main evaluation ---
 if __name__ == '__main__':
-    RECORD = '/home/msztu223/PycharmProjects/ECG_PROJ/databases/svdb/827'
+    RECORD = '/home/msztu223/PycharmProjects/ECG_PROJ/databases/svdb/822'
     evaluate_predictions(RECORD)

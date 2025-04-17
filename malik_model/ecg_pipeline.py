@@ -106,7 +106,7 @@ def train_and_export():
 
     model = build_selfonn_model(input_shape=(128, 2), num_classes=5, Q=7)
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-    model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=20, batch_size=64)
+    model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=30, batch_size=128)
 
     model.save("ecg_selfonn_model.h5")
 
@@ -123,7 +123,8 @@ def train_and_export():
         f.write(tflite_model)
     print("[INFO] Exported to ecg_selfonn_model.tflite")
 
-# === MAIN ===
-save_if_not_exists()
-train_and_export()
+
+if __name__ == "__main__":
+    save_if_not_exists()
+    train_and_export()
 

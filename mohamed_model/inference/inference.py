@@ -16,46 +16,23 @@ AAMI_MAP = {
     'F': 'FVN',
     '/': 'FPN'
 }
+LABEL_MAP = {'N': 0, 'SVP': 1, 'PVC': 2, 'FVN': 3, 'FPN': 4}
 
-
-def display_annotations(file_prefix, channel=0):
-    record = wfdb.rdrecord(file_prefix)
-    ann = wfdb.rdann(file_prefix, 'atr')
-
-    signal = record.p_signal[:, channel]
-    orig_fs = record.fs
-    scale = TARGET_FS / orig_fs
-
-    # Resampling sygnału (dla porównania)
-    resampled_signal = resample(signal, int(len(signal) * scale)) if orig_fs != TARGET_FS else signal
-
-    # Przeskalowane adnotacje
-    ann_sample_scaled = (ann.sample * scale).astype(int)
-
-    print(f"Plik: {file_prefix} | Próbkowanie: {orig_fs} Hz → {TARGET_FS} Hz")
-    print(f"Liczba adnotacji: {len(ann.sample)}\n")
-
-    for i, (orig_s, scaled_s, sym) in enumerate(zip(ann.sample, ann_sample_scaled, ann.symbol)):
-        aami = AAMI_MAP.get(sym, '?')
-        print(f"Beat {i + 1:04d}: orig={orig_s:06d}, resampled={scaled_s:06d}, sym='{sym}', AAMI='{aami}'")
-
-
-# --- Normalizacja jak w treningu ---
+# --- Normalizacja ---
 def preprocess_signal(signal):
     signal = signal - np.mean(signal)
     signal = signal / np.max(np.abs(signal))
     return signal
 
-# --- Detekcja QRS za pomocą biosppy ---
+# --- Detekcja QRS ---
 def detect_qrs(signal, fs):
     out = ecg.ecg(signal=signal, sampling_rate=fs, show=False)
     return out['rpeaks']
 
-# --- Ekstrakcja beatów z paddingiem ---
+# --- Ekstrakcja beatów ---
 def extract_beats(signal, r_peaks, window_size=WINDOW_SIZE):
     half_window = window_size // 2
-    beats = []
-    indices = []
+    beats, indices = [], []
     for r in r_peaks:
         left = r - half_window
         right = r + half_window
@@ -69,18 +46,6 @@ def extract_beats(signal, r_peaks, window_size=WINDOW_SIZE):
         indices.append(r)
     return np.array(beats), np.array(indices)
 
-# --- Przetwarzanie pliku .dat/.hea ---
-def load_and_process_record(file_path, channel=0):
-    record = wfdb.rdrecord(file_path)
-    signal = record.p_signal[:, channel]
-    fs = record.fs
-    if fs != TARGET_FS:
-        signal = resample(signal, int(len(signal) * TARGET_FS / fs))
-    signal = preprocess_signal(signal)
-    r_peaks = detect_qrs(signal, fs=TARGET_FS)
-    beats, beat_locs = extract_beats(signal, r_peaks)
-    return beats, beat_locs
-
 # --- Klasa do predykcji ---
 class ECGPredictor:
     def __init__(self, model_path=MODEL_PATH):
@@ -93,19 +58,49 @@ class ECGPredictor:
         preds = np.argmax(probs, axis=1)
         return preds, probs
 
-# --- Główna funkcja inference ---
-def run_prediction(file_prefix):
-    beats, beat_locs = load_and_process_record(file_prefix)
+# --- Główna funkcja walidacji ---
+def evaluate_predictions(record_path, channel=0, distance_thresh=50):
+    record = wfdb.rdrecord(record_path)
+    ann = wfdb.rdann(record_path, 'atr')
+
+    signal = record.p_signal[:, channel]
+    orig_fs = record.fs
+    scale = TARGET_FS / orig_fs
+
+    signal = resample(signal, int(len(signal) * scale)) if orig_fs != TARGET_FS else signal
+    signal = preprocess_signal(signal)
+    ann_scaled = (ann.sample * scale).astype(int)
+
+    r_peaks = detect_qrs(signal, TARGET_FS)
+    beats, beat_locs = extract_beats(signal, r_peaks)
+
     predictor = ECGPredictor()
-    preds, probs = predictor.predict(beats)
+    preds, _ = predictor.predict(beats)
 
-    for i, (r, pred_id) in enumerate(zip(beat_locs, preds)):
-        label = predictor.class_names[pred_id]
-        print(f"Beat {i+1:04d} at sample {r:06d}: predicted → {label}")
+    correct = total = 0
 
+    for r, pred_class in zip(beat_locs, preds):
+        distances = np.abs(ann_scaled - r)
+        idx = np.argmin(distances)
+        if distances[idx] > distance_thresh:
+            continue
+        sym = ann.symbol[idx]
+        true_aami = AAMI_MAP.get(sym)
+        if true_aami is None:
+            continue
+        true_class = LABEL_MAP[true_aami]
+        total += 1
+        result = '✅' if pred_class == true_class else '❌'
+        if pred_class == true_class:
+            correct += 1
+        print(f"Sample {r:06d}: true={CLASS_NAMES[true_class]}, pred={CLASS_NAMES[pred_class]} {result}")
 
+    if total:
+        print(f"\nMatched beats: {total}")
+        print(f"Accuracy: {100 * correct / total:.2f}%")
+    else:
+        print("No matching annotations found.")
 
+# --- Uruchomienie ---
 if __name__ == '__main__':
-    run_prediction('820')  # używa plików 100.hea, 100.dat, 100.atr
-    display_annotations('820')  # 100.hea, 100.dat, 100.atr muszą być w katalogu
-
+    evaluate_predictions('/home/msztu223/PycharmProjects/ECG_PROJ/databases/svdb/821')

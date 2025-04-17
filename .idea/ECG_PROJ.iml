@@ -6,6 +6,8 @@
       <excludeFolder url="file://$MODULE_DIR$/databases/mitdb" />
       <excludeFolder url="file://$MODULE_DIR$/databases/svdb" />
       <excludeFolder url="file://$MODULE_DIR$/databases/challenge2020_data" />
+      <excludeFolder url="file://$MODULE_DIR$/databases/cudb" />
+      <excludeFolder url="file://$MODULE_DIR$/databases/nsrdb" />
     </content>
     <orderEntry type="jdk" jdkName="tf_cuda" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

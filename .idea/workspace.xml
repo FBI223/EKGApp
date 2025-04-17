@@ -4,16 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="small changes to mohamed">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/ECG_PROJ.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ECG_PROJ.iml" afterDir="false" />
+    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="added arduino model , mobile model and multi model">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/binary_model/main.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/inference.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_model/inference.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/malik_model/ecg_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/malik_model/ecg_pipeline.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/malik_model/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/malik_model/model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mohamed_model/inference/inference.py" beforeDir="false" afterPath="$PROJECT_DIR$/mohamed_model/inference/inference.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mohamed_model/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/mohamed_model/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/multi_model/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/multi_model/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -141,7 +134,7 @@
       <recent name="$PROJECT_DIR$/main_model/trained_models/v3" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.debug">
+  <component name="RunManager" selected="Python.main (1)">
     <configuration name="aami_smaller_model (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ECG_PROJ" />
       <option name="ENV_FILES" value="" />
@@ -259,8 +252,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.debug" />
         <item itemvalue="Python.main (1)" />
+        <item itemvalue="Python.debug" />
         <item itemvalue="Python.main" />
         <item itemvalue="Python.aami_smaller_model (1)" />
         <item itemvalue="Python.test_on_arduino" />
@@ -347,7 +340,7 @@
       <workItem from="1744798912849" duration="6027000" />
       <workItem from="1744882312602" duration="1684000" />
       <workItem from="1744888357283" duration="2639000" />
-      <workItem from="1744892598754" duration="2287000" />
+      <workItem from="1744892598754" duration="6235000" />
     </task>
     <task id="LOCAL-00001" summary="quite ok model for recognizing 'N' 'V' 'A' 'S' 'L' 'R' classes">
       <option name="closed" value="true" />
@@ -461,7 +454,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744319287265</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="added arduino model , mobile model and multi model">
+      <option name="closed" value="true" />
+      <created>1744897072069</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1744897072069</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -493,7 +494,8 @@
     <MESSAGE value="changed r_peak_detection mohamed/main.py" />
     <MESSAGE value="change yaml erquirements file and added inference for main model" />
     <MESSAGE value="small changes to mohamed" />
-    <option name="LAST_COMMIT_MESSAGE" value="small changes to mohamed" />
+    <MESSAGE value="added arduino model , mobile model and multi model" />
+    <option name="LAST_COMMIT_MESSAGE" value="added arduino model , mobile model and multi model" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ECG_PROJ$test_on_arduino.coverage" NAME="test_on_arduino Coverage Results" MODIFIED="1744721396165" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/arduino_smaller_model/test" />
@@ -501,7 +503,7 @@
     <SUITE FILE_PATH="coverage/ECG_PROJ$aami_pipeline_lstm.coverage" NAME="aami_pipeline_lstm Coverage Results" MODIFIED="1744712594913" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/arduino_lstm_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$main__4_.coverage" NAME="main (4) Coverage Results" MODIFIED="1743418981569" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/wave_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$estimator.coverage" NAME="estimator Coverage Results" MODIFIED="1742994438486" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1744894056992" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/multi_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1744897123188" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/multi_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$aami_pipeline_lstm_fixed.coverage" NAME="aami_pipeline_lstm_fixed Coverage Results" MODIFIED="1744719616502" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/arduino_lstm_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$test_augmentation__2_.coverage" NAME="test_augmentation (2) Coverage Results" MODIFIED="1742918352875" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$validate_model.coverage" NAME="validate_model Coverage Results" MODIFIED="1744276883137" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mohamed_model/inference" />

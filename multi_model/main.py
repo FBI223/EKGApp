@@ -13,17 +13,6 @@ import seaborn as sns
 import datetime
 import subprocess
 from tqdm import tqdm
-import tensorflow as tf
-
-gpus = tf.config.experimental.list_physical_devices('GPU')
-if gpus:
-    try:
-        tf.config.experimental.set_virtual_device_configuration(
-            gpus[0],
-            [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=1800)]
-        )
-    except RuntimeError as e:
-        print(e)
 
 # === CONSTANTS ===
 BASE_PATH = '/home/msztu223/Documents/ECG/EKG_DB_2/challenge2020_data/training'
@@ -31,7 +20,7 @@ FS_TARGET = 500
 SEGMENT_SAMPLES = FS_TARGET * 10  # 10 seconds
 NUM_LEADS = 12
 BATCH_SIZE = 32
-EPOCHS = 20
+EPOCHS = 40
 SNOMED_CLASSES = [
     270492004, 164889003, 164890007, 426627000, 713427006, 713426002, 445118002,
     39732003, 164909002, 251146004, 698252002, 10370003, 284470004, 427172004,
@@ -41,10 +30,9 @@ SNOMED_CLASSES = [
 SNOMED2IDX = {code: i for i, code in enumerate(SNOMED_CLASSES)}
 
 
+# === METRICS ===
 def load_weight_matrix():
-    W = np.loadtxt("weights.csv", delimiter=",")
-    return W
-
+    return np.loadtxt("weights.csv", delimiter=",")
 
 def compute_challenge_score(y_true, y_pred, W):
     score = 0.0
@@ -82,7 +70,7 @@ def parse_demographics(header_path):
     return [age / 100.0, sex]
 
 def load_record(path_no_ext):
-    if 'incart' in path_no_ext.lower():  # Exclude INCART database
+    if 'incart' in path_no_ext.lower():
         return []
     try:
         record = wfdb.rdrecord(path_no_ext)
@@ -159,32 +147,64 @@ def build_se_resnet34(input_shape=(SEGMENT_SAMPLES, NUM_LEADS), demo_shape=(2,),
     return tf.keras.Model(inputs=[ecg_input, demo_input], outputs=out)
 
 # === TRAINING ===
-if os.path.exists('X.npy') and os.path.exists('Y.npy') and os.path.exists('D.npy'):
-    X = np.load('X.npy')
-    Y = np.load('Y.npy')
-    D = np.load('D.npy')
-else:
-    X, Y, D = load_all_data()
-    X = np.transpose(X, (0, 2, 1))  # (samples, time, leads)
-    np.save('X.npy', X)
-    np.save('Y.npy', Y)
-    np.save('D.npy', D)
+X = np.load('X.npy')
+Y = np.load('Y.npy')
+D = np.load('D.npy')
+
+# Zamień NaN i Inf na zera
+# Znajdź próbki zawierające NaN lub Inf
+mask = ~(
+    np.isnan(X).any(axis=(1, 2)) | np.isinf(X).any(axis=(1, 2)) |
+    np.isnan(Y).any(axis=1)     | np.isinf(Y).any(axis=1)     |
+    np.isnan(D).any(axis=1)     | np.isinf(D).any(axis=1)
+)
+
+# Usuń je ze wszystkich macierzy
+X = X[mask]
+Y = Y[mask]
+D = D[mask]
+
+# Sprawdź rozmiary
+assert X.shape[0] == Y.shape[0] == D.shape[0], "Mismatch in sample sizes"
+
+# Sprawdź wymiary danych
+assert X.ndim == 3 and X.shape[1:] == (SEGMENT_SAMPLES, NUM_LEADS), f"Invalid X shape: {X.shape}"
+assert Y.ndim == 2 and Y.shape[1] == len(SNOMED_CLASSES), f"Invalid Y shape: {Y.shape}"
+assert D.ndim == 2 and D.shape[1] == 2, f"Invalid D shape: {D.shape}"
 
 label_counts = np.sum(Y, axis=0)
-print("Label distribution:")
+print("Label distribution before filtering:")
 for code, count in zip(SNOMED_CLASSES, label_counts):
     print(f"{code}: {int(count)}")
+
+# Filtruj klasy z < 600 wystąpień
+valid_class_indices = [i for i, count in enumerate(label_counts) if count >= 600]
+valid_class_codes = [SNOMED_CLASSES[i] for i in valid_class_indices]
+
+print("\nClasses kept (≥600 samples):")
+for code in valid_class_codes:
+    print(f"{code}")
+
+# Zaktualizuj macierze
+Y = Y[:, valid_class_indices]
+SNOMED_CLASSES = valid_class_codes
+SNOMED2IDX = {code: i for i, code in enumerate(SNOMED_CLASSES)}
 
 split = int(0.8 * len(X))
 X_train, X_val = X[:split], X[split:]
 Y_train, Y_val = Y[:split], Y[split:]
 D_train, D_val = D[:split], D[split:]
 
-train_ds = tf.data.Dataset.from_tensor_slices(((X_train, D_train), Y_train)).shuffle(2048).batch(BATCH_SIZE)
-val_ds = tf.data.Dataset.from_tensor_slices(((X_val, D_val), Y_val)).batch(BATCH_SIZE)
+train_ds = tf.data.Dataset.from_tensor_slices(((X_train, D_train), Y_train)).shuffle(2048).batch(BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
+val_ds = tf.data.Dataset.from_tensor_slices(((X_val, D_val), Y_val)).batch(BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
 
-model = build_se_resnet34()
-model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001), loss='binary_crossentropy', metrics=['accuracy'])
+
+model = build_se_resnet34(num_classes=len(SNOMED_CLASSES))
+model.compile(
+    optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+    loss='binary_crossentropy',
+    metrics=[tf.keras.metrics.AUC(multi_label=True)]
+)
 
 log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 subprocess.Popen(["tensorboard", "--logdir", log_dir])
@@ -193,7 +213,6 @@ tensorboard_cb = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=
 callbacks = [
     tf.keras.callbacks.ModelCheckpoint("best_model.h5", save_best_only=True, monitor='val_loss'),
     tf.keras.callbacks.ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3),
-    tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True),
     tensorboard_cb
 ]
 
@@ -202,7 +221,7 @@ history = model.fit(train_ds, validation_data=val_ds, epochs=EPOCHS, callbacks=c
 # === EVAL ===
 W = load_weight_matrix()
 preds = model.predict(val_ds)
-preds_binary = (preds > 0.5).astype(int)
+preds_binary = (preds > 0.3).astype(int)  # zamiast 0.5
 
 print("\nClassification Report:")
 print(classification_report(Y_val, preds_binary, zero_division=0))
@@ -226,8 +245,8 @@ for i, code in enumerate(SNOMED_CLASSES):
     plt.show()
 
 # === EXPORT ===
-model.save('ecg_se_resnet34_saved_model')
-converter = tf.lite.TFLiteConverter.from_saved_model('ecg_se_resnet34_saved_model')
+model.save('ecg_se_resnet34.keras')
+converter = tf.lite.TFLiteConverter.from_keras_model(model)
 tflite_model = converter.convert()
 with open("ecg_model.tflite", "wb") as f:
     f.write(tflite_model)

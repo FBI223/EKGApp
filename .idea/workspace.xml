@@ -4,22 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="less classes in multi model">
-      <change beforePath="$PROJECT_DIR$/.idea/ECG_PROJ.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ECG_PROJ.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="changed arduino code ( added 2 more signals )">
+      <change afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp.xcodeproj/project.pbxproj" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp.xcodeproj/project.xcworkspace/contents.xcworkspacedata" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp.xcodeproj/project.xcworkspace/xcuserdata/marcinsztukowski.xcuserdatad/UserInterfaceState.xcuserstate" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp.xcodeproj/xcuserdata/marcinsztukowski.xcuserdatad/xcschemes/xcschememanagement.plist" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Assets.xcassets/AccentColor.colorset/Contents.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Assets.xcassets/AppIcon.appiconset/Contents.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Assets.xcassets/Contents.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Services/EKGBLEManager.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Services/EKGClassifier.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Services/EKGRecorder.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Services/Resampler.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/SupportingFiles/Info.plist" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Utilities/Context.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Utilities/RPeakDetector.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Views/ContentView.swift" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_smaller_model/aami_smaller_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/arduino_model/aami_smaller_model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_smaller_model/macierz_pomylek_lstm_fixed.png" beforeDir="false" afterPath="$PROJECT_DIR$/arduino_model/macierz_pomylek_lstm_fixed.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_smaller_model/model.tflite" beforeDir="false" afterPath="$PROJECT_DIR$/arduino_model/model.tflite" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_smaller_model/model_cc/model.cc" beforeDir="false" afterPath="$PROJECT_DIR$/arduino_model/model_cc/model.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_smaller_model/model_cc/model.h" beforeDir="false" afterPath="$PROJECT_DIR$/arduino_model/model_cc/model.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_smaller_model/test/headers/class_F.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_smaller_model/test/headers/class_N.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_smaller_model/test/headers/class_Q.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_smaller_model/test/headers/class_S.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_smaller_model/test/headers/class_V.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_smaller_model/test/inference_arduino.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_smaller_model/test/test_on_arduino.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -363,6 +364,8 @@
       <workItem from="1745070108498" duration="879000" />
       <workItem from="1745079307314" duration="4258000" />
       <workItem from="1745084948365" duration="1676000" />
+      <workItem from="1745099586065" duration="3646000" />
+      <workItem from="1745221729425" duration="3393000" />
     </task>
     <task id="LOCAL-00001" summary="quite ok model for recognizing 'N' 'V' 'A' 'S' 'L' 'R' classes">
       <option name="closed" value="true" />
@@ -492,7 +495,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744909873577</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="changed arduino code ( added 2 more signals )">
+      <option name="closed" value="true" />
+      <created>1745103731412</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1745103731412</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -526,7 +537,8 @@
     <MESSAGE value="small changes to mohamed" />
     <MESSAGE value="added arduino model , mobile model and multi model" />
     <MESSAGE value="less classes in multi model" />
-    <option name="LAST_COMMIT_MESSAGE" value="less classes in multi model" />
+    <MESSAGE value="changed arduino code ( added 2 more signals )" />
+    <option name="LAST_COMMIT_MESSAGE" value="changed arduino code ( added 2 more signals )" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ECG_PROJ$test_on_arduino.coverage" NAME="test_on_arduino Coverage Results" MODIFIED="1744721396165" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/arduino_smaller_model/test" />

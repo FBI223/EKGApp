@@ -219,7 +219,7 @@ def main():
     # Callbacks
     callbacks = [
         tf.keras.callbacks.ModelCheckpoint(
-            filepath='best_model.keras',
+            filepath='model.keras',
             monitor='val_accuracy',
             save_best_only=True,
             verbose=1

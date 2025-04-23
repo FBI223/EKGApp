@@ -8,8 +8,9 @@
       <excludeFolder url="file://$MODULE_DIR$/databases/challenge2020_data" />
       <excludeFolder url="file://$MODULE_DIR$/databases/cudb" />
       <excludeFolder url="file://$MODULE_DIR$/databases/nsrdb" />
+      <excludeFolder url="file://$MODULE_DIR$/databases/mnist" />
     </content>
-    <orderEntry type="jdk" jdkName="arduino_ecg" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="pytorch_cuda" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyDocumentationSettings">

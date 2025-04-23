@@ -4,22 +4,57 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="less classes in multi model">
+    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="arduino ino">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/ECG_PROJ.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ECG_PROJ.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_smaller_model/aami_smaller_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/arduino_model/aami_smaller_model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_smaller_model/macierz_pomylek_lstm_fixed.png" beforeDir="false" afterPath="$PROJECT_DIR$/arduino_model/macierz_pomylek_lstm_fixed.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_smaller_model/model.tflite" beforeDir="false" afterPath="$PROJECT_DIR$/arduino_model/model.tflite" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_smaller_model/model_cc/model.cc" beforeDir="false" afterPath="$PROJECT_DIR$/arduino_model/model_cc/model.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_smaller_model/model_cc/model.h" beforeDir="false" afterPath="$PROJECT_DIR$/arduino_model/model_cc/model.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_smaller_model/test/headers/class_F.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_smaller_model/test/headers/class_N.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_smaller_model/test/headers/class_Q.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_smaller_model/test/headers/class_S.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_smaller_model/test/headers/class_V.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_smaller_model/test/inference_arduino.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_smaller_model/test/test_on_arduino.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/image_model/main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/consts.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_model/consts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_model/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model/test_augmentation.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mohamed_model/confusion_matrix.png" beforeDir="false" afterPath="$PROJECT_DIR$/mohamed_model/confusion_matrix.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mohamed_model/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/mohamed_model/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mohamed_model/training_accuracy.png" beforeDir="false" afterPath="$PROJECT_DIR$/mohamed_model/training_accuracy.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mohamed_model/training_history.json" beforeDir="false" afterPath="$PROJECT_DIR$/mohamed_model/training_history.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/multi_model/debug.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/multi_model/ecg_model.tflite" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/multi_model/main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/multi_model/snomed_codes_all.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/multi_model/weights.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/colab_copy_files.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/colab_data.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/colab_load_all.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/colab_run.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/colab_trained_1d_mitdb_model/conf_matrix_fold_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/colab_trained_1d_mitdb_model/conf_matrix_fold_10.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/colab_trained_1d_mitdb_model/conf_matrix_fold_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/colab_trained_1d_mitdb_model/conf_matrix_fold_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/colab_trained_1d_mitdb_model/conf_matrix_fold_4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/colab_trained_1d_mitdb_model/conf_matrix_fold_5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/colab_trained_1d_mitdb_model/conf_matrix_fold_6.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/colab_trained_1d_mitdb_model/conf_matrix_fold_7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/colab_trained_1d_mitdb_model/conf_matrix_fold_8.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/colab_trained_1d_mitdb_model/conf_matrix_fold_9.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/colab_trained_1d_mitdb_model/training_log_fold_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/colab_trained_1d_mitdb_model/training_log_fold_10.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/colab_trained_1d_mitdb_model/training_log_fold_2.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/colab_trained_1d_mitdb_model/training_log_fold_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/colab_trained_1d_mitdb_model/training_log_fold_4.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/colab_trained_1d_mitdb_model/training_log_fold_5.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/colab_trained_1d_mitdb_model/training_log_fold_6.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/colab_trained_1d_mitdb_model/training_log_fold_7.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/colab_trained_1d_mitdb_model/training_log_fold_8.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/ecg_dataset.7z" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/main_colab.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/colab/main_colab_1d.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/multi_class_model_not_working/classes_challenge_2020.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/multi_class_model_not_working/classes_explained.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/multi_class_model_not_working/main1.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/multi_class_model_not_working/main2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/multi_class_model_not_working/main3.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/multi_class_model_not_working/main4.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_models/requirements.txt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,7 +97,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/FBI223/ECG_PROJ&quot;,
-    &quot;accountId&quot;: &quot;f776c449-d0ea-460a-a6f7-3d9cda9dd335&quot;
+    &quot;accountId&quot;: &quot;35fcbfd0-a946-443d-bb94-ea32878e9c0f&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
@@ -85,6 +120,7 @@
     &quot;Python.aami_smaller_model (1).executor&quot;: &quot;Run&quot;,
     &quot;Python.binary (1).executor&quot;: &quot;Run&quot;,
     &quot;Python.consts.executor&quot;: &quot;Run&quot;,
+    &quot;Python.conversion.executor&quot;: &quot;Run&quot;,
     &quot;Python.convert.executor&quot;: &quot;Run&quot;,
     &quot;Python.deaugmentation.executor&quot;: &quot;Run&quot;,
     &quot;Python.debug.executor&quot;: &quot;Run&quot;,
@@ -94,6 +130,7 @@
     &quot;Python.inference (1).executor&quot;: &quot;Run&quot;,
     &quot;Python.inference (2).executor&quot;: &quot;Run&quot;,
     &quot;Python.inference.executor&quot;: &quot;Run&quot;,
+    &quot;Python.ios_model_conversion.executor&quot;: &quot;Run&quot;,
     &quot;Python.main (1).executor&quot;: &quot;Run&quot;,
     &quot;Python.main (2).executor&quot;: &quot;Run&quot;,
     &quot;Python.main (3).executor&quot;: &quot;Run&quot;,
@@ -101,6 +138,7 @@
     &quot;Python.main.executor&quot;: &quot;Run&quot;,
     &quot;Python.main2 (1).executor&quot;: &quot;Run&quot;,
     &quot;Python.main3 (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.main_torch.executor&quot;: &quot;Run&quot;,
     &quot;Python.test_augmentation (1).executor&quot;: &quot;Run&quot;,
     &quot;Python.test_augmentation (2).executor&quot;: &quot;Run&quot;,
     &quot;Python.test_augmentation.executor&quot;: &quot;Run&quot;,
@@ -110,14 +148,16 @@
     &quot;Python.visualize_ble.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/msztu223/PycharmProjects/ECG_PROJ/arduino_smaller_model&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/msztu223/PycharmProjects/someones_model&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.editor&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -143,15 +183,15 @@
       <recent name="$PROJECT_DIR$/mohamed_model/inference" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/arduino_smaller_model/model_cc" />
       <recent name="$PROJECT_DIR$/arduino_smaller_model/test" />
-      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/main_model" />
       <recent name="$PROJECT_DIR$/main_model/trained_models/v3" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.visualize_ble">
-    <configuration name="convert" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python.main_torch">
+    <configuration name="consts" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ECG_PROJ" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -160,12 +200,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/arduino_smaller_model" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/main_model" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/arduino_smaller_model/convert.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main_model/consts.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -174,7 +214,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="debug" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="conversion" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ECG_PROJ" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -183,12 +223,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/multi_model" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/main_model" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/multi_model/debug.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main_model/conversion.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -206,12 +246,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/multi_model" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/main_model" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/multi_model/main.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main_model/main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -220,7 +260,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="visualize_ble" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="main_torch" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ECG_PROJ" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -229,12 +269,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/arduino_smaller_model" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/main_model" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/arduino_smaller_model/visualize_ble.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main_model/main_torch.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -243,7 +283,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="visualize_serial" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="main_torch_mnist" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ECG_PROJ" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -252,12 +292,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/arduino_smaller_model" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/main_model" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/arduino_smaller_model/visualize_serial.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main_torch_mnist.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -266,21 +306,28 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Python.consts" />
+      <item itemvalue="Python.main_torch" />
+      <item itemvalue="Python.main_torch_mnist" />
+      <item itemvalue="Python.conversion" />
+      <item itemvalue="Python.main (1)" />
+    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.visualize_ble" />
-        <item itemvalue="Python.convert" />
-        <item itemvalue="Python.visualize_serial" />
+        <item itemvalue="Python.main_torch" />
+        <item itemvalue="Python.conversion" />
         <item itemvalue="Python.main (1)" />
-        <item itemvalue="Python.debug" />
+        <item itemvalue="Python.consts" />
+        <item itemvalue="Python.main_torch_mnist" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-PY-243.26053.29" />
-        <option value="bundled-python-sdk-b1dbf8ef85a6-4df51de95216-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.26053.29" />
+        <option value="bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-PY-251.23774.444" />
+        <option value="bundled-python-sdk-890ed5b35930-d9c5bdb153f4-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.23774.444" />
       </set>
     </attachedChunks>
   </component>
@@ -362,7 +409,13 @@
       <workItem from="1745067968425" duration="2121000" />
       <workItem from="1745070108498" duration="879000" />
       <workItem from="1745079307314" duration="4258000" />
-      <workItem from="1745084948365" duration="1676000" />
+      <workItem from="1745084948365" duration="1847000" />
+      <workItem from="1745164127660" duration="2485000" />
+      <workItem from="1745223773350" duration="13389000" />
+      <workItem from="1745238339710" duration="9423000" />
+      <workItem from="1745405253277" duration="1392000" />
+      <workItem from="1745407418367" duration="9727000" />
+      <workItem from="1745427381878" duration="7531000" />
     </task>
     <task id="LOCAL-00001" summary="quite ok model for recognizing 'N' 'V' 'A' 'S' 'L' 'R' classes">
       <option name="closed" value="true" />
@@ -492,7 +545,23 @@
       <option name="project" value="LOCAL" />
       <updated>1744909873577</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="arduino code plus arduino visualization">
+      <option name="closed" value="true" />
+      <created>1745086651206</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1745086651206</updated>
+    </task>
+    <task id="LOCAL-00018" summary="arduino ino">
+      <option name="closed" value="true" />
+      <created>1745086728658</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1745086728658</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -526,37 +595,42 @@
     <MESSAGE value="small changes to mohamed" />
     <MESSAGE value="added arduino model , mobile model and multi model" />
     <MESSAGE value="less classes in multi model" />
-    <option name="LAST_COMMIT_MESSAGE" value="less classes in multi model" />
+    <MESSAGE value="arduino code plus arduino visualization" />
+    <MESSAGE value="arduino ino" />
+    <option name="LAST_COMMIT_MESSAGE" value="arduino ino" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ECG_PROJ$test_on_arduino.coverage" NAME="test_on_arduino Coverage Results" MODIFIED="1744721396165" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/arduino_smaller_model/test" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$inference__2_.coverage" NAME="inference (2) Coverage Results" MODIFIED="1744460096309" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/sensor_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$aami_pipeline_lstm.coverage" NAME="aami_pipeline_lstm Coverage Results" MODIFIED="1744712594913" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/arduino_lstm_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$convert.coverage" NAME="convert Coverage Results" MODIFIED="1745082247048" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/arduino_smaller_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$main__4_.coverage" NAME="main (4) Coverage Results" MODIFIED="1743418981569" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/wave_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$estimator.coverage" NAME="estimator Coverage Results" MODIFIED="1742994438486" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1744969263442" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/multi_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$aami_pipeline_lstm_fixed.coverage" NAME="aami_pipeline_lstm_fixed Coverage Results" MODIFIED="1744719616502" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/arduino_lstm_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$test_augmentation__2_.coverage" NAME="test_augmentation (2) Coverage Results" MODIFIED="1742918352875" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$validate_model.coverage" NAME="validate_model Coverage Results" MODIFIED="1744276883137" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mohamed_model/inference" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$main.coverage" NAME="main Coverage Results" MODIFIED="1744810142768" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mobile_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$inference__1_.coverage" NAME="inference (1) Coverage Results" MODIFIED="1744460164248" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$consts.coverage" NAME="consts Coverage Results" MODIFIED="1745432449506" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$aami_smaller_model__1_.coverage" NAME="aami_smaller_model (1) Coverage Results" MODIFIED="1744731314107" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/arduino_smaller_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$inference.coverage" NAME="inference Coverage Results" MODIFIED="1744402106636" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mohamed_model/inference" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$test_on_arduino.coverage" NAME="test_on_arduino Coverage Results" MODIFIED="1744721396165" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/arduino_smaller_model/test" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$visualize.coverage" NAME="visualize Coverage Results" MODIFIED="1745070162309" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/arduino_smaller_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$main__3_.coverage" NAME="main (3) Coverage Results" MODIFIED="1744317401664" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mohamed_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$test_augmentation.coverage" NAME="test_augmentation Coverage Results" MODIFIED="1742916870454" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$aami_pipeline.coverage" NAME="aami_pipeline Coverage Results" MODIFIED="1744720077284" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/arduino_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$visualize_ble.coverage" NAME="visualize_ble Coverage Results" MODIFIED="1745084326368" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/arduino_smaller_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1745433593271" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$deaugmentation.coverage" NAME="deaugmentation Coverage Results" MODIFIED="1742915824582" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$test_augmentation__1_.coverage" NAME="test_augmentation (1) Coverage Results" MODIFIED="1742916994228" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model/data_manipulation" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$gpu_efficiency_test.coverage" NAME="gpu_efficiency_test Coverage Results" MODIFIED="1743418214362" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/binary_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$main__3_.coverage" NAME="main (3) Coverage Results" MODIFIED="1744317401664" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mohamed_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$debug.coverage" NAME="debug Coverage Results" MODIFIED="1744896966073" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/multi_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$main__2_.coverage" NAME="main (2) Coverage Results" MODIFIED="1744635405215" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mohamed_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$main3__1_.coverage" NAME="main3 (1) Coverage Results" MODIFIED="1742380110082" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/wave_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$binary__1_.coverage" NAME="binary (1) Coverage Results" MODIFIED="1743107922127" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/binary_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$consts.coverage" NAME="consts Coverage Results" MODIFIED="1742997792711" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$test_augmentation__1_.coverage" NAME="test_augmentation (1) Coverage Results" MODIFIED="1742916994228" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model/data_manipulation" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$conversion.coverage" NAME="conversion Coverage Results" MODIFIED="1745433864353" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$gpu_efficiency_test.coverage" NAME="gpu_efficiency_test Coverage Results" MODIFIED="1743418214362" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/binary_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$main3__1_.coverage" NAME="main3 (1) Coverage Results" MODIFIED="1742380110082" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/wave_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$main.coverage" NAME="main Coverage Results" MODIFIED="1745165124662" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/visualize_data" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$validate_model.coverage" NAME="validate_model Coverage Results" MODIFIED="1744276883137" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mohamed_model/inference" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$main2__1_.coverage" NAME="main2 (1) Coverage Results" MODIFIED="1742380131642" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/visualize_data" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$inference__1_.coverage" NAME="inference (1) Coverage Results" MODIFIED="1744460164248" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$main__2_.coverage" NAME="main (2) Coverage Results" MODIFIED="1745235094246" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mohamed_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$estimator.coverage" NAME="estimator Coverage Results" MODIFIED="1742994438486" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$visualize_ble.coverage" NAME="visualize_ble Coverage Results" MODIFIED="1745084326368" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/arduino_smaller_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$main_torch.coverage" NAME="main_torch Coverage Results" MODIFIED="1745434819122" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$aami_pipeline.coverage" NAME="aami_pipeline Coverage Results" MODIFIED="1744720077284" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/arduino_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$main__4_.coverage" NAME="main (4) Coverage Results" MODIFIED="1743418981569" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/wave_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$aami_pipeline_lstm_fixed.coverage" NAME="aami_pipeline_lstm_fixed Coverage Results" MODIFIED="1744719616502" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/arduino_lstm_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$test_augmentation.coverage" NAME="test_augmentation Coverage Results" MODIFIED="1742916870454" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$inference.coverage" NAME="inference Coverage Results" MODIFIED="1744402106636" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mohamed_model/inference" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$inference__2_.coverage" NAME="inference (2) Coverage Results" MODIFIED="1744460096309" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/sensor_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$convert.coverage" NAME="convert Coverage Results" MODIFIED="1745235320807" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mohamed_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$aami_pipeline_lstm.coverage" NAME="aami_pipeline_lstm Coverage Results" MODIFIED="1744712594913" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/arduino_lstm_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$ios_model_conversion.coverage" NAME="ios_model_conversion Coverage Results" MODIFIED="1745230537598" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$ecg_pipeline.coverage" NAME="ecg_pipeline Coverage Results" MODIFIED="1744707099974" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/malik_model" />
   </component>
 </project>

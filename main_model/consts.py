@@ -1,5 +1,10 @@
-FS_TARGET=360
-FS=360
+FS_TARGET=128
+FS=128
+WINDOW_SIZE = 188
+FOLDS = 5
+EPOCHS = 30
+BATCH_SIZE = 64
+
 
 DB_PATHS = [
     ('../databases/mitdb', 360),
@@ -7,41 +12,33 @@ DB_PATHS = [
     ('../databases/incartdb', 257)
 ]
 
-DB_PATHS2 = [
-    ('../databases/mitdb', 360),
-    ('../databases/svdb', 128),
-    ('../databases/incartdb', 257)
-]
 
 MITDB_PATH = '../databases/mitdb'
 SVDB_PATH = '../databases/svdb'
 INCARTDB_PATH = '../databases/incartdb'
 NSRDB_PATH = '../databases/nsrdb'
-CUDB_PATH = '../databases/cudb'
 
 
-WINDOW_SIZE = FS_TARGET
-FOLDS = 5
-EPOCHS = 16
-BATCH_SIZE = 32
 
 
 # --- Annotation map ---
 ANNOTATION_MAP = {
-    'N': 0, 'L': 0, 'R': 0, 'e': 0, 'j': 0,
-    'A': 1, 'a': 1, 'J': 1, 'S': 1,
-    'V': 2, 'E': 2,
-    '/': 3, 'f': 3, 'Q': 3, '!': 3, '|': 3, '~': 3, 'x': 3
+    'N': 0, 'L': 0, 'R': 0, 'e': 0, 'j': 0,  # Normal (N)
+    'A': 1, 'a': 1, 'J': 1, 'S': 1,          # Supraventricular (S)
+    'V': 2, 'E': 2,                          # Ventricular (V)
+    'F': 3,                                  # Fusion (F)
+    '/': 4, 'f': 4, 'Q': 4, '!': 4, '|': 4, '~': 4, 'x': 4  # Unknown (Q)
 }
 INV_ANNOTATION_MAP = {
     0: 'N',
     1: 'S',
     2: 'V',
-    3: 'Q'
+    3: 'F',
+    4: 'Q'
 }
 
-ANNOTATION_MAP1 = {'N': 0, 'L': 1, 'R': 2, 'V': 3, 'A': 4}
-INV_ANNOTATION_MAP1 = {v: k for k, v in ANNOTATION_MAP.items()}
+
+NUM_CLASSES = len(INV_ANNOTATION_MAP)
 
 
 

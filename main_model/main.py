@@ -4,6 +4,14 @@ import numpy as np
 import wfdb
 import matplotlib.pyplot as plt
 
+
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Input, Conv1D, BatchNormalization, MaxPooling1D, GlobalAveragePooling1D, Dense, Dropout
+from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+from sklearn.metrics import classification_report
+from sklearn.model_selection import train_test_split
+
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import train_test_split
 
@@ -23,12 +31,27 @@ from scipy.signal import resample
 
 from main_model.augmentation import augment_chain, AUGMENTATION_FUNCS
 from main_model.consts import (
-    INV_ANNOTATION_MAP, ANNOTATION_MAP, WINDOW_SIZE, EPOCHS, BATCH_SIZE, DB_PATHS, FS_TARGET
+    INV_ANNOTATION_MAP, ANNOTATION_MAP, WINDOW_SIZE, EPOCHS, BATCH_SIZE, DB_PATHS, FS_TARGET, NUM_CLASSES
 )
 
+
+from tensorflow.keras.metrics import Precision, Recall
+
 import tensorflow as tf
+import tf2onnx
 
 
+from tensorflow.keras import Input, Model
+from tensorflow.keras.layers import Conv1D, MaxPooling1D, GRU, Dense, Dropout, BatchNormalization, Bidirectional
+
+
+
+
+def extract_primary_lead(signal, sig_names):
+    for lead_name in ['MLII', 'II' , 'ECG1']:
+        if lead_name in sig_names:
+            return signal[:, sig_names.index(lead_name)]
+    return None
 
 # --- Utility functions ---
 def plot_conf_matrix(y_true, y_pred, fold):
@@ -78,17 +101,33 @@ def extract_beats(record_path):
 
 
 
-def extract_beats_with_resampling(record_path, fs_orig):
-    record = wfdb.rdrecord(record_path)
-    annotation = wfdb.rdann(record_path, 'atr')
 
-    signal = record.p_signal[:, 0]
+
+
+# --- Extract beat segments using QRS neighbours with resampling and lead selection ---
+def extract_beats_with_resampling(record_path, fs_orig):
+    from collections import Counter
+    try:
+        record = wfdb.rdrecord(record_path)
+        annotation = wfdb.rdann(record_path, 'atr')
+    except:
+        print(f"❌ Błąd odczytu rekordu: {record_path}")
+        return [], []
+
+    signal = extract_primary_lead(record.p_signal, record.sig_name)
+    if signal is None:
+        print(f"⚠️ Pominięto rekord (brak MLII/II/ECG1): {record_path}")
+        return [], []
+
     signal_rs, ann_samples_rs = resample_signal_and_annotations(signal, annotation.sample, fs_orig, FS_TARGET)
 
     beats, labels = [], []
+    local_counter = Counter()
+
     for i in range(1, len(ann_samples_rs) - 1):
         sym = annotation.symbol[i]
         if sym in ANNOTATION_MAP:
+            label = ANNOTATION_MAP[sym]
             center = ann_samples_rs[i]
             prev = center - WINDOW_SIZE // 2
             next_ = center + WINDOW_SIZE // 2
@@ -98,9 +137,11 @@ def extract_beats_with_resampling(record_path, fs_orig):
                     segment = np.interp(np.linspace(0, len(segment) - 1, WINDOW_SIZE),
                                         np.arange(len(segment)), segment)
                 beats.append(segment)
-                labels.append(ANNOTATION_MAP[sym])
-    return beats, labels
+                labels.append(label)
+                local_counter.update([label])
 
+
+    return beats, labels
 
 
 
@@ -132,6 +173,8 @@ def build_dataset_augmented():
                 continue
     X = np.array(X)
     y = np.array(y)
+    X = (X - np.mean(X)) / np.std(X)
+
     return X[..., np.newaxis], y
 
 
@@ -151,6 +194,9 @@ def build_dataset():
                 continue
     X = np.array(X)
     y = np.array(y)
+    X = (X - np.mean(X)) / np.std(X)
+
+
     return X[..., np.newaxis], y
 
 
@@ -169,72 +215,70 @@ def load_or_generate_dataset(build_dataset_func, X_path="X.npy", y_path="y.npy")
 
 
 
+
+
+
+
+
 # --- Model architecture ---
-def build_model_old():
-    model = Sequential()
-    model.add(Input(shape=(WINDOW_SIZE, 1)))
-    model.add(Conv1D(64, 5, activation='elu', padding='same'))
-    model.add(BatchNormalization())
-    model.add(Conv1D(64, 5, activation='elu', padding='same'))
-    model.add(BatchNormalization())
-    model.add(MaxPooling1D(2))
-
-    model.add(Conv1D(128, 5, activation='elu', padding='same'))
-    model.add(BatchNormalization())
-    model.add(Conv1D(128, 5, activation='elu', padding='same'))
-    model.add(BatchNormalization())
-    model.add(MaxPooling1D(2))
-
-    model.add(Flatten())
-    model.add(Dense(256, activation='elu'))
-    model.add(Dropout(0.5))
-    model.add(Dense(len(INV_ANNOTATION_MAP), activation='softmax'))
-
-    model.compile(optimizer=Adam(1e-4), loss='categorical_crossentropy', metrics=['accuracy'])
-    return model
-
-# --- Model architecture with Bi-GRU ---
 def build_model():
-    model = Sequential()
-    model.add(Input(shape=(WINDOW_SIZE, 1)))
+    inp = Input(shape=(WINDOW_SIZE, 1), name="input")
 
-    # Convolutional layers
-    model.add(Conv1D(64, 5, activation='elu', padding='same'))
-    model.add(BatchNormalization())
-    model.add(Conv1D(64, 5, activation='elu', padding='same'))
-    model.add(BatchNormalization())
-    model.add(MaxPooling1D(2))
+    x = Conv1D(64, 5, activation='elu', padding='same')(inp)
+    x = BatchNormalization()(x)
+    x = Conv1D(64, 5, activation='elu', padding='same')(x)
+    x = BatchNormalization()(x)
+    x = MaxPooling1D(2)(x)
 
-    model.add(Conv1D(128, 5, activation='elu', padding='same'))
-    model.add(BatchNormalization())
-    model.add(Conv1D(128, 5, activation='elu', padding='same'))
-    model.add(BatchNormalization())
-    model.add(MaxPooling1D(2))
+    x = Conv1D(128, 5, activation='elu', padding='same')(x)
+    x = BatchNormalization()(x)
+    x = Conv1D(128, 5, activation='elu', padding='same')(x)
+    x = BatchNormalization()(x)
+    x = MaxPooling1D(2)(x)
 
-    # Temporal feature extraction
-    model.add(Bidirectional(GRU(64, return_sequences=False)))
+    x = GlobalAveragePooling1D()(x)
+    x = Dense(128, activation='elu')(x)
+    x = Dropout(0.5)(x)
+    out = Dense(NUM_CLASSES, activation='softmax', name="output")(x)
 
-    # Dense layers
-    model.add(Dense(128, activation='elu'))
-    model.add(Dropout(0.5))
-    model.add(Dense(len(INV_ANNOTATION_MAP), activation='softmax'))
-
-    model.compile(optimizer=Adam(1e-4), loss='categorical_crossentropy', metrics=['accuracy'])
+    model = Model(inputs=inp, outputs=out)
+    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
     return model
 
+
+
+
+# --- Utility: Validate structure of input arrays ---
+def check_dataset_integrity(X, y):
+    print("📊 Dataset Summary:")
+    print("  X shape:", X.shape)
+    print("  y shape:", y.shape)
+    print("  X dtype:", X.dtype)
+    print("  y dtype:", y.dtype)
+    print("  X mean:", np.mean(X))
+    print("  X std:", np.std(X))
+    print("  y classes:", np.unique(y, return_counts=True))
 
 def train_model():
+    import tensorflow as tf
+
     print("✅ TF Version:", tf.__version__)
     print("✅ GPU Devices:", tf.config.list_physical_devices('GPU'))
+    print("🧠 TF Version:", tf.__version__)
+
 
     gpus = tf.config.list_physical_devices('GPU')
     print(gpus)
     for gpu in gpus:
         tf.config.experimental.set_memory_growth(gpu, True)
 
-    #X, y = build_dataset()
-    #X,y = build_dataset_augmented()
-    X, y = load_or_generate_dataset(build_dataset_augmented)
+
+    X,y = build_dataset()
+    np.save("X.npy", X)
+    np.save("y.npy", y)
+    #X, y = load_or_generate_dataset(build_dataset_augmented)
+    check_dataset_integrity(X, y)
+    return
 
     y_cat = to_categorical(y, num_classes=len(INV_ANNOTATION_MAP))
 
@@ -250,7 +294,7 @@ def train_model():
 
     callbacks = [
         EarlyStopping(monitor='val_accuracy', patience=3, restore_best_weights=True),
-        ModelCheckpoint("model_final.h5", monitor='val_accuracy', save_best_only=True),
+        ModelCheckpoint("model_best.keras", monitor='val_accuracy', save_best_only=True),
     ]
 
     model.fit(X_train, y_train, validation_data=(X_val, y_val),
@@ -267,6 +311,25 @@ def train_model():
     print(classification_report(y_true, y_pred, target_names=target_names))
 
     plot_conf_matrix(y_true, y_pred, fold="val")
+
+
+    print("💾 Zapisuję model ")
+    model.save("model.h5")
+    # 1. Zalecany zapis modelu pełnego (TF/Keras format .keras)
+    model.save("model.keras")
+    # 2. Dodatkowo: klasyczny HDF5 (dla starszych środowisk)
+    model.save("model_legacy.h5", save_format="h5")
+
+
+
+
+
+def to_onnx(model, filename="model.onnx"):
+    spec = (tf.TensorSpec((None, WINDOW_SIZE, 1), tf.float32, name="input"),)
+    model_proto, _ = tf2onnx.convert.from_keras(model, input_signature=spec, output_path=filename, opset=13)
+    print("✅ Zapisano ONNX:", filename)
+
+
 
 
 

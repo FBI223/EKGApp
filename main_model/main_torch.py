@@ -76,9 +76,6 @@ class ECGClassifier(nn.Module):
         x = self.dropout(x)
         return self.out(x)
 
-
-
-
 # Training function
 def train_model():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -87,27 +84,15 @@ def train_model():
     X = np.load('X.npy')
     y = np.load('y.npy')
 
-    # Flatten for undersampling
+    if X.ndim == 2:
+        print(f"⚠️ Dodaję kanał (axis=-1), X.shape = {X.shape}")
+        X = X[..., np.newaxis]
+
     X = X.reshape((X.shape[0], -1))
-
-    # Undersample class 0 (N)
-    from collections import Counter
-    from sklearn.utils import resample
-
-    X_new, y_new = [], []
-    min_class_size = Counter(y)[1]  # smallest minority class
-
-    for label in np.unique(y):
-        X_class = X[y == label]
-        y_class = y[y == label]
-        if label == 0:
-            X_class, y_class = resample(X_class, y_class, replace=False, n_samples=min_class_size * 2, random_state=42)
-        X_new.append(X_class)
-        y_new.append(y_class)
-
-    X = np.vstack(X_new)
-    y = np.concatenate(y_new)
-    X = X.reshape((-1, WINDOW_SIZE, 1))
+    smote = SMOTE(sampling_strategy='not majority', random_state=42)
+    X_resampled, y_resampled = smote.fit_resample(X, y)
+    X = X_resampled.reshape((-1, WINDOW_SIZE, 1))
+    y = y_resampled
 
     X_train, X_val, y_train, y_val = train_test_split(
         X, y, test_size=0.2, stratify=y, random_state=42)
@@ -122,6 +107,7 @@ def train_model():
 
     model = ECGClassifier(num_classes=NUM_CLASSES).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=5, factor=0.5)
     criterion = nn.CrossEntropyLoss()
 
     best_val_acc = 0.0
@@ -167,6 +153,7 @@ def train_model():
         writer.add_scalar('Recall/val', val_rec, epoch)
         csv_writer.writerow([epoch, train_loss, val_acc, val_f1, val_prec, val_rec])
         log_csv.flush()
+        scheduler.step(1 - val_acc)
 
         if val_acc > best_val_acc:
             torch.save(model.state_dict(), 'model_best.pt')
@@ -199,4 +186,3 @@ def train_model():
 
 if __name__ == '__main__':
     train_model()
-

@@ -17,6 +17,8 @@ from sklearn.metrics import accuracy_score, f1_score, confusion_matrix, classifi
 from torch.utils.data import DataLoader, TensorDataset
 from main_model.consts import BATCH_SIZE, EPOCHS, NUM_CLASSES, WINDOW_SIZE, INV_ANNOTATION_MAP, FOLDS
 import random
+from sklearn.metrics import cohen_kappa_score
+
 
 # Residual Block for 1D CNN
 class ResidualBlock(nn.Module):
@@ -212,18 +214,21 @@ def plot_conf_matrix(y_true, y_pred, fold, output_dir):
     plt.close()
 
 
-def plot_metrics(train_losses, val_accuracies, fold, output_dir):
+def plot_metrics(train_losses, val_losses, train_accs, val_accs, fold, output_dir):
     plt.figure()
     plt.plot(train_losses, label='Train Loss')
-    plt.plot(val_accuracies, label='Val Accuracy')
+    plt.plot(val_losses, label='Val Loss')
+    plt.plot(train_accs, label='Train Acc')
+    plt.plot(val_accs, label='Val Acc')
     plt.xlabel('Epoch')
     plt.ylabel('Metric')
-    plt.legend()
-    plt.title(f'Training Metrics Fold {fold}')
+    plt.title(f'Metrics Fold {fold}')
     plt.grid()
+    plt.legend()
     plt.tight_layout()
     plt.savefig(os.path.join(output_dir, f'metrics_fold{fold}.png'))
     plt.close()
+
 
 
 def export_onnx_model(model, output_path):
@@ -249,7 +254,6 @@ def train_kfold_model(X, y, folds=FOLDS, output_dir='training'):
         "csv": os.path.join(output_dir, "csv"),
         "config": os.path.join(output_dir, "config"),
         "mlmodel": os.path.join(output_dir, "mlmodel"),
-
     }
     for d in dirs.values():
         os.makedirs(d, exist_ok=True)
@@ -265,7 +269,7 @@ def train_kfold_model(X, y, folds=FOLDS, output_dir='training'):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     skf = StratifiedKFold(n_splits=folds, shuffle=True, random_state=42)
 
-    all_val_acc, all_val_f1 = [], []
+    all_val_acc, all_val_f1, all_kappa = [], [], []
 
     for fold, (train_idx, val_idx) in enumerate(skf.split(X, y), 1):
         print(f"\n🧪 Fold {fold}/{folds}")
@@ -284,15 +288,16 @@ def train_kfold_model(X, y, folds=FOLDS, output_dir='training'):
         model = ECGClassifier(num_classes=NUM_CLASSES).to(device)
         optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=5, factor=0.5)
-        criterion = nn.CrossEntropyLoss()
+        criterion = torch.nn.CrossEntropyLoss()
 
         best_val_acc = 0.0
-        train_losses, val_accuracies = [], []
-        f1_macro_list, prec_macro_list, recall_macro_list = [], [], []
+        train_losses, val_losses = [], []
+        train_accs, val_accs = [], []
+        f1_macro_list, prec_macro_list, recall_macro_list, kappa_list = [], [], [], []
 
         for epoch in range(1, EPOCHS + 1):
             model.train()
-            loss_sum = 0.0
+            loss_sum, correct, total = 0.0, 0, 0
             for X_batch, y_batch in train_loader:
                 X_batch, y_batch = X_batch.to(device), y_batch.to(device)
                 optimizer.zero_grad()
@@ -301,27 +306,38 @@ def train_kfold_model(X, y, folds=FOLDS, output_dir='training'):
                 loss.backward()
                 optimizer.step()
                 loss_sum += loss.detach().item()
+                correct += (outputs.argmax(1) == y_batch).sum().item()
+                total += y_batch.size(0)
+
             train_loss = loss_sum / len(train_loader)
+            train_acc = correct / total
             train_losses.append(train_loss)
+            train_accs.append(train_acc)
 
             model.eval()
             preds, targets = [], []
+            val_loss_sum = 0.0
             with torch.no_grad():
                 for X_batch, y_batch in val_loader:
-                    X_batch = X_batch.to(device)
-                    logits = model(X_batch)
-                    preds.extend(torch.argmax(logits, dim=1).cpu().numpy())
-                    targets.extend(y_batch.numpy())
+                    X_batch, y_batch = X_batch.to(device), y_batch.to(device)
+                    outputs = model(X_batch)
+                    val_loss_sum += criterion(outputs, y_batch).item()
+                    preds.extend(torch.argmax(outputs, dim=1).cpu().numpy())
+                    targets.extend(y_batch.cpu().numpy())
 
+            val_loss = val_loss_sum / len(val_loader)
             val_acc = accuracy_score(targets, preds)
             val_f1 = f1_score(targets, preds, average='macro')
             val_prec = precision_score(targets, preds, average='macro')
             val_rec = recall_score(targets, preds, average='macro')
+            val_kappa = cohen_kappa_score(targets, preds)
 
-            val_accuracies.append(val_acc)
+            val_losses.append(val_loss)
+            val_accs.append(val_acc)
             f1_macro_list.append(val_f1)
             prec_macro_list.append(val_prec)
             recall_macro_list.append(val_rec)
+            kappa_list.append(val_kappa)
 
             scheduler.step(1 - val_acc)
 
@@ -334,21 +350,23 @@ def train_kfold_model(X, y, folds=FOLDS, output_dir='training'):
 
         all_val_acc.append(best_val_acc)
         all_val_f1.append(val_f1)
+        all_kappa.append(val_kappa)
 
         plot_conf_matrix(targets, preds, fold, dirs["conf_matrix"])
-        plot_metrics(train_losses, val_accuracies, fold, dirs["metrics"])
+        plot_metrics(train_losses, val_losses, train_accs, val_accs, fold, dirs["metrics"])
 
         with open(os.path.join(dirs["csv"], f'metrics_fold{fold}.csv'), 'w', newline='') as f:
             writer = csv.writer(f)
-            writer.writerow(['epoch', 'train_loss', 'val_acc', 'val_f1_macro', 'val_prec_macro', 'val_recall_macro'])
+            writer.writerow(['epoch', 'train_loss', 'val_loss', 'train_acc', 'val_acc',
+                             'val_f1_macro', 'val_prec_macro', 'val_recall_macro', 'val_kappa'])
             for i in range(EPOCHS):
                 writer.writerow([
-                    i+1, train_losses[i], val_accuracies[i],
-                    f1_macro_list[i], prec_macro_list[i], recall_macro_list[i]
+                    i + 1, train_losses[i], val_losses[i], train_accs[i], val_accs[i],
+                    f1_macro_list[i], prec_macro_list[i], recall_macro_list[i], kappa_list[i]
                 ])
 
     plot_avg_metric(all_val_acc, all_val_f1, dirs["metrics"])
-    print(f"\n✅ Średnia dokładność: {np.mean(all_val_acc):.4f}, F1: {np.mean(all_val_f1):.4f}")
+    print(f"\n✅ Średnie wyniki: Acc = {np.mean(all_val_acc):.4f}, F1 = {np.mean(all_val_f1):.4f}, Kappa = {np.mean(all_kappa):.4f}")
 
 # W __main__:
 if __name__ == '__main__':

@@ -4,34 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="pytorch model have smote and more examples, added stats and saved models">
-      <change afterPath="$PROJECT_DIR$/main_model/training/conf_matrix/conf_matrix_fold1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main_model/training/conf_matrix/conf_matrix_fold2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main_model/training/conf_matrix/conf_matrix_fold3.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main_model/training/config/config.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main_model/training/csv/metrics_fold1.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main_model/training/csv/metrics_fold2.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main_model/training/csv/metrics_fold3.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main_model/training/metrics/avg_metrics.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main_model/training/metrics/metrics_fold1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main_model/training/metrics/metrics_fold2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main_model/training/metrics/metrics_fold3.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main_model/training/onnx/model_fold1.onnx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main_model/training/onnx/model_fold2.onnx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main_model/training/onnx/model_fold3.onnx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main_model/training/pt/model_fold1.pt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main_model/training/pt/model_fold2.pt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main_model/training/pt/model_fold3.pt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/augmentation.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_model/augmentation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/consts.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_model/consts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/conversion.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_model/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/main_torch.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_model/main_torch.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/model.mlmodel" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/model.onnx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/model_best.pt" beforeDir="false" />
-    </list>
+    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="added mlmodels" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -162,14 +135,14 @@
       <recent name="$PROJECT_DIR$/mohamed_model/inference" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/main_model/training" />
+      <recent name="$PROJECT_DIR$/main_model/mlmodels" />
       <recent name="$PROJECT_DIR$/arduino_smaller_model/model_cc" />
       <recent name="$PROJECT_DIR$/arduino_smaller_model/test" />
       <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/main_model" />
-      <recent name="$PROJECT_DIR$/main_model/trained_models/v3" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.main_torch">
+  <component name="RunManager" selected="Python.conversion">
     <configuration name="conversion" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ECG_PROJ" />
       <option name="ENV_FILES" value="" />
@@ -294,9 +267,9 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.conversion" />
         <item itemvalue="Python.main_torch" />
         <item itemvalue="Python.main" />
-        <item itemvalue="Python.conversion" />
         <item itemvalue="Python.visualize_ble" />
         <item itemvalue="Python.convert" />
       </list>
@@ -391,7 +364,7 @@
       <workItem from="1745084948365" duration="1676000" />
       <workItem from="1745479905062" duration="1903000" />
       <workItem from="1745487721986" duration="1027000" />
-      <workItem from="1745490504788" duration="4693000" />
+      <workItem from="1745490504788" duration="4997000" />
     </task>
     <task id="LOCAL-00001" summary="quite ok model for recognizing 'N' 'V' 'A' 'S' 'L' 'R' classes">
       <option name="closed" value="true" />
@@ -545,7 +518,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745495280479</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="added mlmodels">
+      <option name="closed" value="true" />
+      <created>1745495584522</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1745495584522</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -582,7 +563,8 @@
     <MESSAGE value="added Smote oversampling in pytorch model" />
     <MESSAGE value="added mlmodel and onnx save and pt" />
     <MESSAGE value="pytorch model have smote and more examples, added stats and saved models" />
-    <option name="LAST_COMMIT_MESSAGE" value="pytorch model have smote and more examples, added stats and saved models" />
+    <MESSAGE value="added mlmodels" />
+    <option name="LAST_COMMIT_MESSAGE" value="added mlmodels" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ECG_PROJ$test_augmentation__2_.coverage" NAME="test_augmentation (2) Coverage Results" MODIFIED="1742918352875" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
@@ -596,7 +578,7 @@
     <SUITE FILE_PATH="coverage/ECG_PROJ$debug.coverage" NAME="debug Coverage Results" MODIFIED="1744896966073" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/multi_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$binary__1_.coverage" NAME="binary (1) Coverage Results" MODIFIED="1743107922127" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/binary_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$test_augmentation__1_.coverage" NAME="test_augmentation (1) Coverage Results" MODIFIED="1742916994228" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model/data_manipulation" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$conversion.coverage" NAME="conversion Coverage Results" MODIFIED="1745452407862" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$conversion.coverage" NAME="conversion Coverage Results" MODIFIED="1745495430210" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$gpu_efficiency_test.coverage" NAME="gpu_efficiency_test Coverage Results" MODIFIED="1743418214362" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/binary_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$main3__1_.coverage" NAME="main3 (1) Coverage Results" MODIFIED="1742380110082" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/wave_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$main.coverage" NAME="main Coverage Results" MODIFIED="1745492800952" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />

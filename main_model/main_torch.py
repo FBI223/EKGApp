@@ -248,6 +248,8 @@ def train_kfold_model(X, y, folds=FOLDS, output_dir='training'):
         "metrics": os.path.join(output_dir, "metrics"),
         "csv": os.path.join(output_dir, "csv"),
         "config": os.path.join(output_dir, "config"),
+        "mlmodel": os.path.join(output_dir, "mlmodel"),
+
     }
     for d in dirs.values():
         os.makedirs(d, exist_ok=True)

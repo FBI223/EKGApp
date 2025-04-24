@@ -1,12 +1,17 @@
-FS_TARGET=128
-FS=128
-WINDOW_SIZE = 188
-FOLDS = 5
-EPOCHS = 30
+FS_TARGET=360
+FS=360
+WINDOW_SIZE = 540
+FOLDS = 3
+EPOCHS = 5
 BATCH_SIZE = 64
 
 
 DB_PATHS = [
+    ('../databases/mitdb', 360),
+]
+
+
+DB_PATHS_OLD = [
     ('../databases/mitdb', 360),
     ('../databases/svdb', 128),
     ('../databases/incartdb', 257)
@@ -22,6 +27,15 @@ NSRDB_PATH = '../databases/nsrdb'
 
 
 # --- Annotation map ---
+ANNOTATION_MAP_OLD = {
+    'N': 0, 'L': 0, 'R': 0, 'e': 0, 'j': 0,  # Normal (N)
+    'A': 1, 'a': 1, 'J': 1, 'S': 1,          # Supraventricular (S)
+    'V': 2, 'E': 2,                          # Ventricular (V)
+    'F': 3,                                  # Fusion (F)
+    '/': 4, 'f': 4, 'Q': 4, '!': 4, '|': 4, '~': 4, 'x': 4  # Unknown (Q)
+}
+
+
 ANNOTATION_MAP = {
     'N': 0, 'L': 0, 'R': 0, 'e': 0, 'j': 0,  # Normal (N)
     'A': 1, 'a': 1, 'J': 1, 'S': 1,          # Supraventricular (S)
@@ -29,6 +43,8 @@ ANNOTATION_MAP = {
     'F': 3,                                  # Fusion (F)
     '/': 4, 'f': 4, 'Q': 4, '!': 4, '|': 4, '~': 4, 'x': 4  # Unknown (Q)
 }
+
+
 INV_ANNOTATION_MAP = {
     0: 'N',
     1: 'S',

@@ -3,53 +3,42 @@ import random
 import numpy as np
 import wfdb
 import matplotlib.pyplot as plt
-
-
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Conv1D, BatchNormalization, MaxPooling1D, GlobalAveragePooling1D, Dense, Dropout
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
-
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import train_test_split
-
 from tensorflow.keras.layers import Bidirectional, GRU
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import (
-    Conv1D, MaxPooling1D, GRU, Dense, Dropout, BatchNormalization, Input, Flatten
-)
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping, CSVLogger, ModelCheckpoint, TensorBoard
 from tensorflow.keras.utils import to_categorical
-
+from tensorflow.keras.layers import (
+    Conv1D, MaxPooling1D, GRU, Dense, Dropout, BatchNormalization, Input, Flatten
+)
 from tqdm import tqdm
 import seaborn as sns
 import pandas as pd
 from scipy.signal import resample
-
-from main_model.augmentation import augment_chain, AUGMENTATION_FUNCS
+from collections import Counter
+from tensorflow.keras.metrics import Precision, Recall
+import tensorflow as tf
+import tf2onnx
+from tensorflow.keras import Input, Model
+from tensorflow.keras.layers import Conv1D, MaxPooling1D, GRU, Dense, Dropout, BatchNormalization, Bidirectional
 from main_model.consts import (
     INV_ANNOTATION_MAP, ANNOTATION_MAP, WINDOW_SIZE, EPOCHS, BATCH_SIZE, DB_PATHS, FS_TARGET, NUM_CLASSES
 )
-
-
-from tensorflow.keras.metrics import Precision, Recall
-
-import tensorflow as tf
-import tf2onnx
-
-
-from tensorflow.keras import Input, Model
-from tensorflow.keras.layers import Conv1D, MaxPooling1D, GRU, Dense, Dropout, BatchNormalization, Bidirectional
-
 
 
 
 def extract_primary_lead(signal, sig_names):
     for lead_name in ['MLII', 'II' , 'ECG1']:
         if lead_name in sig_names:
+            print(sig_names)
             return signal[:, sig_names.index(lead_name)]
     return None
 
@@ -67,44 +56,6 @@ def plot_conf_matrix(y_true, y_pred, fold):
     plt.close()
 
 
-# --- Augmentation ---
-def augment_1d(signal, label, max_chain_len=len(AUGMENTATION_FUNCS)):
-    aug_signals = [signal]
-
-    if label != ANNOTATION_MAP['N']:
-        num_augs = random.randint(3, 5)
-        for _ in range(num_augs):
-            aug = augment_chain(signal, AUGMENTATION_FUNCS, max_chain_len)
-            aug_signals.append(aug)
-    return aug_signals
-
-
-# --- Extract beat segments using QRS neighbours ---
-def extract_beats(record_path):
-    record = wfdb.rdrecord(record_path)
-    annotation = wfdb.rdann(record_path, 'atr')
-    signal = record.p_signal[:, 0]  # use only channel 0
-    beats, labels = [], []
-    for i in range(1, len(annotation.sample) - 1):
-        sym = annotation.symbol[i]
-        if sym in ANNOTATION_MAP:
-            prev = annotation.sample[i] - WINDOW_SIZE // 2
-            next_ = annotation.sample[i ] + (WINDOW_SIZE // 2)
-            if prev < next_ and next_ <= len(signal):
-                segment = signal[prev:next_].astype(np.float32)
-                if len(segment) != WINDOW_SIZE:
-                    segment = np.interp(np.linspace(0, len(segment) - 1, WINDOW_SIZE),
-                                        np.arange(len(segment)), segment)
-                beats.append(segment)
-                labels.append(ANNOTATION_MAP[sym])
-    return beats, labels
-
-
-
-
-
-
-# --- Extract beat segments using QRS neighbours with resampling and lead selection ---
 def extract_beats_with_resampling(record_path, fs_orig):
     from collections import Counter
     try:
@@ -119,30 +70,41 @@ def extract_beats_with_resampling(record_path, fs_orig):
         print(f"⚠️ Pominięto rekord (brak MLII/II/ECG1): {record_path}")
         return [], []
 
-    signal_rs, ann_samples_rs = resample_signal_and_annotations(signal, annotation.sample, fs_orig, FS_TARGET)
+    if fs_orig != FS_TARGET:
+        print("resampling signal... ", end="")
+        signal_rs, ann_samples_rs = resample_signal_and_annotations(signal, annotation.sample, fs_orig, FS_TARGET)
+    else:
+        print("skipping resampling... ", end="")
+        signal_rs = signal
+        ann_samples_rs = annotation.sample
 
     beats, labels = [], []
     local_counter = Counter()
 
+    # Upewnij się, że bicie nie pokrywa się z początkiem lub końcem sygnału
     for i in range(1, len(ann_samples_rs) - 1):
+        center = ann_samples_rs[i]
+        prev = center - WINDOW_SIZE // 2
+        next_ = center + WINDOW_SIZE // 2
+
+        if prev < 0 or next_ > len(signal_rs):
+            print("missed beat")
+            continue
+
         sym = annotation.symbol[i]
         if sym in ANNOTATION_MAP:
-            label = ANNOTATION_MAP[sym]
-            center = ann_samples_rs[i]
-            prev = center - WINDOW_SIZE // 2
-            next_ = center + WINDOW_SIZE // 2
-            if prev < next_ and next_ <= len(signal_rs):
-                segment = signal_rs[prev:next_].astype(np.float32)
-                if len(segment) != WINDOW_SIZE:
-                    segment = np.interp(np.linspace(0, len(segment) - 1, WINDOW_SIZE),
-                                        np.arange(len(segment)), segment)
-                beats.append(segment)
-                labels.append(label)
-                local_counter.update([label])
-
+            segment = signal_rs[prev:next_].astype(np.float32)
+            if len(segment) != WINDOW_SIZE:
+                segment = np.interp(
+                    np.linspace(0, len(segment) - 1, WINDOW_SIZE),
+                    np.arange(len(segment)),
+                    segment
+                )
+            beats.append(segment)
+            labels.append(ANNOTATION_MAP[sym])
+            local_counter.update([ANNOTATION_MAP[sym]])
 
     return beats, labels
-
 
 
 def resample_signal_and_annotations(signal, annotation_samples, fs_orig, fs_target):
@@ -151,31 +113,6 @@ def resample_signal_and_annotations(signal, annotation_samples, fs_orig, fs_targ
     resampled_ann = [int(s * factor) for s in annotation_samples]
     return resampled_signal, resampled_ann
 
-
-# --- Dataset generation ---
-def build_dataset_augmented():
-    X, y = [], []
-    for db_path, fs in DB_PATHS:
-        records = [f[:-4] for f in os.listdir(db_path) if f.endswith('.dat')]
-        for rec in tqdm(records, desc=f"Loading {os.path.basename(db_path)}"):
-            path = os.path.join(db_path, rec)
-            try:
-                beats, labels = extract_beats_with_resampling(path, fs)
-                for beat, label in zip(beats, labels):
-                    if label == ANNOTATION_MAP['N']:
-                        X.append(beat)
-                        y.append(label)
-                    else:
-                        for aug in augment_1d(beat, label):
-                            X.append(aug)
-                            y.append(label)
-            except:
-                continue
-    X = np.array(X)
-    y = np.array(y)
-    X = (X - np.mean(X)) / np.std(X)
-
-    return X[..., np.newaxis], y
 
 
 
@@ -198,25 +135,6 @@ def build_dataset():
 
 
     return X[..., np.newaxis], y
-
-
-# --- Dataset caching (load or generate) ---
-def load_or_generate_dataset(build_dataset_func, X_path="X.npy", y_path="y.npy"):
-    if os.path.exists(X_path) and os.path.exists(y_path):
-        print("📦 Loading preprocessed data from disk...")
-        X = np.load(X_path)
-        y = np.load(y_path)
-    else:
-        print("⚙️  Generating dataset...")
-        X, y = build_dataset_func()
-        np.save(X_path, X)
-        np.save(y_path, y)
-    return X, y
-
-
-
-
-
 
 
 
@@ -264,8 +182,6 @@ def train_model():
 
     print("✅ TF Version:", tf.__version__)
     print("✅ GPU Devices:", tf.config.list_physical_devices('GPU'))
-    print("🧠 TF Version:", tf.__version__)
-
 
     gpus = tf.config.list_physical_devices('GPU')
     print(gpus)
@@ -276,9 +192,13 @@ def train_model():
     X,y = build_dataset()
     np.save("X.npy", X)
     np.save("y.npy", y)
-    #X, y = load_or_generate_dataset(build_dataset_augmented)
     check_dataset_integrity(X, y)
     return
+
+
+
+
+
 
     y_cat = to_categorical(y, num_classes=len(INV_ANNOTATION_MAP))
 

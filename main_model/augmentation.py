@@ -1,6 +1,10 @@
+import os
 import random
 import numpy as np
+import wfdb
 from scipy.signal import butter, sosfilt
+from tqdm import tqdm
+
 from main_model.consts import (
     FS,
     NOISE_STD_DEFAULT,
@@ -13,8 +17,63 @@ from main_model.consts import (
     SPIKE_NUM_DEFAULT,
     SPIKE_STRENGTH,
     DROP_SEGMENT_MIN,
-    DROP_SEGMENT_MAX
+    DROP_SEGMENT_MAX, ANNOTATION_MAP, WINDOW_SIZE, DB_PATHS
 )
+from main_model.main import extract_beats_with_resampling
+
+
+# --- Dataset generation ---
+def build_dataset_augmented():
+    X, y = [], []
+    for db_path, fs in DB_PATHS:
+        records = [f[:-4] for f in os.listdir(db_path) if f.endswith('.dat')]
+        for rec in tqdm(records, desc=f"Loading {os.path.basename(db_path)}"):
+            path = os.path.join(db_path, rec)
+            try:
+                beats, labels = extract_beats_with_resampling(path, fs)
+                for beat, label in zip(beats, labels):
+                    if label == ANNOTATION_MAP['N']:
+                        X.append(beat)
+                        y.append(label)
+                    else:
+                        for aug in augment_1d(beat, label):
+                            X.append(aug)
+                            y.append(label)
+            except:
+                continue
+    X = np.array(X)
+    y = np.array(y)
+    X = (X - np.mean(X)) / np.std(X)
+
+    return X[..., np.newaxis], y
+
+
+
+
+
+
+
+
+# --- Extract beat segments using QRS neighbours ---
+def extract_beats(record_path):
+    record = wfdb.rdrecord(record_path)
+    annotation = wfdb.rdann(record_path, 'atr')
+    signal = record.p_signal[:, 0]  # use only channel 0
+    beats, labels = [], []
+    for i in range(1, len(annotation.sample) - 1):
+        sym = annotation.symbol[i]
+        if sym in ANNOTATION_MAP:
+            prev = annotation.sample[i] - WINDOW_SIZE // 2
+            next_ = annotation.sample[i ] + (WINDOW_SIZE // 2)
+            if prev < next_ and next_ <= len(signal):
+                segment = signal[prev:next_].astype(np.float32)
+                if len(segment) != WINDOW_SIZE:
+                    segment = np.interp(np.linspace(0, len(segment) - 1, WINDOW_SIZE),
+                                        np.arange(len(segment)), segment)
+                beats.append(segment)
+                labels.append(ANNOTATION_MAP[sym])
+    return beats, labels
+
 
 # --- Gaussian noise ---
 def add_gaussian_noise(signal, std=NOISE_STD_DEFAULT):
@@ -84,6 +143,7 @@ AUGMENTATION_FUNCS = [
     drop_segment
 ]
 
+
 # --- Augmentacja łańcuchowa (losowy zestaw funkcji) ---
 def augment_chain(signal, funcs=None, max_chain_len=None):
     """
@@ -99,3 +159,15 @@ def augment_chain(signal, funcs=None, max_chain_len=None):
     for func in chosen_funcs:
         aug_signal = func(aug_signal)
     return aug_signal
+
+
+# --- Augmentation ---
+def augment_1d(signal, label, max_chain_len=len(AUGMENTATION_FUNCS)):
+    aug_signals = [signal]
+
+    if label != ANNOTATION_MAP['N']:
+        num_augs = random.randint(3, 5)
+        for _ in range(num_augs):
+            aug = augment_chain(signal, AUGMENTATION_FUNCS, max_chain_len)
+            aug_signals.append(aug)
+    return aug_signals

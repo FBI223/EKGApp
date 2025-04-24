@@ -1,32 +1,22 @@
-import os
-import random
-import numpy as np
-from scipy.signal import resample
-import torch
+
+
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.utils.data import DataLoader, TensorDataset
 from torch.utils.tensorboard import SummaryWriter
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, classification_report, confusion_matrix
+from sklearn.metrics import precision_score, recall_score
 import csv
-import pandas as pd
-import seaborn as sns
+import os
+import torch
+import numpy as np
 import matplotlib.pyplot as plt
-from main_model.consts import INV_ANNOTATION_MAP, ANNOTATION_MAP, WINDOW_SIZE, EPOCHS, BATCH_SIZE, NUM_CLASSES
-
-# Utility: confusion matrix plot
-def plot_conf_matrix(y_true, y_pred, fold):
-    cm = confusion_matrix(y_true, y_pred)
-    labels = [INV_ANNOTATION_MAP[i] for i in range(len(INV_ANNOTATION_MAP))]
-    df_cm = pd.DataFrame(cm, index=labels, columns=labels)
-    sns.heatmap(df_cm, annot=True, fmt='d', cmap='Blues')
-    plt.title(f'Confusion Matrix Fold {fold}')
-    plt.ylabel('True Label')
-    plt.xlabel('Predicted Label')
-    plt.tight_layout()
-    plt.savefig(f'conf_matrix_fold_{fold}.png')
-    plt.close()
+import seaborn as sns
+import pandas as pd
+from sklearn.model_selection import StratifiedKFold
+from sklearn.metrics import accuracy_score, f1_score, confusion_matrix, classification_report
+from torch.utils.data import DataLoader, TensorDataset
+from main_model.consts import BATCH_SIZE, EPOCHS, NUM_CLASSES, WINDOW_SIZE, INV_ANNOTATION_MAP, FOLDS
+import random
 
 # Residual Block for 1D CNN
 class ResidualBlock(nn.Module):
@@ -83,6 +73,12 @@ def train_model():
     X = np.load('X.npy')
     y = np.load('y.npy')
 
+    # Apply SMOTE exactly as in the paper
+    X = X.reshape((X.shape[0], -1))  # Flatten to (samples, features)
+    smote = SMOTE(sampling_strategy='not majority', random_state=42)
+    X_resampled, y_resampled = smote.fit_resample(X, y)
+    X = X_resampled.reshape((-1, WINDOW_SIZE, 1))
+    y = y_resampled
 
     X_train, X_val, y_train, y_val = train_test_split(
         X, y, test_size=0.2, stratify=y, random_state=42)
@@ -174,5 +170,198 @@ def train_model():
                       opset_version=13)
     print('Saved best model and ONNX.')
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def plot_avg_metric(fold_acc, fold_f1, output_dir):
+    plt.figure()
+    plt.bar(['Acc', 'F1'], [np.mean(fold_acc), np.mean(fold_f1)], yerr=[np.std(fold_acc), np.std(fold_f1)], capsize=5)
+    plt.title("Average Accuracy and F1 Score Across Folds")
+    plt.savefig(os.path.join(output_dir, "avg_metrics.png"))
+    plt.close()
+
+
+
+
+def plot_conf_matrix(y_true, y_pred, fold, output_dir):
+    cm = confusion_matrix(y_true, y_pred)
+    labels = [INV_ANNOTATION_MAP[i] for i in range(len(INV_ANNOTATION_MAP))]
+    df_cm = pd.DataFrame(cm, index=labels, columns=labels)
+    plt.figure(figsize=(6, 5))
+    sns.heatmap(df_cm, annot=True, fmt='d', cmap='Blues')
+    plt.title(f'Confusion Matrix Fold {fold}')
+    plt.ylabel('True Label')
+    plt.xlabel('Predicted Label')
+    plt.tight_layout()
+    plt.savefig(os.path.join(output_dir, f'conf_matrix_fold{fold}.png'))
+    plt.close()
+
+
+def plot_metrics(train_losses, val_accuracies, fold, output_dir):
+    plt.figure()
+    plt.plot(train_losses, label='Train Loss')
+    plt.plot(val_accuracies, label='Val Accuracy')
+    plt.xlabel('Epoch')
+    plt.ylabel('Metric')
+    plt.legend()
+    plt.title(f'Training Metrics Fold {fold}')
+    plt.grid()
+    plt.tight_layout()
+    plt.savefig(os.path.join(output_dir, f'metrics_fold{fold}.png'))
+    plt.close()
+
+
+def export_onnx_model(model, output_path):
+    dummy = torch.randn(1, 1, WINDOW_SIZE, device=next(model.parameters()).device)
+    torch.onnx.export(model, dummy, output_path, input_names=['input'], output_names=['output'], opset_version=13)
+
+
+
+def train_kfold_model(X, y, folds=FOLDS, output_dir='training'):
+
+    torch.manual_seed(42)
+    np.random.seed(42)
+    random.seed(42)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+    os.makedirs(output_dir, exist_ok=True)
+    dirs = {
+        "onnx": os.path.join(output_dir, "onnx"),
+        "pt": os.path.join(output_dir, "pt"),
+        "conf_matrix": os.path.join(output_dir, "conf_matrix"),
+        "metrics": os.path.join(output_dir, "metrics"),
+        "csv": os.path.join(output_dir, "csv"),
+        "config": os.path.join(output_dir, "config"),
+    }
+    for d in dirs.values():
+        os.makedirs(d, exist_ok=True)
+
+    with open(os.path.join(dirs["config"], 'config.txt'), 'w') as f:
+        f.write(f"BATCH_SIZE={BATCH_SIZE}\n")
+        f.write(f"EPOCHS={EPOCHS}\n")
+        f.write(f"FOLDS={folds}\n")
+        f.write(f"SMOTE=not majority\n")
+        f.write(f"WINDOW_SIZE={WINDOW_SIZE}\n")
+        f.write(f"MODEL=ECGClassifier with ResidualBlocks\n")
+
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    skf = StratifiedKFold(n_splits=folds, shuffle=True, random_state=42)
+
+    all_val_acc, all_val_f1 = [], []
+
+    for fold, (train_idx, val_idx) in enumerate(skf.split(X, y), 1):
+        print(f"\n🧪 Fold {fold}/{folds}")
+
+        X_train, X_val = X[train_idx], X[val_idx]
+        y_train, y_val = y[train_idx], y[val_idx]
+
+        X_train = torch.tensor(X_train, dtype=torch.float32).permute(0, 2, 1)
+        y_train = torch.tensor(y_train, dtype=torch.long)
+        X_val = torch.tensor(X_val, dtype=torch.float32).permute(0, 2, 1)
+        y_val = torch.tensor(y_val, dtype=torch.long)
+
+        train_loader = DataLoader(TensorDataset(X_train, y_train), batch_size=BATCH_SIZE, shuffle=True)
+        val_loader = DataLoader(TensorDataset(X_val, y_val), batch_size=BATCH_SIZE)
+
+        model = ECGClassifier(num_classes=NUM_CLASSES).to(device)
+        optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=5, factor=0.5)
+        criterion = nn.CrossEntropyLoss()
+
+        best_val_acc = 0.0
+        train_losses, val_accuracies = [], []
+        f1_macro_list, prec_macro_list, recall_macro_list = [], [], []
+
+        for epoch in range(1, EPOCHS + 1):
+            model.train()
+            loss_sum = 0.0
+            for X_batch, y_batch in train_loader:
+                X_batch, y_batch = X_batch.to(device), y_batch.to(device)
+                optimizer.zero_grad()
+                outputs = model(X_batch)
+                loss = criterion(outputs, y_batch)
+                loss.backward()
+                optimizer.step()
+                loss_sum += loss.detach().item()
+            train_loss = loss_sum / len(train_loader)
+            train_losses.append(train_loss)
+
+            model.eval()
+            preds, targets = [], []
+            with torch.no_grad():
+                for X_batch, y_batch in val_loader:
+                    X_batch = X_batch.to(device)
+                    logits = model(X_batch)
+                    preds.extend(torch.argmax(logits, dim=1).cpu().numpy())
+                    targets.extend(y_batch.numpy())
+
+            val_acc = accuracy_score(targets, preds)
+            val_f1 = f1_score(targets, preds, average='macro')
+            val_prec = precision_score(targets, preds, average='macro')
+            val_rec = recall_score(targets, preds, average='macro')
+
+            val_accuracies.append(val_acc)
+            f1_macro_list.append(val_f1)
+            prec_macro_list.append(val_prec)
+            recall_macro_list.append(val_rec)
+
+            scheduler.step(1 - val_acc)
+
+            if val_acc > best_val_acc:
+                torch.save(model.state_dict(), os.path.join(dirs["pt"], f'model_fold{fold}.pt'))
+                export_onnx_model(model, os.path.join(dirs["onnx"], f'model_fold{fold}.onnx'))
+                best_val_acc = val_acc
+
+            print(f"[Fold {fold}] Epoch {epoch}/{EPOCHS} | Loss: {train_loss:.4f} | Acc: {val_acc:.4f} | F1: {val_f1:.4f}")
+
+        all_val_acc.append(best_val_acc)
+        all_val_f1.append(val_f1)
+
+        plot_conf_matrix(targets, preds, fold, dirs["conf_matrix"])
+        plot_metrics(train_losses, val_accuracies, fold, dirs["metrics"])
+
+        with open(os.path.join(dirs["csv"], f'metrics_fold{fold}.csv'), 'w', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(['epoch', 'train_loss', 'val_acc', 'val_f1_macro', 'val_prec_macro', 'val_recall_macro'])
+            for i in range(EPOCHS):
+                writer.writerow([
+                    i+1, train_losses[i], val_accuracies[i],
+                    f1_macro_list[i], prec_macro_list[i], recall_macro_list[i]
+                ])
+
+    plot_avg_metric(all_val_acc, all_val_f1, dirs["metrics"])
+    print(f"\n✅ Średnia dokładność: {np.mean(all_val_acc):.4f}, F1: {np.mean(all_val_f1):.4f}")
+
+# W __main__:
 if __name__ == '__main__':
-    train_model()
+    from imblearn.over_sampling import SMOTE
+    X = np.load('X.npy')
+    y = np.load('y.npy')
+    X = X.reshape((X.shape[0], -1))
+    X, y = SMOTE(sampling_strategy='not majority', random_state=42).fit_resample(X, y)
+    X = X.reshape((-1, WINDOW_SIZE, 1))
+
+    train_kfold_model(X, y, output_dir='training', folds=FOLDS)
+
+
+
+
+
+
+

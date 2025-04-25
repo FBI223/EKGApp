@@ -52,7 +52,7 @@ class ECGClassifier(nn.Module):
         self.block2 = ResidualBlock(64, 64)
         self.block3 = ResidualBlock(64, 128, downsample=True)
         self.block4 = ResidualBlock(128, 128)
-        self.global_pool = nn.AdaptiveAvgPool1d(1)
+        self.global_pool = nn.AdaptiveAvgPool1d(1)       # [B, C, 1]
         self.fc1 = nn.Linear(128, 128)
         self.dropout = nn.Dropout(0.5)
         self.out = nn.Linear(128, num_classes)
@@ -62,10 +62,15 @@ class ECGClassifier(nn.Module):
         x = self.block2(x)
         x = self.block3(x)
         x = self.block4(x)
-        x = self.global_pool(x).squeeze(-1)
+        x = self.global_pool(x)                          # [B, C, 1]
+        x = x.view(x.size(0), -1)                        # [B, C]
         x = F.elu(self.fc1(x))
         x = self.dropout(x)
         return self.out(x)
+
+
+
+
 
 # Training function
 def train_model():

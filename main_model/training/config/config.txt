@@ -1,0 +1,6 @@
+BATCH_SIZE=64
+EPOCHS=10
+FOLDS=5
+SMOTE=not majority
+WINDOW_SIZE=540
+MODEL=ECGClassifier with ResidualBlocks

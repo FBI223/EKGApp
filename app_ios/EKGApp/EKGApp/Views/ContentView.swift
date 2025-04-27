@@ -1,11 +1,6 @@
 import SwiftUI
-import CoreBluetooth
-import Accelerate
-import CoreML
-import UniformTypeIdentifiers
 import Charts
-
-// MARK: - ContentView
+import Combine
 
 struct ChartDataPoint: Identifiable {
     let id = UUID()
@@ -13,159 +8,233 @@ struct ChartDataPoint: Identifiable {
     let y: Float
 }
 
+struct SignalMeta: Codable {
+    let id: Int
+    let fs: Int
+    let gain: Int
+    let baseline: Int
+    let source: String
+    let lead: String
+    let name: String
+}
+
+
+
 struct ContentView: View {
     @StateObject private var ble = EKGBLEManager()
-    @StateObject private var rec = EKGRecorder()
-    private let classifier = EKGClassifier()
-    @State private var mode = 0
-    @State private var importedData = [Float]()
-    @State private var result = ""
+    @State private var samples: [Float] = Array(repeating: 0, count: 500)
+    @State private var recordingBuffer: [Float] = []
+    @State private var currentIndex = 0
+    @State private var timer: AnyCancellable?
+    @State private var isProcessing = false
     @State private var isRecording = false
-    @State private var statusMessage = ""
+    @State private var showingMetaInfo = false
 
-    // Buffers for R-peak detection
-    @State private var buffer: [Float] = []
-    let fs=360
-    let peakThreshold: Float = 0.5
-    let minInterval =  Int(0.2 * 360) // 200ms
+
+    let maxVisibleSamples = 500
+    let updateInterval = 0.05
+    let samplesPerTick = 10
 
     var body: some View {
-        VStack(spacing: 16) {
-            Picker("Mode", selection: $mode) {
-                Text("Live BLE").tag(0)
-                Text("Import .dat").tag(1)
-                Text("Playback").tag(2)
-            }
-            .pickerStyle(SegmentedPickerStyle())
-            .padding([.horizontal, .top])
-
-            Group {
-                switch mode {
-                case 0: liveBLEView
-                case 1: importView
-                default: playbackView
-                }
+        VStack(spacing: 10) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text("META: \(ble.latestMetaMessage ?? "No META received yet")")
+                    .font(.caption)
+                    .foregroundColor(.blue)
+                    .padding(5)
+                    .background(Color.gray.opacity(0.1))
+                    .cornerRadius(8)
             }
             .padding(.horizontal)
 
-            Text(statusMessage)
-                .font(.footnote)
-                .foregroundColor(.gray)
-                .padding(.bottom)
+
+            Divider()
+
+            if ble.connectedPeripheral == nil {
+                List(ble.devices, id: \ .identifier) { device in
+                    Button(action: { ble.connect(to: device) }) {
+                        Text(device.name ?? "Unknown")
+                    }
+                }
+            } else {
+                Chart(liveSamples) { point in
+                    LineMark(x: .value("Index", point.x), y: .value("Voltage", point.y))
+                }
+                .chartYScale(domain: -3...3)
+                .frame(height: 250)
+                .padding()
+
+
+                HStack {
+                    Button(isProcessing ? "Stop" : "Start") {
+                        isProcessing ? stopProcessing() : startProcessing()
+                    }
+                    .padding()
+                    .background(isProcessing ? Color.red : Color.green)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+
+                    Button(isRecording ? "Stop Rec" : "Record") {
+                        isRecording ? stopRecording() : startRecording()
+                    }
+                    .padding()
+                    .background(isRecording ? Color.orange : Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+
+                    Button("Disconnect") {
+                        ble.disconnect()
+                        stopProcessing()
+                        samples = Array(repeating: 0, count: maxVisibleSamples)
+                    }
+                    .padding()
+                    .background(Color.gray)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+
+                    Button("Status") {
+                        showingMetaInfo = true
+                    }
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+                }
+                .padding(.top)
+
+                
+                
+                
+            }
+            
+            
+
+            Divider()
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 2) {
+                    ForEach(ble.eventLogs.reversed(), id: \ .self) { log in
+                        Text(log).font(.system(size: 10)).foregroundColor(.secondary)
+                    }
+                }
+                .padding()
+            }
+            .frame(maxHeight: 200)
+            .background(Color.black.opacity(0.05))
+            .cornerRadius(8)
         }
         .onAppear {
-            NotificationCenter.default.addObserver(
-                forName: .didImportData,
-                object: nil,
-                queue: .main
-            ) { notification in
-                importedData = notification.object as? [Float] ?? []
-                statusMessage = "Imported \(importedData.count) samples"
-            }
+            ble.startScan()
         }
-    }
 
-    // MARK: - Live BLE View
-    var liveBLEView: some View {
-        VStack {
-            Chart(rec.recorded.enumerated().map { ChartDataPoint(x: $0.offset, y: $0.element) }) { point in
-                LineMark(
-                    x: .value("Index", point.x),
-                    y: .value("Voltage", point.y)
-                )
-                PointMark(
-                    x: .value("Index", point.x),
-                    y: .value("Voltage", point.y)
-                )
-            }
-            .chartYScale(domain: -1...1)
-            .frame(height: 200)
-
-            HStack {
-                Button(isRecording ? "Stop" : "Start") {
-                    isRecording ? stopProcessing() : startProcessing()
+        .sheet(isPresented: $showingMetaInfo) {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("META Information")
+                    .font(.title2)
+                    .padding(.bottom, 10)
+                
+                Group {
+                    Text("Name: \(ble.meta.name)")
+                    Text("Lead: \(ble.meta.lead)")
+                    Text("Source: \(ble.meta.source)")
+                    Text("Fs: \(ble.meta.fs) Hz")
+                    Text("Gain: \(ble.meta.gain)")
+                    Text("Baseline: \(ble.meta.baseline)")
+                    Text("ID: \(ble.meta.id)")
                 }
-                .padding(.vertical, 8)
-                .padding(.horizontal, 16)
-                .background(isRecording ? Color.red.opacity(0.7) : Color.green.opacity(0.7))
+                .font(.body)
+                
+                Spacer()
+                
+                Button("Close") {
+                    showingMetaInfo = false
+                }
+                .padding()
+                .background(Color.red)
                 .foregroundColor(.white)
                 .cornerRadius(8)
+                Spacer()
             }
-        }
-        .onReceive(ble.$rawBuffer) { buf in
-            guard mode==0, isRecording else { return }
-            for v in buf {
-                rec.append(v)
-                processSample(v)
-            }
-        }
-    }
-
-    // MARK: - Import View
-    var importView: some View {
-        Button("Import .dat") { importDAT() }
             .padding()
-    }
-
-    // MARK: - Playback View
-    var playbackView: some View {
-        VStack(spacing: 12) {
-            Button("Classify Imported") { classify(importedData) }
-                .padding()
-            Text("Result: \(result)")
         }
+        .padding()
     }
 
-    // MARK: - Actions
-    func importDAT() {
-        let picker = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.data])
-        picker.allowsMultipleSelection = false
-        picker.delegate = Context.shared
-        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let root = scene.windows.first(where: { $0.isKeyWindow })?.rootViewController {
-            root.present(picker, animated: true)
+    var liveSamples: [ChartDataPoint] {
+        samples.enumerated().map { (i, v) in
+            ChartDataPoint(x: i, y: v)
         }
-    }
-
-    func classify(_ data: [Float]) {
-        let rs = Resampler.resample(input: data, srcRate: 128, dstRate: Float(fs))
-        result = classifier.predict(rs)
-        statusMessage = "Classification done"
     }
 
     func startProcessing() {
-        rec.start()
-        buffer.removeAll()
-        isRecording = true
-        statusMessage = "Running..."
+        samples = Array(repeating: 0, count: maxVisibleSamples)
+        currentIndex = 0
+        isProcessing = true
+
+        timer = Timer.publish(every: updateInterval, on: .main, in: .common)
+            .autoconnect()
+            .sink { _ in
+                updateSamples()
+            }
     }
 
     func stopProcessing() {
-        isRecording = false
-        statusMessage = "Stopped"
+        isProcessing = false
+        timer?.cancel()
     }
 
-    // MARK: - R-peak detection & segment classify
-    func processSample(_ sample: Float) {
-        buffer.append(sample)
-        if buffer.count < fs { return }
-        // simple threshold detect
-        let n=buffer.count
-        if buffer[n-1] > peakThreshold,
-           n>minInterval,
-           buffer[n-1] > buffer[n-2] {
-            // found R peak at last sample
-            let start = max(0, n - Int(fs/2))
-            let end = min(n, start + fs)
-            let segment = Array(buffer[start..<end])
-            let rs = Resampler.resample(input: segment, srcRate: Float(fs), dstRate: Float(fs))
-            let label = classifier.predict(rs)
-            statusMessage = "Peak @\(n), class=\(label)"
-            // shift buffer to avoid re-detect
-            buffer = Array(buffer[(n-minInterval)...])
-        }
-        // keep buffer size <= 5s
-        if buffer.count>fs*5 { buffer.removeFirst(buffer.count-fs*5) }
+    func startRecording() {
+        recordingBuffer.removeAll()
+        isRecording = true
     }
+
+    func stopRecording() {
+        isRecording = false
+        saveRecording()
+    }
+
+    func updateSamples() {
+        guard isProcessing else { return }
+        guard !ble.rawBuffer.isEmpty else { return }
+
+        for _ in 0..<samplesPerTick {
+            if !ble.rawBuffer.isEmpty {
+                let nextValue = ble.rawBuffer.removeFirst()
+
+                samples[currentIndex] = nextValue
+                currentIndex = (currentIndex + 1) % maxVisibleSamples
+
+                if isRecording {
+                    recordingBuffer.append(nextValue)
+                }
+            }
+        }
+    }
+
+    func saveRecording() {
+        let filename = "EKG_" + formattedDate() + ".csv"
+        let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let fileURL = documentsURL.appendingPathComponent(filename)
+
+        var csvText = "# fs=\(ble.meta.fs)\n# lead=\(ble.meta.lead)\n# source=\(ble.meta.source)\n"
+        for sample in recordingBuffer {
+            csvText += "\(sample)\n"
+        }
+
+        do {
+            try csvText.write(to: fileURL, atomically: true, encoding: .utf8)
+            print("✅ Saved recording at:", fileURL)
+        } catch {
+            print("❌ Failed to save recording:", error)
+        }
+    }
+
+    func formattedDate() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
+        return formatter.string(from: Date())
+    }
+
+
 }
 

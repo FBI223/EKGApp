@@ -1,17 +1,17 @@
 FS_TARGET=360
 FS=360
 WINDOW_SIZE = 540
-FOLDS = 5
+FOLDS = 3
 EPOCHS = 10
 BATCH_SIZE = 64
 
 
-DB_PATHS = [
+DB_PATHS_OLD = [
     ('../databases/mitdb', 360),
 ]
 
 
-DB_PATHS_OLD = [
+DB_PATHS = [
     ('../databases/mitdb', 360),
     ('../databases/svdb', 128),
     ('../databases/incartdb', 257)

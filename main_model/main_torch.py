@@ -19,57 +19,66 @@ from main_model.consts import BATCH_SIZE, EPOCHS, NUM_CLASSES, WINDOW_SIZE, INV_
 import random
 from sklearn.metrics import cohen_kappa_score
 
-
-# Residual Block for 1D CNN
-class ResidualBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, downsample=False):
-        super().__init__()
-        stride = 2 if downsample else 1
-        self.conv1 = nn.Conv1d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1)
-        self.bn1 = nn.BatchNorm1d(out_channels)
-        self.conv2 = nn.Conv1d(out_channels, out_channels, kernel_size=3, stride=1, padding=1)
-        self.bn2 = nn.BatchNorm1d(out_channels)
-        self.relu = nn.ELU()
-        self.downsample = nn.Sequential()
-        if downsample or in_channels != out_channels:
-            self.downsample = nn.Sequential(
-                nn.Conv1d(in_channels, out_channels, kernel_size=1, stride=stride),
-                nn.BatchNorm1d(out_channels)
-            )
+class SEBlock(nn.Module):
+    def __init__(self, channels, reduction=8):
+        super(SEBlock, self).__init__()
+        self.se = nn.Sequential(
+            nn.AdaptiveAvgPool1d(1),
+            nn.Conv1d(channels, channels // reduction, kernel_size=1),
+            nn.ReLU(),
+            nn.Conv1d(channels // reduction, channels, kernel_size=1),
+            nn.Sigmoid()
+        )
 
     def forward(self, x):
-        identity = self.downsample(x)
+        w = self.se(x)
+        return x * w
+
+class ResidualBlock(nn.Module):
+    def __init__(self, channels):
+        super(ResidualBlock, self).__init__()
+        self.conv1 = nn.Conv1d(channels, channels, kernel_size=3, padding=1)
+        self.bn1 = nn.BatchNorm1d(channels)
+        self.relu = nn.ReLU()
+        self.conv2 = nn.Conv1d(channels, channels, kernel_size=3, padding=1)
+        self.bn2 = nn.BatchNorm1d(channels)
+
+    def forward(self, x):
+        identity = x
         out = self.relu(self.bn1(self.conv1(x)))
         out = self.bn2(self.conv2(out))
         out += identity
         return self.relu(out)
 
-# Updated Model using Residual Blocks
 class ECGClassifier(nn.Module):
-    def __init__(self, num_classes):
-        super().__init__()
-        self.block1 = ResidualBlock(1, 64, downsample=True)
-        self.block2 = ResidualBlock(64, 64)
-        self.block3 = ResidualBlock(64, 128, downsample=True)
-        self.block4 = ResidualBlock(128, 128)
-        self.global_pool = nn.AdaptiveAvgPool1d(1)       # [B, C, 1]
-        self.fc1 = nn.Linear(128, 128)
+    def __init__(self, num_classes=5):
+        super(ECGClassifier, self).__init__()
+        self.conv1 = nn.Conv1d(1, 32, kernel_size=7, stride=2, padding=3)
+        self.bn1 = nn.BatchNorm1d(32)
+        self.relu = nn.ReLU()
+        self.resblock1 = ResidualBlock(32)
+        self.seblock1 = SEBlock(32)
+        self.conv2 = nn.Conv1d(32, 64, kernel_size=5, stride=2, padding=2)
+        self.bn2 = nn.BatchNorm1d(64)
+        self.resblock2 = ResidualBlock(64)
+        self.seblock2 = SEBlock(64)
+        self.global_pool = nn.AdaptiveAvgPool1d(1)
+        self.fc1 = nn.Linear(64, 32)
         self.dropout = nn.Dropout(0.5)
-        self.out = nn.Linear(128, num_classes)
+        self.fc2 = nn.Linear(32, num_classes)
 
     def forward(self, x):
-        x = self.block1(x)
-        x = self.block2(x)
-        x = self.block3(x)
-        x = self.block4(x)
-        x = self.global_pool(x)                          # [B, C, 1]
-        x = x.view(x.size(0), -1)                        # [B, C]
-        x = F.elu(self.fc1(x))
+        x = self.relu(self.bn1(self.conv1(x)))
+        x = self.resblock1(x)
+        x = self.seblock1(x)
+        x = self.relu(self.bn2(self.conv2(x)))
+        x = self.resblock2(x)
+        x = self.seblock2(x)
+        x = self.global_pool(x)
+        x = x.view(x.size(0), -1)
+        x = self.relu(self.fc1(x))
         x = self.dropout(x)
-        return self.out(x)
-
-
-
+        return self.fc2(x)
 
 
 # Training function
@@ -82,10 +91,6 @@ def train_model():
 
     # Apply SMOTE exactly as in the paper
     X = X.reshape((X.shape[0], -1))  # Flatten to (samples, features)
-    smote = SMOTE(sampling_strategy='not majority', random_state=42)
-    X_resampled, y_resampled = smote.fit_resample(X, y)
-    X = X_resampled.reshape((-1, WINDOW_SIZE, 1))
-    y = y_resampled
 
     X_train, X_val, y_train, y_val = train_test_split(
         X, y, test_size=0.2, stratify=y, random_state=42)

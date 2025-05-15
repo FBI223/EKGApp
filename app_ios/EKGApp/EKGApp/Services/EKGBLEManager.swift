@@ -8,7 +8,6 @@ class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPer
     @Published var statusMessage = "Waiting for Bluetooth..."
     @Published var eventLogs: [String] = []
     @Published var latestMetaMessage: String? = nil
-    @Published var meta = SignalMeta(id: -1, fs: 360, gain: 1, baseline: 0, source: "Unknown", lead: "Unknown", name: "Unknown")
 
     private var central: CBCentralManager!
     private let serviceUUID = CBUUID(string: "bd37e8b4-1bcf-4f42-bdd1-bebea1a51a1a")
@@ -92,7 +91,6 @@ class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPer
         if let text = String(data: data, encoding: .utf8), text.starts(with: "META;") {
             DispatchQueue.main.async {
                 self.latestMetaMessage = text
-                self.parseAndUpdateMeta(text) // dodajemy nowe!
             }
             log("📥 Received META")
         } else {
@@ -105,21 +103,7 @@ class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPer
     }
 
     
-    private func parseAndUpdateMeta(_ message: String) {
-        guard message.starts(with: "META;") else { return }
-        let jsonPart = String(message.dropFirst(5))
-        if let data = jsonPart.data(using: .utf8) {
-            do {
-                let decoded = try JSONDecoder().decode(SignalMeta.self, from: data)
-                DispatchQueue.main.async {
-                    self.meta = decoded
-                }
-                log("✅ Updated META in manager: \(decoded.name)")
-            } catch {
-                log("❌ Failed to parse META in manager: \(error.localizedDescription)")
-            }
-        }
-    }
+
 
 
 

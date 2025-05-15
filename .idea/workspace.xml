@@ -5,45 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="added mlmodels">
-      <change beforePath="$PROJECT_DIR$/.idea/ECG_PROJ.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ECG_PROJ.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Models/ECGClassifier.mlpackage/Data/com.apple.CoreML/ECGClassifier.mlmodel" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/consts.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_model/consts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_model/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/main_torch.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_model/main_torch.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/sketch_apr17a.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/conf_matrix/conf_matrix_fold1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/conf_matrix/conf_matrix_fold2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/conf_matrix/conf_matrix_fold3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/conf_matrix/conf_matrix_fold4.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/conf_matrix/conf_matrix_fold5.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/config/config.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/csv/metrics_fold1.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/csv/metrics_fold2.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/csv/metrics_fold3.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/csv/metrics_fold4.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/csv/metrics_fold5.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/metrics/avg_metrics.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/metrics/metrics_fold1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/metrics/metrics_fold2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/metrics/metrics_fold3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/metrics/metrics_fold4.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/metrics/metrics_fold5.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/mlmodel/model_fold1.mlmodel" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/mlmodel/model_fold2.mlmodel" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/mlmodel/model_fold3.mlmodel" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/mlmodel/model_fold4.mlmodel" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/mlmodel/model_fold5.mlmodel" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/onnx/model_fold1.onnx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/onnx/model_fold2.onnx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/onnx/model_fold3.onnx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/onnx/model_fold4.onnx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/onnx/model_fold5.onnx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/pt/model_fold1.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/pt/model_fold2.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/pt/model_fold3.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/pt/model_fold4.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_model/training/pt/model_fold5.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp.xcodeproj/project.xcworkspace/xcuserdata/marcinsztukowski.xcuserdatad/UserInterfaceState.xcuserstate" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp.xcodeproj/project.xcworkspace/xcuserdata/marcinsztukowski.xcuserdatad/UserInterfaceState.xcuserstate" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp.xcodeproj/xcuserdata/marcinsztukowski.xcuserdatad/xcschemes/xcschememanagement.plist" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp.xcodeproj/xcuserdata/marcinsztukowski.xcuserdatad/xcschemes/xcschememanagement.plist" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Models/ECGClassifier.mlpackage/Data/com.apple.CoreML/FeatureDescriptions.json" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Models/ECGClassifier.mlpackage/Data/com.apple.CoreML/FeatureDescriptions.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Models/ECGClassifier.mlpackage/Data/com.apple.CoreML/Metadata.json" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Models/ECGClassifier.mlpackage/Data/com.apple.CoreML/Metadata.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Models/ECGClassifier.mlpackage/Data/com.apple.CoreML/model_fold1.mlmodel" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Models/ECGClassifier.mlpackage/Manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Models/ECGClassifier.mlpackage/Manifest.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Services/EKGBLEManager.swift" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Services/EKGBLEManager.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Services/EKGClassifier.swift" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Services/EKGClassifier.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Services/EKGRecorder.swift" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Services/Resampler.swift" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Services/Resampler.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Utilities/Context.swift" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Utilities/RPeakDetector.swift" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Utilities/RPeakDetector.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Views/ContentView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Views/ContentView.swift" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -103,58 +79,58 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Python.aami_pipeline.executor": "Run",
-    "Python.aami_pipeline_lstm.executor": "Run",
-    "Python.aami_pipeline_lstm_fixed.executor": "Run",
-    "Python.aami_smaller_model (1).executor": "Run",
-    "Python.binary (1).executor": "Run",
-    "Python.consts.executor": "Run",
-    "Python.conversion.executor": "Run",
-    "Python.convert.executor": "Run",
-    "Python.convert2.executor": "Run",
-    "Python.deaugmentation.executor": "Run",
-    "Python.debug.executor": "Run",
-    "Python.ecg_pipeline.executor": "Run",
-    "Python.estimator.executor": "Run",
-    "Python.gpu_efficiency_test.executor": "Run",
-    "Python.inference (1).executor": "Run",
-    "Python.inference (2).executor": "Run",
-    "Python.inference.executor": "Run",
-    "Python.main (1).executor": "Run",
-    "Python.main (2).executor": "Run",
-    "Python.main (3).executor": "Run",
-    "Python.main (4).executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.main2 (1).executor": "Run",
-    "Python.main3 (1).executor": "Run",
-    "Python.main_torch.executor": "Run",
-    "Python.rythm_model.executor": "Run",
-    "Python.test_augmentation (1).executor": "Run",
-    "Python.test_augmentation (2).executor": "Run",
-    "Python.test_augmentation.executor": "Run",
-    "Python.test_on_arduino.executor": "Run",
-    "Python.validate_model.executor": "Run",
-    "Python.visualize.executor": "Run",
-    "Python.visualize_ble.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "/home/msztu223/PycharmProjects/ECG_PROJ/arduino_smaller_model",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "run.code.analysis.last.selected.profile": "aDefault",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Python.aami_pipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python.aami_pipeline_lstm.executor&quot;: &quot;Run&quot;,
+    &quot;Python.aami_pipeline_lstm_fixed.executor&quot;: &quot;Run&quot;,
+    &quot;Python.aami_smaller_model (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.binary (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.consts.executor&quot;: &quot;Run&quot;,
+    &quot;Python.conversion.executor&quot;: &quot;Run&quot;,
+    &quot;Python.convert.executor&quot;: &quot;Run&quot;,
+    &quot;Python.convert2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.deaugmentation.executor&quot;: &quot;Run&quot;,
+    &quot;Python.debug.executor&quot;: &quot;Run&quot;,
+    &quot;Python.ecg_pipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python.estimator.executor&quot;: &quot;Run&quot;,
+    &quot;Python.gpu_efficiency_test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.inference (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.inference (2).executor&quot;: &quot;Run&quot;,
+    &quot;Python.inference.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.main (2).executor&quot;: &quot;Run&quot;,
+    &quot;Python.main (3).executor&quot;: &quot;Run&quot;,
+    &quot;Python.main (4).executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main2 (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.main3 (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.main_torch.executor&quot;: &quot;Run&quot;,
+    &quot;Python.rythm_model.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test_augmentation (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.test_augmentation (2).executor&quot;: &quot;Run&quot;,
+    &quot;Python.test_augmentation.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test_on_arduino.executor&quot;: &quot;Run&quot;,
+    &quot;Python.validate_model.executor&quot;: &quot;Run&quot;,
+    &quot;Python.visualize.executor&quot;: &quot;Run&quot;,
+    &quot;Python.visualize_ble.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/msztu223/PycharmProjects/ECG_PROJ/arduino_smaller_model&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;aDefault&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
       <console-settings sdk-home="$PROJECT_DIR$/../../../../Program Files/Python312/python.exe">
@@ -320,7 +296,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-890ed5b35930-d9c5bdb153f4-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.23774.444" />
+        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-PY-251.25410.122" />
+        <option value="bundled-python-sdk-880ecab49056-36ea0e71a18c-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.25410.122" />
       </set>
     </attachedChunks>
   </component>
@@ -413,6 +390,7 @@
       <workItem from="1746641416146" duration="598000" />
       <workItem from="1746653728204" duration="726000" />
       <workItem from="1746695014850" duration="3768000" />
+      <workItem from="1747243981459" duration="1672000" />
     </task>
     <task id="LOCAL-00001" summary="quite ok model for recognizing 'N' 'V' 'A' 'S' 'L' 'R' classes">
       <option name="closed" value="true" />

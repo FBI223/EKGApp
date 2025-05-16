@@ -1,78 +1,130 @@
-
-
 import SwiftUI
 import Charts
 import Combine
 
 struct BeatAnalysisView: View {
     @StateObject private var ble = EKGBLEManager()
-    
-    @State private var samples: [Float] = []                // bufor próbek
-    @State private var recordingBuffer: [Float] = []        // do zapisu
+    @State private var samples: [Float] = []
+    @State private var recordingBuffer: [Float] = []
     @State private var timer: AnyCancellable?
     @State private var isProcessing = false
+    
+    @State private var lastDetectedTimes: [Date] = []
+    @State private var bpm: Int = 0
+
+
+    @Environment(\.dismiss) var dismiss
+    @ObservedObject private var settings = AppSettings.shared
+
+    var backgroundColor: Color { settings.darkModeEnabled ? .black : .white }
+    var foregroundColor: Color { settings.darkModeEnabled ? .white : .black }
+    var chartColor: Color { settings.darkModeEnabled ? .cyan : .blue }
 
     @State private var fs_main = 128
     @State private var qrsCount = 0
     @State private var classCounts: [String: Int] = ["N": 0, "S": 0, "V": 0, "F": 0, "Q": 0]
 
-    let maxWindowSize = 700        // rozmiar okna do klasyfikacji
-    let maxTotalSamples = 5000     // limit całego bufora
+    let maxWindowSize = 700
+    let maxTotalSamples = 5000
     let samplesPerTick = 10
-    let updateInterval = 0.05      // 50 ms
-    let segmentRadius = 96         // ±96 próbek = 192
+    let updateInterval = 0.05
+    let segmentRadius = 96
 
     private let classifier = EKGClassifier()
 
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 16) {
             if ble.connectedPeripheral == nil {
-                List(ble.devices, id: \.identifier) { device in
-                    Button { ble.connect(to: device) }
-                    label: { Text(device.name ?? "Unknown") }
+                VStack(spacing: 10) {
+                    Text("Select ECG Device")
+                        .font(.headline)
+                        .foregroundColor(foregroundColor)
+
+                    List(ble.devices, id: \.identifier) { device in
+                        Button {
+                            ble.connect(to: device)
+                        } label: {
+                            HStack {
+                                Image(systemName: "antenna.radiowaves.left.and.right")
+                                Text(device.name ?? "Unknown")
+                            }
+                            .padding(8)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .foregroundColor(foregroundColor)
+                    }
+                    .listStyle(.plain)
+                    .background(backgroundColor)
                 }
             } else {
-                Chart {
-                    // pokaż ostatnie maxWindowSize próbek
-                    let visible = Array(samples.suffix(maxWindowSize))
-                    ForEach(0..<maxWindowSize, id: \.self) { i in
-                        let value = i < visible.count ? visible[i] : 0.0
-                        LineMark(x: .value("Index", i), y: .value("Voltage", value))
+                VStack(spacing: 12) {
+                    Chart {
+                        let visible = Array(samples.suffix(maxWindowSize))
+                        ForEach(0..<visible.count, id: \.self) { i in
+                            LineMark(
+                                x: .value("Index", i),
+                                y: .value("Voltage", visible[i])
+                            )
+                            .foregroundStyle(chartColor)
+                        }
+                    }
+                    .chartXScale(domain: 0...maxWindowSize)
+                    .chartYScale(domain: Double(settings.yAxisRange.lowerBound)...Double(settings.yAxisRange.upperBound))
+                    .frame(height: 250)
+                    .padding(.horizontal)
+
+                    
+        
+                    Text("❤️ BPM: \(bpm)")
+                        .font(.title3)
+                        .bold()
+                        .foregroundColor(.red)
+                    
+                    Text("QRS Beat Count: \(qrsCount)")
+                        .font(.title3)
+                        .foregroundColor(foregroundColor)
+
+                    HStack {
+                        ForEach(["N", "S", "V", "F", "Q"], id: \.self) { k in
+                            VStack {
+                                Text(k)
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                                Text("\(classCounts[k] ?? 0)")
+                                    .font(.headline)
+                                    .foregroundColor(foregroundColor)
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
                     }
 
-                }
-                .chartXScale(domain: 0...maxWindowSize) // wymusza zakres X
-                .chartYScale(domain: -3...3)
-                .frame(height: 250)
-                .padding()
+                    HStack(spacing: 20) {
+                        Button(isProcessing ? "Stop" : "Start") {
+                            isProcessing ? stopProcessing() : startProcessing()
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(isProcessing ? .red : .green)
 
-                Text("QRS Beat Count: \(qrsCount)").font(.headline)
-                HStack {
-                    ForEach(["N","S","V","F","Q"], id: \.self) { k in
-                        Text("\(k): \(classCounts[k] ?? 0)").font(.subheadline)
+                        Button("Disconnect") {
+                            ble.disconnect()
+                            stopProcessing()
+                            samples = []
+                            qrsCount = 0
+                            classCounts = ["N": 0, "S": 0, "V": 0, "F": 0, "Q": 0]
+                            dismiss()
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(.gray)
                     }
-                }
-
-                HStack {
-                    Button(isProcessing ? "Stop" : "Start") {
-                        isProcessing ? stopProcessing() : startProcessing()
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .tint(isProcessing ? .red : .green)
-
-                    Button("Disconnect") {
-                        ble.disconnect()
-                        stopProcessing()
-                        samples = []
-                        qrsCount = 0
-                        classCounts = ["N": 0, "S": 0, "V": 0, "F": 0, "Q": 0]
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.gray)
                 }
             }
         }
-        .onAppear { ble.startScan() }
+        .padding()
+        .background(backgroundColor)
+        .preferredColorScheme(settings.darkModeEnabled ? .dark : .light)
+        .onAppear {
+            ble.startScan()
+        }
     }
 
     func startProcessing() {
@@ -91,6 +143,21 @@ struct BeatAnalysisView: View {
         isProcessing = false
         timer?.cancel()
     }
+    
+    private func updateBPM(from qrsPeaks: [Int]) {
+        let fs = Float(settings.sampleRateIn)
+
+        guard qrsPeaks.count >= 2 else {
+            bpm = 0
+            return
+        }
+
+        let rrIntervals: [Float] = zip(qrsPeaks.dropFirst(), qrsPeaks).map { Float($0 - $1) / fs }
+        let avgRR = rrIntervals.reduce(0, +) / Float(rrIntervals.count)
+        
+        bpm = avgRR > 0 ? Int(60.0 / avgRR) : 0
+    }
+
 
     private func updateSamples() {
         guard isProcessing, !ble.rawBuffer.isEmpty else { return }
@@ -105,43 +172,37 @@ struct BeatAnalysisView: View {
             }
         }
 
-        // gdy uzbieramy pełne okno, klasyfikujemy wszystkie QRS w danym oknie
         while samples.count >= maxWindowSize {
             let window = Array(samples.prefix(maxWindowSize))
             classifyWindow(window)
-            // usuń cały ten fragment, przesuwając bufor
             samples.removeFirst(maxWindowSize)
         }
     }
 
-
-    
     private func classifyWindow(_ window: [Float]) {
         let peaks = RPeakDetector.detectRPeaks(signal: window, fs: fs_main)
-
         for localPeak in peaks {
             let left = localPeak - segmentRadius
             let right = localPeak + segmentRadius
 
-            // pozwalamy segmentowi wyjść poza okno, ale dopełniamy zerami
             var segment: [Float] = []
             for i in left...right {
-                if i >= 0 && i < window.count {
-                    segment.append(window[i])
-                } else {
-                    segment.append(0.0) // dopełnienie
-                }
+                segment.append(i >= 0 && i < window.count ? window[i] : 0.0)
             }
 
             guard segment.count == 2 * segmentRadius + 1 else { continue }
 
             qrsCount += 1
-            let predicted = classifier.predict(input128Hz: segment)
+            let predicted = classifier.predict(input: segment)
             print("QRS at local index \(localPeak): \(predicted)")
             classCounts[predicted, default: 0] += 1
+            
+            
+            
+            
+            updateBPM(from: peaks)
+
         }
     }
-    
-    
-    
 }
+

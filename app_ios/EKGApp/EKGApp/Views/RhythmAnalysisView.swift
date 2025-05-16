@@ -1,10 +1,6 @@
-
-
-
 import SwiftUI
 import Charts
 import Combine
-
 
 struct RhythmAnalysisView: View {
     @StateObject private var ble = EKGBLEManager()
@@ -15,56 +11,101 @@ struct RhythmAnalysisView: View {
     @State private var timer: AnyCancellable?
     @State private var isProcessing = false
 
-    let windowLength = 1280 // 10s * 128Hz
+    @Environment(\.dismiss) var dismiss
+    @ObservedObject private var settings = AppSettings.shared
+
+    var backgroundColor: Color { settings.darkModeEnabled ? .black : .white }
+    var foregroundColor: Color { settings.darkModeEnabled ? .white : .black }
+    var chartColor: Color { settings.darkModeEnabled ? .cyan : .blue }
+
+    let windowLength = 1280
     private let model = EKGClassifier()
 
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 16) {
             if ble.connectedPeripheral == nil {
-                List(ble.devices, id: \.identifier) { device in
-                    Button { ble.connect(to: device) }
-                    label: { Text(device.name ?? "Unknown") }
+                VStack(spacing: 10) {
+                    Text("Select ECG Device")
+                        .font(.headline)
+                        .foregroundColor(foregroundColor)
+
+                    List(ble.devices, id: \.identifier) { device in
+                        Button {
+                            ble.connect(to: device)
+                        } label: {
+                            HStack {
+                                Image(systemName: "antenna.radiowaves.left.and.right")
+                                Text(device.name ?? "Unknown")
+                            }
+                            .padding(8)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .foregroundColor(foregroundColor)
+                    }
+                    .listStyle(.plain)
+                    .background(backgroundColor)
                 }
             } else {
-                Chart {
-                    let visible = Array(rhythmBuffer.suffix(windowLength))
-                    ForEach(0..<windowLength, id: \.self) { i in
-                        let value = i < visible.count ? visible[i] : 0.0
-                        LineMark(x: .value("Index", i), y: .value("Voltage", value))
-                    }
-                }
-                .chartXScale(domain: 0...windowLength)
-                .chartYScale(domain: -3...3)
-                .frame(height: 250)
-                .padding()
+                VStack(spacing: 12) {
+                    Text("Rhythm Prediction: \(prediction)")
+                        .font(.title2)
+                        .foregroundColor(foregroundColor)
 
-                Text("Rhythm Prediction: \(prediction)").font(.headline)
-                HStack {
-                    ForEach(["NSR", "AFib", "AFL", "VT", "Other"], id: \.self) { k in
-                        Text("\(k): \(rhythmClassCounts[k] ?? 0)").font(.subheadline)
+                    Chart {
+                        let visible = Array(rhythmBuffer.suffix(windowLength))
+                        ForEach(0..<visible.count, id: \.self) { i in
+                            LineMark(
+                                x: .value("Index", i),
+                                y: .value("Voltage", visible[i])
+                            )
+                            .foregroundStyle(chartColor)
+                        }
                     }
-                }
+                    .chartXScale(domain: 0...windowLength)
+                    .chartYScale(domain: Double(settings.yAxisRange.lowerBound)...Double(settings.yAxisRange.upperBound))
+                    .frame(height: 250)
+                    .background(backgroundColor)
+                    .cornerRadius(10)
+                    .padding(.horizontal)
 
-                HStack {
-                    Button(isProcessing ? "Stop" : "Start") {
-                        isProcessing ? stopProcessing() : startProcessing()
+                    HStack {
+                        ForEach(["NSR", "AFib", "AFL", "VT", "Other"], id: \.self) { key in
+                            VStack {
+                                Text(key)
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                                Text("\(rhythmClassCounts[key] ?? 0)")
+                                    .font(.headline)
+                                    .foregroundColor(foregroundColor)
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
                     }
-                    .buttonStyle(.borderedProminent)
-                    .tint(isProcessing ? .red : .green)
 
-                    Button("Disconnect") {
-                        ble.disconnect()
-                        stopProcessing()
-                        rhythmBuffer = []
-                        prediction = "—"
-                        rhythmClassCounts = ["NSR": 0, "AFib": 0, "AFL": 0, "VT": 0, "Other": 0]
+                    HStack(spacing: 20) {
+                        Button(isProcessing ? "Stop" : "Start") {
+                            isProcessing ? stopProcessing() : startProcessing()
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(isProcessing ? .red : .green)
+
+                        Button("Disconnect") {
+                            ble.disconnect()
+                            stopProcessing()
+                            rhythmBuffer = []
+                            prediction = "—"
+                            rhythmClassCounts = ["NSR": 0, "AFib": 0, "AFL": 0, "VT": 0, "Other": 0]
+                            dismiss()
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(.gray)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.gray)
                 }
             }
         }
         .padding()
+        .background(backgroundColor)
+        .preferredColorScheme(settings.darkModeEnabled ? .dark : .light)
         .onAppear {
             ble.disconnect()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -104,7 +145,7 @@ struct RhythmAnalysisView: View {
         }
 
         if rhythmBuffer.count >= windowLength {
-            let segment = Array(rhythmBuffer.suffix(windowLength))
+            _ = Array(rhythmBuffer.suffix(windowLength))
             let possibleClasses = ["NSR", "AFib", "AFL", "VT", "Other"]
             if let randomClass = possibleClasses.randomElement() {
                 prediction = randomClass
@@ -115,3 +156,4 @@ struct RhythmAnalysisView: View {
         }
     }
 }
+

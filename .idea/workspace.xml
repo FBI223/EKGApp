@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="extended app function extra mode etc">
-      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp.xcodeproj/project.xcworkspace/xcuserdata/marcinsztukowski.xcuserdatad/UserInterfaceState.xcuserstate" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp.xcodeproj/project.xcworkspace/xcuserdata/marcinsztukowski.xcuserdatad/UserInterfaceState.xcuserstate" afterDir="false" />
-    </list>
+    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="added settings better gui no hardcode etc" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -378,7 +376,7 @@
       <workItem from="1746695014850" duration="3768000" />
       <workItem from="1747243981459" duration="1672000" />
       <workItem from="1747393786430" duration="5000" />
-      <workItem from="1747399753606" duration="640000" />
+      <workItem from="1747399753606" duration="1268000" />
     </task>
     <task id="LOCAL-00001" summary="quite ok model for recognizing 'N' 'V' 'A' 'S' 'L' 'R' classes">
       <option name="closed" value="true" />
@@ -548,7 +546,15 @@
       <option name="project" value="LOCAL" />
       <updated>1747399787433</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="added settings better gui no hardcode etc">
+      <option name="closed" value="true" />
+      <created>1747414302798</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1747414302798</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -587,7 +593,8 @@
     <MESSAGE value="pytorch model have smote and more examples, added stats and saved models" />
     <MESSAGE value="added mlmodels" />
     <MESSAGE value="extended app function extra mode etc" />
-    <option name="LAST_COMMIT_MESSAGE" value="extended app function extra mode etc" />
+    <MESSAGE value="added settings better gui no hardcode etc" />
+    <option name="LAST_COMMIT_MESSAGE" value="added settings better gui no hardcode etc" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ECG_PROJ$test_augmentation__2_.coverage" NAME="test_augmentation (2) Coverage Results" MODIFIED="1742918352875" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />

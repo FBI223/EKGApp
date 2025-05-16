@@ -4,21 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="added mlmodels">
-      <change afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Models/ECGClassifier.mlpackage/Data/com.apple.CoreML/ECGClassifier.mlmodel" afterDir="false" />
+    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="dynamiczne okno">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp.xcodeproj/project.xcworkspace/xcuserdata/marcinsztukowski.xcuserdatad/UserInterfaceState.xcuserstate" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp.xcodeproj/project.xcworkspace/xcuserdata/marcinsztukowski.xcuserdatad/UserInterfaceState.xcuserstate" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp.xcodeproj/xcuserdata/marcinsztukowski.xcuserdatad/xcschemes/xcschememanagement.plist" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp.xcodeproj/xcuserdata/marcinsztukowski.xcuserdatad/xcschemes/xcschememanagement.plist" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Models/ECGClassifier.mlpackage/Data/com.apple.CoreML/FeatureDescriptions.json" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Models/ECGClassifier.mlpackage/Data/com.apple.CoreML/FeatureDescriptions.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Models/ECGClassifier.mlpackage/Data/com.apple.CoreML/Metadata.json" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Models/ECGClassifier.mlpackage/Data/com.apple.CoreML/Metadata.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Models/ECGClassifier.mlpackage/Data/com.apple.CoreML/model_fold1.mlmodel" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Models/ECGClassifier.mlpackage/Manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Models/ECGClassifier.mlpackage/Manifest.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Services/EKGBLEManager.swift" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Services/EKGBLEManager.swift" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Services/EKGClassifier.swift" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Services/EKGClassifier.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Services/EKGRecorder.swift" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Services/Resampler.swift" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Services/Resampler.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Utilities/Context.swift" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Utilities/RPeakDetector.swift" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Utilities/RPeakDetector.swift" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Views/ContentView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Views/ContentView.swift" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -277,11 +266,11 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Python.conversion" />
       <item itemvalue="Python.convert2" />
-      <item itemvalue="Python.rythm_model" />
       <item itemvalue="Python.main" />
       <item itemvalue="Python.main_torch" />
-      <item itemvalue="Python.conversion" />
+      <item itemvalue="Python.rythm_model" />
     </list>
     <recent_temporary>
       <list>
@@ -391,6 +380,7 @@
       <workItem from="1746653728204" duration="726000" />
       <workItem from="1746695014850" duration="3768000" />
       <workItem from="1747243981459" duration="1672000" />
+      <workItem from="1747393786430" duration="5000" />
     </task>
     <task id="LOCAL-00001" summary="quite ok model for recognizing 'N' 'V' 'A' 'S' 'L' 'R' classes">
       <option name="closed" value="true" />

@@ -19,6 +19,8 @@ class EKGClassifier {
         let maxIdx = (0..<5).max { output[$0].floatValue < output[$1].floatValue }!
         return invClassMap[maxIdx] ?? "?"
     }
+    
+    
     private func resampleLinear(signal: [Float], from srcHz: Float, to dstHz: Float, outputCount: Int) -> [Float] {
         let scale = dstHz / srcHz
         guard signal.count >= 2 else {

@@ -21,7 +21,7 @@ class AppSettings: ObservableObject {
     @Published var windowLengthBeatResampled: Int = 540
     
     @Published var analysisWindowSeconds: Float = 1.5
-    @Published var darkModeEnabled: Bool = false
+    @Published var darkModeEnabled: Bool = true
     @Published var showDebugInfo: Bool = true
     @Published var sampleRateIn: Int = 128
     @Published var sampleRateOut: Int = 360

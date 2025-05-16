@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="updated info.plist ( orientation key )" />
+    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="gui fixes plus added icons">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp.xcodeproj/project.xcworkspace/xcuserdata/marcinsztukowski.xcuserdatad/UserInterfaceState.xcuserstate" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp.xcodeproj/project.xcworkspace/xcuserdata/marcinsztukowski.xcuserdatad/UserInterfaceState.xcuserstate" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Views/BeatAnalysisView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Views/BeatAnalysisView.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Views/RhythmAnalysisView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Views/RhythmAnalysisView.swift" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -376,7 +381,7 @@
       <workItem from="1746695014850" duration="3768000" />
       <workItem from="1747243981459" duration="1672000" />
       <workItem from="1747393786430" duration="5000" />
-      <workItem from="1747399753606" duration="1702000" />
+      <workItem from="1747399753606" duration="3638000" />
     </task>
     <task id="LOCAL-00001" summary="quite ok model for recognizing 'N' 'V' 'A' 'S' 'L' 'R' classes">
       <option name="closed" value="true" />
@@ -570,7 +575,15 @@
       <option name="project" value="LOCAL" />
       <updated>1747414744030</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="gui fixes plus added icons">
+      <option name="closed" value="true" />
+      <created>1747415755712</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1747415755712</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -612,7 +625,8 @@
     <MESSAGE value="added settings better gui no hardcode etc" />
     <MESSAGE value="update internal settings ( xcode did this )" />
     <MESSAGE value="updated info.plist ( orientation key )" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated info.plist ( orientation key )" />
+    <MESSAGE value="gui fixes plus added icons" />
+    <option name="LAST_COMMIT_MESSAGE" value="gui fixes plus added icons" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ECG_PROJ$test_augmentation__2_.coverage" NAME="test_augmentation (2) Coverage Results" MODIFIED="1742918352875" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />

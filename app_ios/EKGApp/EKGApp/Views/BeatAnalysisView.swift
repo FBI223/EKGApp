@@ -33,99 +33,107 @@ struct BeatAnalysisView: View {
     private let classifier = EKGClassifier()
 
     var body: some View {
-        VStack(spacing: 16) {
-            if ble.connectedPeripheral == nil {
-                VStack(spacing: 10) {
-                    Text("Select ECG Device")
-                        .font(.headline)
-                        .foregroundColor(foregroundColor)
+        GeometryReader { geometry in
+            ScrollView {
+                VStack(spacing: 16) {
+                    if ble.connectedPeripheral == nil {
+                        VStack(spacing: 10) {
+                            Text("Select ECG Device")
+                                .font(.headline)
+                                .foregroundColor(foregroundColor)
 
-                    List(ble.devices, id: \.identifier) { device in
-                        Button {
-                            ble.connect(to: device)
-                        } label: {
+                            List(ble.devices, id: \.identifier) { device in
+                                Button {
+                                    ble.connect(to: device)
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "antenna.radiowaves.left.and.right")
+                                        Text(device.name ?? "Unknown")
+                                    }
+                                    .padding(8)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                                .foregroundColor(foregroundColor)
+                            }
+                            .listStyle(.plain)
+                            .frame(height: geometry.size.height * 0.5)
+                            .background(backgroundColor)
+                        }
+                        .padding(.horizontal)
+                    } else {
+                        VStack(spacing: 12) {
+                            Chart {
+                                let visible = Array(samples.suffix(maxWindowSize))
+                                ForEach(0..<visible.count, id: \.self) { i in
+                                    LineMark(
+                                        x: .value("Index", i),
+                                        y: .value("Voltage", visible[i])
+                                    )
+                                    .foregroundStyle(chartColor)
+                                }
+                            }
+                            .chartXScale(domain: 0...maxWindowSize)
+                            .chartYScale(domain: Double(settings.yAxisRange.lowerBound)...Double(settings.yAxisRange.upperBound))
+                            .frame(height: geometry.size.height * 0.35)
+                            .background(backgroundColor)
+                            .cornerRadius(10)
+                            .padding(.horizontal)
+
+                            Text("❤️ BPM: \(bpm)")
+                                .font(.title3)
+                                .bold()
+                                .foregroundColor(.red)
+
+                            Text("QRS Beat Count: \(qrsCount)")
+                                .font(.title3)
+                                .foregroundColor(foregroundColor)
+
                             HStack {
-                                Image(systemName: "antenna.radiowaves.left.and.right")
-                                Text(device.name ?? "Unknown")
+                                ForEach(["N", "S", "V", "F", "Q"], id: \.self) { k in
+                                    VStack {
+                                        Text(k)
+                                            .font(.caption2)
+                                            .foregroundColor(.secondary)
+                                        Text("\(classCounts[k] ?? 0)")
+                                            .font(.headline)
+                                            .foregroundColor(foregroundColor)
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                }
                             }
-                            .padding(8)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        .foregroundColor(foregroundColor)
-                    }
-                    .listStyle(.plain)
-                    .background(backgroundColor)
-                }
-            } else {
-                VStack(spacing: 12) {
-                    Chart {
-                        let visible = Array(samples.suffix(maxWindowSize))
-                        ForEach(0..<visible.count, id: \.self) { i in
-                            LineMark(
-                                x: .value("Index", i),
-                                y: .value("Voltage", visible[i])
-                            )
-                            .foregroundStyle(chartColor)
-                        }
-                    }
-                    .chartXScale(domain: 0...maxWindowSize)
-                    .chartYScale(domain: Double(settings.yAxisRange.lowerBound)...Double(settings.yAxisRange.upperBound))
-                    .frame(height: 250)
-                    .padding(.horizontal)
 
-                    
-        
-                    Text("❤️ BPM: \(bpm)")
-                        .font(.title3)
-                        .bold()
-                        .foregroundColor(.red)
-                    
-                    Text("QRS Beat Count: \(qrsCount)")
-                        .font(.title3)
-                        .foregroundColor(foregroundColor)
+                            HStack(spacing: 20) {
+                                Button(isProcessing ? "Stop" : "Start") {
+                                    isProcessing ? stopProcessing() : startProcessing()
+                                }
+                                .buttonStyle(.borderedProminent)
+                                .tint(isProcessing ? .red : .green)
 
-                    HStack {
-                        ForEach(["N", "S", "V", "F", "Q"], id: \.self) { k in
-                            VStack {
-                                Text(k)
-                                    .font(.caption2)
-                                    .foregroundColor(.secondary)
-                                Text("\(classCounts[k] ?? 0)")
-                                    .font(.headline)
-                                    .foregroundColor(foregroundColor)
+                                Button("Disconnect") {
+                                    ble.disconnect()
+                                    stopProcessing()
+                                    samples = []
+                                    qrsCount = 0
+                                    classCounts = ["N": 0, "S": 0, "V": 0, "F": 0, "Q": 0]
+                                    dismiss()
+                                }
+                                .buttonStyle(.borderedProminent)
+                                .tint(.gray)
                             }
-                            .frame(maxWidth: .infinity)
                         }
-                    }
-
-                    HStack(spacing: 20) {
-                        Button(isProcessing ? "Stop" : "Start") {
-                            isProcessing ? stopProcessing() : startProcessing()
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .tint(isProcessing ? .red : .green)
-
-                        Button("Disconnect") {
-                            ble.disconnect()
-                            stopProcessing()
-                            samples = []
-                            qrsCount = 0
-                            classCounts = ["N": 0, "S": 0, "V": 0, "F": 0, "Q": 0]
-                            dismiss()
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .tint(.gray)
+                        .padding(.horizontal)
                     }
                 }
+                .frame(minHeight: geometry.size.height)
             }
+            .background(backgroundColor.ignoresSafeArea())
         }
-        .padding()
-        .background(backgroundColor)
         .preferredColorScheme(settings.darkModeEnabled ? .dark : .light)
         .onAppear {
             ble.startScan()
         }
     }
+
 
     func startProcessing() {
         samples = []

@@ -14,51 +14,59 @@ struct ContentView: View {
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 24) {
-                HStack(spacing: 12) {
-                    Image(systemName: "bolt.horizontal.circle.fill")
-                        .foregroundColor(.green)
-                        .font(.title2)
-                    Text("Connected to ECG device")
-                        .font(.headline)
+            VStack(spacing: 32) {
+                // Górna ikona i tytuł
+                VStack(spacing: 8) {
+                    Image(systemName: "waveform.path.ecg.rectangle")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 60, height: 60)
+                        .foregroundColor(.red)
+                    Text("ECG App")
+                        .font(.largeTitle)
+                        .fontWeight(.semibold)
                         .foregroundColor(foregroundColor)
                 }
+                .padding(.top, 32)
 
-                NavigationLink(destination: BeatAnalysisView()) {
-                    Text("🔎 Beat Analysis")
-                        .font(.title2)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
-                }
 
-                NavigationLink(destination: RhythmAnalysisView()) {
-                    Text("📈 Rhythm Analysis")
-                        .font(.title2)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.purple)
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
-                }
+                // Przyciski
+                VStack(spacing: 16) {
+                    NavigationLink(destination: BeatAnalysisView()) {
+                        Text("📈 Beat Analysis")
+                            .font(.title2)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color(red: 0.39, green: 0.0, blue: 0.0)) // HEX #630000
+                            .foregroundColor(.white)
+                            .cornerRadius(16)
+                    }
 
-                NavigationLink(destination: SettingsView()) {
-                    Text("⚙️ Settings")
-                        .font(.title3)
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 24)
-                        .background(Color.gray.opacity(0.2))
-                        .foregroundColor(foregroundColor)
-                        .cornerRadius(10)
+                    NavigationLink(destination: RhythmAnalysisView()) {
+                        Text("📈 Rhythm Analysis")
+                            .font(.title2)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color(red: 0.39, green: 0.0, blue: 0.0)) // HEX #630000
+                            .foregroundColor(.white)
+                            .cornerRadius(16)
+                    }
+
+                    NavigationLink(destination: SettingsView()) {
+                        Text("⚙️ Settings")
+                            .font(.title2)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color(red: 0.39, green: 0.0, blue: 0.0)) // HEX #630000
+                            .foregroundColor(foregroundColor)
+                            .cornerRadius(16)
+                    }
                 }
 
                 Spacer()
             }
             .padding()
             .background(backgroundColor.ignoresSafeArea())
-            .navigationTitle("ECG App")
         }
         .preferredColorScheme(settings.darkModeEnabled ? .dark : .light)
     }

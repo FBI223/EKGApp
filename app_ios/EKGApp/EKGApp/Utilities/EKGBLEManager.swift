@@ -18,16 +18,38 @@ class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPer
         central = CBCentralManager(delegate: self, queue: nil)
     }
 
+    func reset() {
+        stopScan()
+        disconnect()
+        rawBuffer.removeAll()
+        devices.removeAll()
+        latestMetaMessage = nil
+        connectedPeripheral = nil
+        central.delegate = self
+        log("🔁 BLE Manager reset")
+    }
+
     func startScan() {
+        guard central.state == .poweredOn else {
+            statusMessage = "Bluetooth not available"
+            log("❌ Cannot scan, Bluetooth not powered on")
+            return
+        }
+
         devices.removeAll()
         statusMessage = "Scanning..."
         log("🔍 Scanning for devices...")
         central.scanForPeripherals(withServices: nil, options: nil)
     }
 
-    func connect(to device: CBPeripheral) {
-        connectedPeripheral = device
+    func stopScan() {
         central.stopScan()
+        log("🛑 Stopped scanning")
+    }
+
+    func connect(to device: CBPeripheral) {
+        stopScan()
+        connectedPeripheral = device
         device.delegate = self
         central.connect(device, options: nil)
         statusMessage = "Connecting to \(device.name ?? "Unknown")..."
@@ -36,22 +58,28 @@ class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPer
 
     func disconnect() {
         if let peripheral = connectedPeripheral {
+            peripheral.delegate = nil
             central.cancelPeripheralConnection(peripheral)
         }
         connectedPeripheral = nil
         rawBuffer.removeAll()
         devices.removeAll()
+        latestMetaMessage = nil
         statusMessage = "Disconnected"
         log("⛔ Disconnected")
-        startScan()
+
+        // Optional restart after short delay to ensure clean state
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.startScan()
+        }
     }
 
     func centralManagerDidUpdateState(_ c: CBCentralManager) {
+        log("📶 Central state: \(c.state.rawValue)")
         if c.state == .poweredOn {
             startScan()
         } else {
             statusMessage = "Bluetooth not available"
-            log("❌ Bluetooth not available")
         }
     }
 
@@ -101,11 +129,6 @@ class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPer
             }
         }
     }
-
-    
-
-
-
 
     func log(_ text: String) {
         DispatchQueue.main.async {

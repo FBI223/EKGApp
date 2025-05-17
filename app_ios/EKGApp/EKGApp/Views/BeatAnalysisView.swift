@@ -132,6 +132,11 @@ struct BeatAnalysisView: View {
         .onAppear {
             ble.startScan()
         }
+        
+        .onDisappear {
+            stopProcessing()
+            ble.reset()
+        }
     }
 
 

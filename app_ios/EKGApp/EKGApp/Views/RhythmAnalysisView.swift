@@ -22,6 +22,8 @@ struct RhythmAnalysisView: View {
     private let model = EKGClassifier()
 
     
+   
+    
     var body: some View {
         GeometryReader { geometry in
             ScrollView {
@@ -52,9 +54,14 @@ struct RhythmAnalysisView: View {
                         .padding(.horizontal)
                     } else {
                         VStack(spacing: 12) {
-                            Text("Rhythm Prediction: \(prediction)")
+                            Text("📊 Rhythm Prediction")
                                 .font(.title2)
+                                .bold()
                                 .foregroundColor(foregroundColor)
+
+                            Text(prediction)
+                                .font(.system(size: 32, weight: .semibold, design: .rounded))
+                                .foregroundColor(.orange)
 
                             Chart {
                                 let visible = Array(rhythmBuffer.suffix(windowLength))
@@ -120,8 +127,13 @@ struct RhythmAnalysisView: View {
                 ble.startScan()
             }
         }
-        .onDisappear { stopProcessing() }
+        .onDisappear {
+            stopProcessing()
+            ble.reset()
+        }
     }
+
+    
     
     func startProcessing() {
         rhythmBuffer = []

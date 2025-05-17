@@ -110,8 +110,8 @@ struct BeatAnalysisView: View {
                                 .tint(isProcessing ? .red : .green)
 
                                 Button("Disconnect") {
-                                    ble.disconnect()
                                     stopProcessing()
+                                    ble.reset()
                                     samples = []
                                     qrsCount = 0
                                     classCounts = ["N": 0, "S": 0, "V": 0, "F": 0, "Q": 0]

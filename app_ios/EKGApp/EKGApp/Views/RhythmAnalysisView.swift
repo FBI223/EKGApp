@@ -102,8 +102,8 @@ struct RhythmAnalysisView: View {
                                 .tint(isProcessing ? .red : .green)
 
                                 Button("Disconnect") {
-                                    ble.disconnect()
                                     stopProcessing()
+                                    ble.reset()
                                     rhythmBuffer = []
                                     prediction = "—"
                                     rhythmClassCounts = ["NSR": 0, "AFib": 0, "AFL": 0, "VT": 0, "Other": 0]

@@ -1,14 +1,21 @@
-import onnx
-import tensorflow as tf
-from onnx_tf.backend import prepare
+import torch
+import coremltools as ct
+from model import ECGResNet34  # załaduj klasę modelu
+import numpy as np
 
-onnx_model = onnx.load("training/onnx/model_fold3.onnx")
-tf_rep = prepare(onnx_model)
-tf_rep.export_graph("model_tf_fold3")
-print("✅ SavedModel zapisany → model_tf_fold3/")
+model = ECGResNet34(num_classes=9)
+model.load_state_dict(torch.load("model_multi.pt", map_location="cpu"))
+model.eval()
 
-converter = tf.lite.TFLiteConverter.from_saved_model("training/tflite/model_tf_fold3")
-tflite_model = converter.convert()
-with open("training/tflite/model_fold3.tflite", "wb") as f:
-    f.write(tflite_model)
-print("✅ Gotowe! model_fold1.tflite zapisany")
+example_input = torch.randn(1, 12, 5000)  # 12-lead ECG, 10s @ 500Hz
+traced = torch.jit.trace(model, example_input)
+
+mlmodel = ct.convert(
+    traced,
+    inputs=[ct.TensorType(shape=example_input.shape)],
+    compute_units=ct.ComputeUnit.ALL,
+    minimum_deployment_target=ct.target.iOS15,
+)
+
+mlmodel.save("ECGResNet34.mlmodel")
+print("✅ Zapisano ECGResNet34.mlmodel")

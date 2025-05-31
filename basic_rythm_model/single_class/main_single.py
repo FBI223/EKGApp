@@ -70,15 +70,16 @@ CPSC_CODES = [
     "164884008",  # TINV – T wave inversion
     "284470004",  # STD – ST depression
     "164909002",  # AF – Atrial fibrillation
-    "164931005",  # STE – ST elevation
     "428750005",  # PAC – Premature atrial contractions
     "164867002",  # ST – Sinus tachycardia
-    "164861001",  # LQRSV – Low QRS voltage
 ]
 
 
 CLASS2IDX = {code: i for i, code in enumerate(CPSC_CODES)}
 CLASS_NAMES = list(CLASS2IDX.keys())  # nazwy = kody
+
+
+
 
 
 
@@ -186,7 +187,32 @@ class SE_ResNet1D(nn.Module):
         x = torch.cat([x, demo], dim=1)  # (B, 130)
         return self.fc(x)
 
+# === LSTM-enhanced Model ===
+class SE_ResNet1D_LSTM(nn.Module):
+    def __init__(self, num_classes):
+        super().__init__()
+        self.stem = nn.Sequential(
+            nn.Conv1d(1, 32, 7, 2, 3, bias=False),
+            nn.BatchNorm1d(32), nn.ReLU(),
+            nn.MaxPool1d(3, 2, 1)
+        )
+        self.layer1 = ResidualBlock(32, 64, stride=2)
+        self.layer2 = ResidualBlock(64, 128, stride=2)
+        self.layer3 = ResidualBlock(128, 128, stride=2)
+        self.lstm = nn.LSTM(input_size=128, hidden_size=64, num_layers=1, batch_first=True, bidirectional=True)
+        self.fc = nn.Sequential(
+            nn.Linear(64*2 + 2, 64), nn.ReLU(), nn.Dropout(0.4), nn.Linear(64, num_classes)
+        )
 
+    def forward(self, x, demo):
+        x = self.stem(x)
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x = self.layer3(x)
+        x = x.permute(0, 2, 1)  # [B, T, C] for LSTM
+        _, (h_n, _) = self.lstm(x)
+        h_out = torch.cat([h_n[0], h_n[1]], dim=1)  # [B, 128]
+        return self.fc(torch.cat([h_out, demo], dim=1))
 
 
 # === Dataset z demografią ===
@@ -405,7 +431,7 @@ def parse_header(header_path):
 
 def train_single_label_model(model, train_loader, val_loader, num_epochs,
                              criterion, optimizer, scheduler, device,
-                             class_names, model_path="best_model.pt"):
+                             class_names, model_path="model_multi.pt"):
     early_stopping = EarlyStopping(patience=5)
     best_val_loss = float("inf")
 
@@ -431,11 +457,7 @@ def train_single_label_model(model, train_loader, val_loader, num_epochs,
                 output = model(x, demo)
                 loss = criterion(output, y)
                 val_loss += loss.item()
-                if output.shape[1] == 0:
-                    pred = torch.zeros_like(y)  # fallback to class 0
-                else:
-                    pred = torch.argmax(output, dim=1)
-
+                pred = torch.argmax(output, dim=1)
                 all_y.append(y.cpu())
                 all_preds.append(pred.cpu())
 
@@ -493,66 +515,6 @@ def train_single_label_model(model, train_loader, val_loader, num_epochs,
 
 
 
-
-
-
-
-def visualize_denoising_comparison(paths, n_samples=10, wavelet='bior2.6'):
-    from torch.utils.data import DataLoader
-    import random
-
-    idxs = random.sample(range(len(paths)), min(n_samples, len(paths)))
-    sampled_paths = [paths[i] for i in idxs]
-
-    for i, path in enumerate(sampled_paths):
-        try:
-            # === Załaduj i przetwórz surowy sygnał ===
-            raw_sig, meta = wfdb.rdsamp(path)
-            raw_sig = raw_sig.T.astype(np.float32)
-            fs = meta['fs'] if isinstance(meta, dict) else meta.fs
-
-            # === Resample ===
-            if fs != TARGET_FS:
-                n = int(raw_sig.shape[1] * TARGET_FS / fs)
-                raw_sig = resample(raw_sig, n, axis=1)
-
-            lead = raw_sig[LEAD_IDX]
-
-            # === Denoising ===
-            wavelet_len = pywt.Wavelet(wavelet).dec_len
-            max_level = pywt.dwt_max_level(len(lead), wavelet_len)
-            level = min(8, max_level)
-            coeffs = pywt.wavedec(lead, wavelet=wavelet, level=level)
-
-            for j in range(4, len(coeffs)):
-                sigma = np.median(np.abs(coeffs[j])) / 0.6745
-                threshold = 0.5 * sigma * np.sqrt(2 * np.log(len(coeffs[j])))
-                coeffs[j] = pywt.threshold(coeffs[j], threshold, mode='hard')
-
-            denoised_lead = pywt.waverec(coeffs, wavelet=wavelet)[:len(lead)]
-
-            # === Normalize both ===
-            def norm(s):
-                return (s - np.mean(s)) / (np.std(s) + 1e-8)
-
-            lead_norm = norm(lead)
-            denoised_norm = norm(denoised_lead)
-
-            # === Plot ===
-            plt.figure(figsize=(12, 4))
-            plt.plot(lead_norm, label='Before denoising')
-            plt.plot(denoised_norm, label='After denoising', alpha=0.8)
-            plt.title(f"Sample {i+1} — path: {os.path.basename(path)}")
-            plt.xlabel("Samples")
-            plt.ylabel("Amplitude (normalized)")
-            plt.legend()
-            plt.tight_layout()
-            plt.show()
-
-        except Exception as e:
-            print(f"[ERROR] Failed on {path}: {e}")
-
-
 if __name__ == "__main__":
     # === Załaduj dane ===
     print("📦 Ładowanie danych...")
@@ -574,11 +536,13 @@ if __name__ == "__main__":
 
     # === Model ===
     model = SE_ResNet1D(num_classes=len(CLASS2IDX)).to(DEVICE)
+    #model = SE_ResNet1D_LSTM(num_classes=len(CLASS2IDX)).to(DEVICE)
 
     # === Loss i optymalizator ===
     weights = compute_class_weight('balanced', classes=np.unique(labels), y=labels)
     class_weights = torch.tensor(weights, dtype=torch.float32).to(DEVICE)
-    criterion = nn.CrossEntropyLoss(weight=class_weights)
+    #criterion = nn.CrossEntropyLoss(weight=class_weights)
+    criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=LR)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=3, factor=0.5)
 
@@ -593,6 +557,6 @@ if __name__ == "__main__":
         scheduler=scheduler,
         device=DEVICE,
         class_names=CLASS_NAMES,
-        model_path="ecg_best_val_loss.pt"
+        model_path="model_single.pt"
     )
 

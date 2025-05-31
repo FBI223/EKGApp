@@ -9,8 +9,9 @@
       <excludeFolder url="file://$MODULE_DIR$/databases/cudb" />
       <excludeFolder url="file://$MODULE_DIR$/databases/nsrdb" />
       <excludeFolder url="file://$MODULE_DIR$/databases/mnist" />
+      <excludeFolder url="file://$MODULE_DIR$/databases/rythm" />
     </content>
-    <orderEntry type="jdk" jdkName="tf_convert" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="pytorch_cuda" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyDocumentationSettings">

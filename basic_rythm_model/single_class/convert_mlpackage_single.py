@@ -21,6 +21,7 @@ traced = torch.jit.trace(model, (example_input, example_demo))
 # === Konwersja do Core ML ===
 mlmodel = ct.convert(
     traced,
+    compute_precision=ct.precision.FLOAT16,
     inputs=[
         ct.TensorType(name="ecg", shape=(1, 1, 5000), dtype=np.float32),
         ct.TensorType(name="demo", shape=(1, 2), dtype=np.float32),

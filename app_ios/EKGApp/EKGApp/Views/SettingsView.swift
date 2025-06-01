@@ -10,22 +10,18 @@ import Combine
 class AppSettings: ObservableObject {
     static let shared = AppSettings()
 
-    
     @Published var samplesPerTick: Int = 10
-    @Published var updateInterval: Float = 0.05      // 50 ms
-    
-    
+    @Published var updateInterval: Float = 0.05
+
     @Published var windowLengthRythm: Int = 1280
     @Published var windowLengthBeat: Int = 192
     @Published var windowLengthRythmResampled: Int = 3600
     @Published var windowLengthBeatResampled: Int = 540
-    
+
     @Published var analysisWindowSeconds: Float = 1.5
     @Published var darkModeEnabled: Bool = true
     @Published var showDebugInfo: Bool = true
     @Published var sampleRateIn: Int = 128
-    @Published var sampleRateOut: Int = 360
-    @Published var maxBufferSize: Int = 5000
     @Published var yAxisRange: ClosedRange<Float> = -3...3
 }
 
@@ -34,14 +30,23 @@ class AppSettings: ObservableObject {
 
 
 
+
 struct SettingsView: View {
     @ObservedObject private var settings = AppSettings.shared
-    
+
+    @State private var inputRateText: String
+    @State private var rateError: String? = nil
+
+    init() {
+        _inputRateText = State(initialValue: "\(AppSettings.shared.sampleRateIn)")
+    }
+
     var backgroundColor: Color { settings.darkModeEnabled ? .black : .white }
     var foregroundColor: Color { settings.darkModeEnabled ? .white : .black }
     var accentColor: Color { settings.darkModeEnabled ? .cyan : .blue }
 
     var body: some View {
+        
         Form {
             // Display
             Section(header: Text("🌙 Display").foregroundColor(accentColor)) {
@@ -50,30 +55,23 @@ struct SettingsView: View {
             }
 
             // Processing
+        
             Section(header: Text("⚙️ Processing Settings").foregroundColor(accentColor)) {
-                Picker("Input Sample Rate", selection: $settings.sampleRateIn) {
-                    Text("128 Hz").tag(128)
-                    Text("250 Hz").tag(250)
-                    Text("360 Hz").tag(360)
-                }
-                .pickerStyle(.segmented)
-
-                Picker("Output Sample Rate", selection: $settings.sampleRateOut) {
-                    Text("128 Hz").tag(128)
-                    Text("360 Hz").tag(360)
-                    Text("500 Hz").tag(500)
-                }
-                .pickerStyle(.segmented)
-
-                Stepper(value: $settings.maxBufferSize, in: 1000...20000, step: 1000) {
-                    Text("Max Buffer: \(settings.maxBufferSize) samples")
-                }
-
                 VStack(alignment: .leading) {
-                    Text("Analysis Window: \(settings.analysisWindowSeconds, specifier: "%.1f") sec")
-                    Slider(value: $settings.analysisWindowSeconds, in: 1.0...3.0, step: 0.1)
+                    Text("Sample Rate In: \(settings.sampleRateIn) Hz")
+                        .font(.headline)
+
+                    Picker("Sample Rate", selection: $settings.sampleRateIn) {
+                        ForEach(100...500, id: \.self) { rate in
+                            Text("\(rate) Hz").tag(rate)
+                        }
+                    }
+                    .pickerStyle(.wheel)
+                    .frame(height: 150) // wysokość widocznego pokrętła
+                    .clipped()
                 }
-                .padding(.top, 4)
+
+
             }
 
             // Chart
@@ -97,3 +95,6 @@ struct SettingsView: View {
         .preferredColorScheme(settings.darkModeEnabled ? .dark : .light)
     }
 }
+
+
+

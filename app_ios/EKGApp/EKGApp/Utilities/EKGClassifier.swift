@@ -14,7 +14,7 @@ class EKGClassifier {
         let resampled = resampleLinear(
             signal: input,
             from: Float(settings.sampleRateIn),
-            to: Float(settings.sampleRateOut),
+            to: Float(360),
             outputCount: settings.windowLengthBeatResampled
         )
 

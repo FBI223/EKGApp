@@ -11,19 +11,19 @@ from sklearn.metrics import (
     ConfusionMatrixDisplay
 )
 import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.utils.class_weight import compute_class_weight
 import random
 from tqdm import tqdm
 import torch
 import torch.nn as nn
-
+from collections import Counter
+import matplotlib.pyplot as plt
 
 # === Ustawienia ===
 BATCH_SIZE = 64
 VAL_RATIO = 0.15
 TEST_RATIO = 0.15
-NUM_EPOCHS = 30
+NUM_EPOCHS = 50
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 SEED=42
@@ -40,7 +40,7 @@ SEG_LEN = TARGET_FS * SEG_DUR  # 5000 samples
 AGE_MEAN = 60.0
 
 BASE_PATH = "/home/msztu223/PycharmProjects/ECG_PROJ/databases/challenge2020_data/training"
-SUBSETS = ['cpsc_2018', 'cpsc_2018_extra'  ]
+SUBSETS = ['cpsc_2018', 'cpsc_2018_extra'   ]
 
 
 wavelet = 'bior2.6'
@@ -49,37 +49,32 @@ threshold_scale = 0.3
 threshold_mode = 'soft'
 
 
-# === Mapowanie kodów równoważnych (używane tylko przy normalizacji etykiet) ===
-CODE_EQUIV = {
-    "17338001": "428750005",   # SVPB → PAC
-    "47665007": "428750005",   # Atrial premature beat → PAC
-    "164890007": "164889003",  # CRBBB → LBBB
-    "39732003": "59118001",    # Sinus rhythm → NSR (główny kod do NSR!)
-    "164896001": "59118001",   # NSR (alternatywny kod, też NSR)
-    "733534002": "284470004",  # MI with STD → STD
-    "111975006": "164873001",  # STEMI → STE
-}
 
-# Używane tylko wybrane klasy z dokładnie jednym label
+
 CPSC_CODES = [
     "59118001",   # NSR – Normal sinus rhythm
     "164889003",  # LBBB – Left bundle branch block
-    "426783006",  # IAVB – 1st degree AV block
+    "426783006",  # IAVB – 1st degree AV blockdis
     "429622005",  # SVT – Supraventricular tachycardia
-    "270492004",  # PVC – Premature ventricular contractions
+    "270492004",  # PVC – Premature ventricular contraction
     "164884008",  # TINV – T wave inversion
-    "284470004",  # STD – ST depression
-    "164909002",  # AF – Atrial fibrillation
+    "164909002",  # AF – Atrial fibrillation ✅
     "428750005",  # PAC – Premature atrial contractions
-    "164867002",  # ST – Sinus tachycardia
 ]
+
+
+
+CODE_EQUIV = {
+    "39732003": "59118001",     # Sinus rhythm → NSR
+    "164896001": "59118001",    # Alternate NSR code
+    "17338001": "428750005",    # SVPB → PAC
+    "47665007": "428750005",    # Atrial premature beat → PAC
+    "284470004": "164884008",   # Alt code for TINV
+}
 
 
 CLASS2IDX = {code: i for i, code in enumerate(CPSC_CODES)}
 CLASS_NAMES = list(CLASS2IDX.keys())  # nazwy = kody
-
-
-
 
 
 
@@ -102,7 +97,6 @@ class EarlyStopping:
 
 
 
-
 class SEBlock(nn.Module):
     def __init__(self, in_channels, reduction=8):
         super().__init__()
@@ -116,8 +110,8 @@ class SEBlock(nn.Module):
 
     def forward(self, x):
         b, c, _ = x.size()
-        y = self.pool(x).view(b, c)
-        y = self.fc(y).view(b, c, 1)
+        y = self.pool(x).reshape(b, c)
+        y = self.fc(y).reshape(b, c, 1)
         return x * y
 
 
@@ -143,14 +137,11 @@ class ResidualBlock(nn.Module):
 
     def forward(self, x):
         identity = self.downsample(x)
-
         out = self.relu(self.bn1(self.conv1(x)))
         out = self.bn2(self.conv2(out))
         out = self.se(out)
-
         out += identity
         return self.relu(out)
-
 
 
 class SE_ResNet1D(nn.Module):
@@ -169,7 +160,6 @@ class SE_ResNet1D(nn.Module):
 
         self.pool = nn.AdaptiveAvgPool1d(1)
 
-        # Demografia: wiek + płeć → 2 dodatkowe cechy
         self.fc = nn.Sequential(
             nn.Linear(128 + 2, 64),
             nn.ReLU(),
@@ -182,37 +172,10 @@ class SE_ResNet1D(nn.Module):
         x = self.layer1(x)
         x = self.layer2(x)
         x = self.layer3(x)
-        x = self.pool(x).squeeze(-1)   # (B, 128)
-
+        x = self.pool(x)  # (B, 128, 1)
+        x = torch.reshape(x, (x.size(0), -1))  # (B, 128)
         x = torch.cat([x, demo], dim=1)  # (B, 130)
         return self.fc(x)
-
-# === LSTM-enhanced Model ===
-class SE_ResNet1D_LSTM(nn.Module):
-    def __init__(self, num_classes):
-        super().__init__()
-        self.stem = nn.Sequential(
-            nn.Conv1d(1, 32, 7, 2, 3, bias=False),
-            nn.BatchNorm1d(32), nn.ReLU(),
-            nn.MaxPool1d(3, 2, 1)
-        )
-        self.layer1 = ResidualBlock(32, 64, stride=2)
-        self.layer2 = ResidualBlock(64, 128, stride=2)
-        self.layer3 = ResidualBlock(128, 128, stride=2)
-        self.lstm = nn.LSTM(input_size=128, hidden_size=64, num_layers=1, batch_first=True, bidirectional=True)
-        self.fc = nn.Sequential(
-            nn.Linear(64*2 + 2, 64), nn.ReLU(), nn.Dropout(0.4), nn.Linear(64, num_classes)
-        )
-
-    def forward(self, x, demo):
-        x = self.stem(x)
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-        x = x.permute(0, 2, 1)  # [B, T, C] for LSTM
-        _, (h_n, _) = self.lstm(x)
-        h_out = torch.cat([h_n[0], h_n[1]], dim=1)  # [B, 128]
-        return self.fc(torch.cat([h_out, demo], dim=1))
 
 
 # === Dataset z demografią ===
@@ -242,42 +205,9 @@ class ECGDatasetSingleLabelWithDemo(Dataset):
         std = sig.std(axis=1, keepdims=True) + 1e-8
         return (sig - mean) / std
 
-    def wavelet_denoise_dynamic(self, sig, wavelet='bior2.6', start_thresh_level=4):
-        denoised = []
-        wavelet_len = pywt.Wavelet(wavelet).dec_len
-
-        for lead in sig:
-            max_level = pywt.dwt_max_level(len(lead), wavelet_len)
-            level = min(8, max_level)
-            coeffs = pywt.wavedec(lead, wavelet=wavelet, level=level)
-
-            # Bezpieczne wyznaczenie base_sigma
-            base_detail = coeffs[-1]
-            if base_detail.size == 0 or not np.all(np.isfinite(base_detail)):
-                base_sigma = 1.0
-            else:
-                base_sigma = np.median(np.abs(base_detail)) / 0.6745
-                if not np.isfinite(base_sigma) or base_sigma <= 1e-6:
-                    base_sigma = 1.0
-
-            for i in range(start_thresh_level, len(coeffs)):
-                if coeffs[i].size == 0 or not np.all(np.isfinite(coeffs[i])):
-                    continue
-                sigma = np.median(np.abs(coeffs[i])) / 0.6745
-                if not np.isfinite(sigma) or sigma <= 1e-6:
-                    continue
-                ratio = sigma / base_sigma
-                dynamic_scale = min(1.5, max(0.3, ratio))
-                threshold = dynamic_scale * sigma * np.sqrt(2 * np.log(len(coeffs[i])))
-                mode = 'soft' if dynamic_scale < 0.7 else 'hard'
-                coeffs[i] = pywt.threshold(coeffs[i], threshold, mode=mode)
-
-            denoised_lead = pywt.waverec(coeffs, wavelet=wavelet)
-            denoised.append(denoised_lead[:lead.shape[0]])
-
-        return np.vstack(denoised)
 
     def wavelet_denoise(self, sig, wavelet='bior2.6', start_thresh_level=4, threshold_scale=0.5, threshold_mode='hard'):
+
         denoised = []
         wavelet_len = pywt.Wavelet(wavelet).dec_len
 
@@ -380,7 +310,7 @@ def load_single_label_paths_and_labels(class2idx):
             # Zostaw tylko dozwolone klasy
             codes = [c for c in codes if c in class2idx]
             if len(codes) != 1:
-                continue  # pomiń multi-label lub brakujące klasy
+                continue  # pomiń multi-label lub brakujące etykiety
 
             label_idx = class2idx[codes[0]]
             paths.append(rec_path)
@@ -392,7 +322,7 @@ def load_single_label_paths_and_labels(class2idx):
 
 
 
-def parse_header(header_path):
+def parse_header_old(header_path):
     age, sex, codes = None, None, []
 
     try:
@@ -426,6 +356,38 @@ def parse_header(header_path):
     return age, sex, codes
 
 
+def parse_header(header_path):
+    age, sex, codes = None, None, []
+
+    try:
+        with open(header_path, 'r') as f:
+            for line in f:
+                if line.startswith('# Age:'):
+                    try:
+                        age_val = float(line.split(':')[1].strip())
+                        if np.isnan(age_val) or age_val < 0 or age_val > 110:
+                            age = None
+                        else:
+                            age = age_val
+                    except:
+                        age = None
+                elif line.startswith('# Sex:'):
+                    sex_str = line.split(':')[1].strip().lower()
+                    sex = 1.0 if 'female' in sex_str else 0.0
+                elif 'Dx:' in line:
+                    raw = line.split(':')[1].split(',')
+                    codes = [CODE_EQUIV.get(c.strip(), c.strip()) for c in raw]
+    except Exception as e:
+        print(f"[ERROR] parse_header failed for {header_path}: {e}")
+
+
+    # fallback na brak wieku/płci
+    if age is None:
+        age = AGE_MEAN
+    if sex is None:
+        sex = 0.0
+
+    return age, sex, codes
 
 
 
@@ -514,8 +476,22 @@ def train_single_label_model(model, train_loader, val_loader, num_epochs,
 
 
 
+def plot_class_histogram(labels, class_names, fname="histogram_klas.png"):
+    label_counts = Counter(labels)
+    keys_sorted = sorted(set(labels))
+    plt.figure(figsize=(8, 4))
+    plt.bar([class_names[k] for k in keys_sorted],
+            [label_counts[k] for k in keys_sorted])
+    plt.xticks(rotation=45)
+    plt.title("Histogram liczności klas (po filtracji)")
+    plt.ylabel("Liczba próbek")
+    plt.tight_layout()
+    plt.savefig(fname)
+    plt.show()
+
 
 if __name__ == "__main__":
+    os.makedirs("models", exist_ok=True)
     # === Załaduj dane ===
     print("📦 Ładowanie danych...")
     paths, labels = load_single_label_paths_and_labels(CLASS2IDX)
@@ -525,6 +501,8 @@ if __name__ == "__main__":
     train_paths, val_paths, train_labels, val_labels = train_test_split(
         paths, labels, test_size=VAL_RATIO, random_state=SEED, stratify=labels
     )
+
+    plot_class_histogram(labels, CLASS_NAMES, fname="histogram_klas_przed_trenowaniem.png")
 
     print(f"✅ Train: {len(train_paths)} | Val: {len(val_paths)} | Total: {total}")
 
@@ -541,8 +519,8 @@ if __name__ == "__main__":
     # === Loss i optymalizator ===
     weights = compute_class_weight('balanced', classes=np.unique(labels), y=labels)
     class_weights = torch.tensor(weights, dtype=torch.float32).to(DEVICE)
-    #criterion = nn.CrossEntropyLoss(weight=class_weights)
-    criterion = nn.CrossEntropyLoss()
+    criterion = nn.CrossEntropyLoss(weight=class_weights)
+    #criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=LR)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=3, factor=0.5)
 

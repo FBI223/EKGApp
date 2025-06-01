@@ -1,0 +1,15 @@
+name: tflite_convert
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - numpy
+  - pip:
+      - torch==2.1.2
+      - onnx==1.14.1
+      - onnx-tf==1.10.0
+      - tensorflow==2.14.0
+      - tensorflow-probability[tf]
+      - tensorflow-addons==0.23.0

@@ -116,27 +116,7 @@ def load_multi_label_paths_and_labels():
                         labels.append((vec, age, sex))
     return paths, labels
 
-# === Dataset ===
-class ECGDatasetMultiLabel(Dataset):
-    def __init__(self, paths_labels):
-        self.data = paths_labels
 
-    def __len__(self):
-        return len(self.data)
-
-    def __getitem__(self, idx):
-        path, (label_vec, age, sex) = self.data[idx]
-        x, meta = wfdb.rdsamp(path)
-        sig = x.T.astype(np.float32)
-        fs = meta['fs'] if isinstance(meta, dict) else meta.fs
-        if fs != TARGET_FS:
-            sig = resample(sig, int(sig.shape[1] * TARGET_FS / fs), axis=1)
-        sig = sig[LEAD_IDX:LEAD_IDX+1, :SEG_LEN]
-        sig = (sig - sig.mean()) / (sig.std() + 1e-8)
-        x_tensor = torch.tensor(sig, dtype=torch.float32)
-        demo_tensor = torch.tensor([age, sex], dtype=torch.float32)
-        y_tensor = torch.tensor(label_vec, dtype=torch.float32)
-        return x_tensor, demo_tensor, y_tensor
 
 # === Model ===
 class SEBlock(nn.Module):
@@ -196,36 +176,6 @@ class SE_ResNet1D(nn.Module):
         x = self.layer3(x)
         x = self.pool(x).squeeze(-1)
         return self.fc(torch.cat([x, demo], dim=1))
-
-
-# === LSTM-enhanced Model ===
-class SE_ResNet1D_LSTM(nn.Module):
-    def __init__(self, num_classes):
-        super().__init__()
-        self.stem = nn.Sequential(
-            nn.Conv1d(1, 32, 7, 2, 3, bias=False),
-            nn.BatchNorm1d(32), nn.ReLU(),
-            nn.MaxPool1d(3, 2, 1)
-        )
-        self.layer1 = ResidualBlock(32, 64, stride=2)
-        self.layer2 = ResidualBlock(64, 128, stride=2)
-        self.layer3 = ResidualBlock(128, 128, stride=2)
-        self.lstm = nn.LSTM(input_size=128, hidden_size=64, num_layers=1, batch_first=True, bidirectional=True)
-        self.fc = nn.Sequential(
-            nn.Linear(64*2 + 2, 64), nn.ReLU(), nn.Dropout(0.4), nn.Linear(64, num_classes)
-        )
-
-    def forward(self, x, demo):
-        x = self.stem(x)
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-        x = x.permute(0, 2, 1)  # [B, T, C] for LSTM
-        _, (h_n, _) = self.lstm(x)
-        h_out = torch.cat([h_n[0], h_n[1]], dim=1)  # [B, 128]
-        return self.fc(torch.cat([h_out, demo], dim=1))
-
-
 
 class ECGDatasetMultiLabelWithDemo(Dataset):
     def __init__(self, data, seg_len=SEG_LEN, target_fs=TARGET_FS):
@@ -321,9 +271,9 @@ def train(model, train_loader, val_loader, criterion, optimizer, scheduler):
                 x, demo = x.to(DEVICE), demo.to(DEVICE)
                 out = model(x, demo)
                 prob = torch.sigmoid(out).cpu().numpy()
-                pred = (prob > 0.7).astype(int)
-                fallback = pred.sum(axis=1) == 0
-                pred[fallback, CLASS2IDX["59118001"]] = 1
+                pred = (prob > 0.64 ).astype(int)
+                if pred.sum() == 0:
+                    pred[np.argmax(prob)] = 1
                 y_true.append(y.numpy())
                 y_pred.append(pred)
 
@@ -374,7 +324,7 @@ def train(model, train_loader, val_loader, criterion, optimizer, scheduler):
 
         if f1 > best_f1:
             best_f1 = f1
-            torch.save(model.state_dict(), "model_multi.pt")
+            torch.save(model.state_dict(), "models/model_multi.pt")
         scheduler.step(total_loss)
 
 def collate_skip_none(batch):
@@ -385,6 +335,8 @@ def collate_skip_none(batch):
 
 # === Main ===
 if __name__ == '__main__':
+    os.makedirs("models", exist_ok=True)
+
     paths, labels = load_multi_label_paths_and_labels()
     data = list(zip(paths, labels))
     train_data, val_data = train_test_split(data, test_size=VAL_RATIO, random_state=SEED)

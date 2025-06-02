@@ -1,8 +1,11 @@
 
 from onnx_tf.backend import prepare
 import onnx
+import numpy as np
 
 
-onnx_model = onnx.load("model 3 no st  no georgia/model.onnx")
+SAVE_NAME = "model_mobile_single"
+
+onnx_model = onnx.load( SAVE_NAME + ".onnx")
 tf_rep = prepare(onnx_model)
-tf_rep.export_graph("model_tf")
+tf_rep.export_graph(SAVE_NAME + "_tf")

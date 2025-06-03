@@ -30,7 +30,7 @@ VAL_RATIO = 0.15
 TEST_RATIO = 0.15
 NUM_EPOCHS = 100
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-NSR_MAX_COUNT= 3500
+NSR_MAX_COUNT= 6000
 
 SEED=42
 random.seed(SEED)
@@ -95,7 +95,6 @@ CODE_EQUIV = {
 
 
     # === AV Blocks ===
-    "428750005": "AV_BLOCK",  # I degree AVB
     "164865005": "AV_BLOCK",  # II degree AVB
     "427393009": "AV_BLOCK",  # III degree AVB
     "59931005": "AV_BLOCK",  # AV dissociation (czasem stosowane)
@@ -887,7 +886,7 @@ def prepare_dataset(npz_dir=".", nsr_idx=CLASS2IDX["NSR"], nsr_max=NSR_MAX_COUNT
     )
 
     # === Augmentacja
-    multiply_map = build_multiply_map_auto_balanced(y_train, class_names=CLASS_NAMES, nsr_code="NSR", factor=0.8)
+    multiply_map = build_multiply_map_auto_balanced(y_train, class_names=CLASS_NAMES, nsr_code="NSR", factor=0.5)
 
     X_train_aug, y_train_aug, d_train_aug = augment_dataset(X_train, y_train, d_train, class_names, multiply_map)
     save_augmented_dataset_to_npz(X_train_aug, d_train_aug, y_train_aug, npz_dir)

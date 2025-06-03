@@ -1,13 +1,13 @@
 
 import torch
 from main_single import N_CLASSES , SEG_LEN , AGE_MEAN , SAVE_NAME
-from main_single import SE_MobileNet1D
+from main_single import SE_MobileNet1D_noLSTM
 
 OPSET_VERSION = 11
 
 
 # Załaduj model
-model = SE_MobileNet1D(num_classes=N_CLASSES)
+model = SE_MobileNet1D_noLSTM(num_classes=N_CLASSES)
 model.load_state_dict(torch.load(SAVE_NAME + ".pt", map_location="cpu"))
 model.eval()
 # Przykładowe wejście

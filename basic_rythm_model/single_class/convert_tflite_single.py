@@ -2,7 +2,7 @@
 import tensorflow as tf
 
 
-SAVE_NAME = "model_mobile_single.pt"
+SAVE_NAME = "model_mobile_single"
 
 # Załaduj zapisany model
 converter = tf.lite.TFLiteConverter.from_saved_model( SAVE_NAME + "_tf")

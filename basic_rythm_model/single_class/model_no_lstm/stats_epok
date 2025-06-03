@@ -1,0 +1,493 @@
+/home/msztu223/miniconda3/envs/pytorch_cuda/bin/python /home/msztu223/PycharmProjects/ECG_PROJ/basic_rythm_model/single_class/main_single.py
+✅ Znaleziono .npz – wczytywanie z pamięci
+✅ Dane gotowe: Train: 22796 | Val: 1900
+Epoch 1 [train]: 100%|██████████| 357/357 [00:10<00:00, 34.50it/s]
+Epoch 1 [val]: 100%|██████████| 30/30 [00:00<00:00, 126.76it/s]
+
+📊 Epoch 1/100
+Train Loss: 1.2380 | Val Loss: 1.2293 | Acc: 0.5668
+
+Per-class metrics:
+NSR    | Precision: 0.553 | Recall: 0.720 | F1: 0.626
+AF_FLUTTER | Precision: 0.670 | Recall: 0.841 | F1: 0.746
+PAC    | Precision: 0.526 | Recall: 0.126 | F1: 0.203
+PVC    | Precision: 0.460 | Recall: 0.655 | F1: 0.540
+BBB    | Precision: 0.553 | Recall: 0.272 | F1: 0.365
+SVT    | Precision: 0.319 | Recall: 0.659 | F1: 0.430
+AV_BLOCK | Precision: 0.599 | Recall: 0.431 | F1: 0.501
+TORSADES | Precision: 0.800 | Recall: 0.976 | F1: 0.879
+
+Macro F1: 0.5362 | Weighted F1: 0.5433
+💾 Zapisano model do model_mobile_single.pt
+Epoch 2 [train]: 100%|██████████| 357/357 [00:10<00:00, 34.90it/s]
+Epoch 2 [val]: 100%|██████████| 30/30 [00:00<00:00, 131.38it/s]
+
+📊 Epoch 2/100
+Train Loss: 0.8999 | Val Loss: 1.1170 | Acc: 0.5947
+
+Per-class metrics:
+NSR    | Precision: 0.718 | Recall: 0.510 | F1: 0.597
+AF_FLUTTER | Precision: 0.844 | Recall: 0.763 | F1: 0.801
+PAC    | Precision: 0.596 | Recall: 0.352 | F1: 0.443
+PVC    | Precision: 0.530 | Recall: 0.800 | F1: 0.638
+BBB    | Precision: 0.389 | Recall: 0.393 | F1: 0.391
+SVT    | Precision: 0.341 | Recall: 0.705 | F1: 0.459
+AV_BLOCK | Precision: 0.523 | Recall: 0.638 | F1: 0.575
+TORSADES | Precision: 0.864 | Recall: 0.927 | F1: 0.894
+
+Macro F1: 0.5997 | Weighted F1: 0.5948
+💾 Zapisano model do model_mobile_single.pt
+Epoch 3 [train]: 100%|██████████| 357/357 [00:10<00:00, 34.64it/s]
+Epoch 3 [val]: 100%|██████████| 30/30 [00:00<00:00, 133.43it/s]
+
+📊 Epoch 3/100
+Train Loss: 0.8245 | Val Loss: 1.0945 | Acc: 0.6074
+
+Per-class metrics:
+NSR    | Precision: 0.727 | Recall: 0.537 | F1: 0.618
+AF_FLUTTER | Precision: 0.755 | Recall: 0.837 | F1: 0.794
+PAC    | Precision: 0.467 | Recall: 0.541 | F1: 0.501
+PVC    | Precision: 0.480 | Recall: 0.812 | F1: 0.604
+BBB    | Precision: 0.646 | Recall: 0.325 | F1: 0.432
+SVT    | Precision: 0.297 | Recall: 0.750 | F1: 0.426
+AV_BLOCK | Precision: 0.585 | Recall: 0.571 | F1: 0.578
+TORSADES | Precision: 0.812 | Recall: 0.951 | F1: 0.876
+
+Macro F1: 0.6037 | Weighted F1: 0.6053
+💾 Zapisano model do model_mobile_single.pt
+Epoch 4 [train]: 100%|██████████| 357/357 [00:10<00:00, 33.24it/s]
+Epoch 4 [val]: 100%|██████████| 30/30 [00:00<00:00, 126.95it/s]
+
+📊 Epoch 4/100
+Train Loss: 0.7699 | Val Loss: 1.0598 | Acc: 0.6347
+
+Per-class metrics:
+NSR    | Precision: 0.636 | Recall: 0.699 | F1: 0.666
+AF_FLUTTER | Precision: 0.785 | Recall: 0.852 | F1: 0.817
+PAC    | Precision: 0.582 | Recall: 0.491 | F1: 0.532
+PVC    | Precision: 0.606 | Recall: 0.812 | F1: 0.694
+BBB    | Precision: 0.696 | Recall: 0.335 | F1: 0.452
+SVT    | Precision: 0.294 | Recall: 0.841 | F1: 0.435
+AV_BLOCK | Precision: 0.619 | Recall: 0.502 | F1: 0.554
+TORSADES | Precision: 0.864 | Recall: 0.927 | F1: 0.894
+
+Macro F1: 0.6307 | Weighted F1: 0.6290
+💾 Zapisano model do model_mobile_single.pt
+Epoch 5 [train]: 100%|██████████| 357/357 [00:10<00:00, 33.66it/s]
+Epoch 5 [val]: 100%|██████████| 30/30 [00:00<00:00, 122.75it/s]
+
+📊 Epoch 5/100
+Train Loss: 0.7384 | Val Loss: 1.0968 | Acc: 0.6195
+
+Per-class metrics:
+NSR    | Precision: 0.745 | Recall: 0.490 | F1: 0.591
+AF_FLUTTER | Precision: 0.676 | Recall: 0.890 | F1: 0.768
+PAC    | Precision: 0.583 | Recall: 0.465 | F1: 0.517
+PVC    | Precision: 0.726 | Recall: 0.739 | F1: 0.733
+BBB    | Precision: 0.503 | Recall: 0.414 | F1: 0.454
+SVT    | Precision: 0.286 | Recall: 0.818 | F1: 0.424
+AV_BLOCK | Precision: 0.570 | Recall: 0.648 | F1: 0.606
+TORSADES | Precision: 0.864 | Recall: 0.927 | F1: 0.894
+
+Macro F1: 0.6234 | Weighted F1: 0.6164
+Epoch 6 [train]: 100%|██████████| 357/357 [00:10<00:00, 34.77it/s]
+Epoch 6 [val]: 100%|██████████| 30/30 [00:00<00:00, 132.69it/s]
+
+📊 Epoch 6/100
+Train Loss: 0.7073 | Val Loss: 0.9774 | Acc: 0.6700
+
+Per-class metrics:
+NSR    | Precision: 0.682 | Recall: 0.699 | F1: 0.690
+AF_FLUTTER | Precision: 0.812 | Recall: 0.855 | F1: 0.833
+PAC    | Precision: 0.577 | Recall: 0.566 | F1: 0.571
+PVC    | Precision: 0.744 | Recall: 0.758 | F1: 0.751
+BBB    | Precision: 0.670 | Recall: 0.403 | F1: 0.503
+SVT    | Precision: 0.361 | Recall: 0.795 | F1: 0.496
+AV_BLOCK | Precision: 0.618 | Recall: 0.606 | F1: 0.612
+TORSADES | Precision: 0.848 | Recall: 0.951 | F1: 0.897
+
+Macro F1: 0.6692 | Weighted F1: 0.6678
+💾 Zapisano model do model_mobile_single.pt
+Epoch 7 [train]: 100%|██████████| 357/357 [00:10<00:00, 35.20it/s]
+Epoch 7 [val]: 100%|██████████| 30/30 [00:00<00:00, 131.11it/s]
+
+📊 Epoch 7/100
+Train Loss: 0.6886 | Val Loss: 1.0274 | Acc: 0.6353
+
+Per-class metrics:
+NSR    | Precision: 0.642 | Recall: 0.705 | F1: 0.672
+AF_FLUTTER | Precision: 0.717 | Recall: 0.915 | F1: 0.804
+PAC    | Precision: 0.584 | Recall: 0.503 | F1: 0.541
+PVC    | Precision: 0.495 | Recall: 0.855 | F1: 0.627
+BBB    | Precision: 0.759 | Recall: 0.346 | F1: 0.475
+SVT    | Precision: 0.418 | Recall: 0.636 | F1: 0.505
+AV_BLOCK | Precision: 0.655 | Recall: 0.455 | F1: 0.537
+TORSADES | Precision: 0.867 | Recall: 0.951 | F1: 0.907
+
+Macro F1: 0.6334 | Weighted F1: 0.6233
+Epoch 8 [train]: 100%|██████████| 357/357 [00:10<00:00, 34.84it/s]
+Epoch 8 [val]: 100%|██████████| 30/30 [00:00<00:00, 133.34it/s]
+
+📊 Epoch 8/100
+Train Loss: 0.6713 | Val Loss: 0.9908 | Acc: 0.6563
+
+Per-class metrics:
+NSR    | Precision: 0.721 | Recall: 0.634 | F1: 0.675
+AF_FLUTTER | Precision: 0.797 | Recall: 0.887 | F1: 0.839
+PAC    | Precision: 0.509 | Recall: 0.516 | F1: 0.512
+PVC    | Precision: 0.635 | Recall: 0.842 | F1: 0.724
+BBB    | Precision: 0.443 | Recall: 0.586 | F1: 0.505
+SVT    | Precision: 0.630 | Recall: 0.659 | F1: 0.644
+AV_BLOCK | Precision: 0.655 | Recall: 0.533 | F1: 0.587
+TORSADES | Precision: 0.886 | Recall: 0.951 | F1: 0.918
+
+Macro F1: 0.6756 | Weighted F1: 0.6548
+Epoch 9 [train]: 100%|██████████| 357/357 [00:10<00:00, 34.27it/s]
+Epoch 9 [val]: 100%|██████████| 30/30 [00:00<00:00, 132.19it/s]
+
+📊 Epoch 9/100
+Train Loss: 0.6500 | Val Loss: 0.9760 | Acc: 0.6589
+
+Per-class metrics:
+NSR    | Precision: 0.661 | Recall: 0.701 | F1: 0.680
+AF_FLUTTER | Precision: 0.864 | Recall: 0.830 | F1: 0.847
+PAC    | Precision: 0.497 | Recall: 0.572 | F1: 0.532
+PVC    | Precision: 0.631 | Recall: 0.848 | F1: 0.724
+BBB    | Precision: 0.577 | Recall: 0.492 | F1: 0.531
+SVT    | Precision: 0.469 | Recall: 0.682 | F1: 0.556
+AV_BLOCK | Precision: 0.648 | Recall: 0.516 | F1: 0.575
+TORSADES | Precision: 0.851 | Recall: 0.976 | F1: 0.909
+
+Macro F1: 0.6691 | Weighted F1: 0.6561
+💾 Zapisano model do model_mobile_single.pt
+Epoch 10 [train]: 100%|██████████| 357/357 [00:10<00:00, 34.39it/s]
+Epoch 10 [val]: 100%|██████████| 30/30 [00:00<00:00, 126.35it/s]
+
+📊 Epoch 10/100
+Train Loss: 0.6320 | Val Loss: 0.9692 | Acc: 0.6689
+
+Per-class metrics:
+NSR    | Precision: 0.638 | Recall: 0.764 | F1: 0.695
+AF_FLUTTER | Precision: 0.772 | Recall: 0.898 | F1: 0.830
+PAC    | Precision: 0.682 | Recall: 0.365 | F1: 0.475
+PVC    | Precision: 0.683 | Recall: 0.758 | F1: 0.718
+BBB    | Precision: 0.686 | Recall: 0.377 | F1: 0.486
+SVT    | Precision: 0.432 | Recall: 0.727 | F1: 0.542
+AV_BLOCK | Precision: 0.644 | Recall: 0.589 | F1: 0.616
+TORSADES | Precision: 0.867 | Recall: 0.951 | F1: 0.907
+
+Macro F1: 0.6588 | Weighted F1: 0.6583
+💾 Zapisano model do model_mobile_single.pt
+Epoch 11 [train]: 100%|██████████| 357/357 [00:10<00:00, 33.99it/s]
+Epoch 11 [val]: 100%|██████████| 30/30 [00:00<00:00, 132.19it/s]
+
+📊 Epoch 11/100
+Train Loss: 0.6188 | Val Loss: 0.9447 | Acc: 0.6800
+
+Per-class metrics:
+NSR    | Precision: 0.694 | Recall: 0.714 | F1: 0.704
+AF_FLUTTER | Precision: 0.775 | Recall: 0.901 | F1: 0.833
+PAC    | Precision: 0.623 | Recall: 0.478 | F1: 0.541
+PVC    | Precision: 0.673 | Recall: 0.824 | F1: 0.741
+BBB    | Precision: 0.599 | Recall: 0.461 | F1: 0.521
+SVT    | Precision: 0.525 | Recall: 0.727 | F1: 0.610
+AV_BLOCK | Precision: 0.640 | Recall: 0.589 | F1: 0.614
+TORSADES | Precision: 0.870 | Recall: 0.976 | F1: 0.920
+
+Macro F1: 0.6854 | Weighted F1: 0.6736
+💾 Zapisano model do model_mobile_single.pt
+Epoch 12 [train]: 100%|██████████| 357/357 [00:10<00:00, 35.16it/s]
+Epoch 12 [val]: 100%|██████████| 30/30 [00:00<00:00, 131.97it/s]
+
+📊 Epoch 12/100
+Train Loss: 0.6050 | Val Loss: 0.9744 | Acc: 0.6711
+
+Per-class metrics:
+NSR    | Precision: 0.748 | Recall: 0.598 | F1: 0.665
+AF_FLUTTER | Precision: 0.804 | Recall: 0.901 | F1: 0.850
+PAC    | Precision: 0.549 | Recall: 0.560 | F1: 0.555
+PVC    | Precision: 0.578 | Recall: 0.897 | F1: 0.703
+BBB    | Precision: 0.655 | Recall: 0.476 | F1: 0.552
+SVT    | Precision: 0.509 | Recall: 0.659 | F1: 0.574
+AV_BLOCK | Precision: 0.615 | Recall: 0.630 | F1: 0.622
+TORSADES | Precision: 0.867 | Recall: 0.951 | F1: 0.907
+
+Macro F1: 0.6784 | Weighted F1: 0.6672
+Epoch 13 [train]: 100%|██████████| 357/357 [00:10<00:00, 35.21it/s]
+Epoch 13 [val]: 100%|██████████| 30/30 [00:00<00:00, 132.35it/s]
+
+📊 Epoch 13/100
+Train Loss: 0.5925 | Val Loss: 0.9432 | Acc: 0.6842
+
+Per-class metrics:
+NSR    | Precision: 0.702 | Recall: 0.695 | F1: 0.699
+AF_FLUTTER | Precision: 0.791 | Recall: 0.898 | F1: 0.841
+PAC    | Precision: 0.628 | Recall: 0.585 | F1: 0.606
+PVC    | Precision: 0.711 | Recall: 0.715 | F1: 0.713
+BBB    | Precision: 0.705 | Recall: 0.450 | F1: 0.550
+SVT    | Precision: 0.432 | Recall: 0.795 | F1: 0.560
+AV_BLOCK | Precision: 0.622 | Recall: 0.632 | F1: 0.627
+TORSADES | Precision: 0.905 | Recall: 0.927 | F1: 0.916
+
+Macro F1: 0.6888 | Weighted F1: 0.6812
+💾 Zapisano model do model_mobile_single.pt
+Epoch 14 [train]: 100%|██████████| 357/357 [00:10<00:00, 35.16it/s]
+Epoch 14 [val]: 100%|██████████| 30/30 [00:00<00:00, 132.01it/s]
+
+📊 Epoch 14/100
+Train Loss: 0.5816 | Val Loss: 0.9650 | Acc: 0.6763
+
+Per-class metrics:
+NSR    | Precision: 0.717 | Recall: 0.670 | F1: 0.693
+AF_FLUTTER | Precision: 0.769 | Recall: 0.908 | F1: 0.833
+PAC    | Precision: 0.567 | Recall: 0.610 | F1: 0.588
+PVC    | Precision: 0.696 | Recall: 0.776 | F1: 0.734
+BBB    | Precision: 0.750 | Recall: 0.471 | F1: 0.579
+SVT    | Precision: 0.400 | Recall: 0.864 | F1: 0.547
+AV_BLOCK | Precision: 0.616 | Recall: 0.579 | F1: 0.597
+TORSADES | Precision: 0.905 | Recall: 0.927 | F1: 0.916
+
+Macro F1: 0.6857 | Weighted F1: 0.6736
+Epoch 15 [train]: 100%|██████████| 357/357 [00:10<00:00, 35.20it/s]
+Epoch 15 [val]: 100%|██████████| 30/30 [00:00<00:00, 132.16it/s]
+
+📊 Epoch 15/100
+Train Loss: 0.5662 | Val Loss: 1.0361 | Acc: 0.6463
+
+Per-class metrics:
+NSR    | Precision: 0.705 | Recall: 0.650 | F1: 0.676
+AF_FLUTTER | Precision: 0.854 | Recall: 0.827 | F1: 0.840
+PAC    | Precision: 0.455 | Recall: 0.604 | F1: 0.519
+PVC    | Precision: 0.593 | Recall: 0.891 | F1: 0.712
+BBB    | Precision: 0.524 | Recall: 0.513 | F1: 0.519
+SVT    | Precision: 0.410 | Recall: 0.773 | F1: 0.535
+AV_BLOCK | Precision: 0.656 | Recall: 0.484 | F1: 0.557
+TORSADES | Precision: 0.800 | Recall: 0.976 | F1: 0.879
+
+Macro F1: 0.6546 | Weighted F1: 0.6448
+Epoch 16 [train]: 100%|██████████| 357/357 [00:10<00:00, 35.17it/s]
+Epoch 16 [val]: 100%|██████████| 30/30 [00:00<00:00, 131.52it/s]
+
+📊 Epoch 16/100
+Train Loss: 0.5568 | Val Loss: 0.9435 | Acc: 0.6858
+
+Per-class metrics:
+NSR    | Precision: 0.728 | Recall: 0.617 | F1: 0.668
+AF_FLUTTER | Precision: 0.810 | Recall: 0.905 | F1: 0.855
+PAC    | Precision: 0.517 | Recall: 0.660 | F1: 0.580
+PVC    | Precision: 0.712 | Recall: 0.824 | F1: 0.764
+BBB    | Precision: 0.726 | Recall: 0.471 | F1: 0.571
+SVT    | Precision: 0.636 | Recall: 0.636 | F1: 0.636
+AV_BLOCK | Precision: 0.609 | Recall: 0.661 | F1: 0.634
+TORSADES | Precision: 0.907 | Recall: 0.951 | F1: 0.929
+
+Macro F1: 0.7046 | Weighted F1: 0.6831
+Epoch 17 [train]: 100%|██████████| 357/357 [00:10<00:00, 35.19it/s]
+Epoch 17 [val]: 100%|██████████| 30/30 [00:00<00:00, 131.65it/s]
+
+📊 Epoch 17/100
+Train Loss: 0.5487 | Val Loss: 0.9716 | Acc: 0.6747
+
+Per-class metrics:
+NSR    | Precision: 0.639 | Recall: 0.752 | F1: 0.691
+AF_FLUTTER | Precision: 0.902 | Recall: 0.813 | F1: 0.855
+PAC    | Precision: 0.674 | Recall: 0.377 | F1: 0.484
+PVC    | Precision: 0.697 | Recall: 0.836 | F1: 0.760
+BBB    | Precision: 0.672 | Recall: 0.419 | F1: 0.516
+SVT    | Precision: 0.398 | Recall: 0.795 | F1: 0.530
+AV_BLOCK | Precision: 0.626 | Recall: 0.620 | F1: 0.623
+TORSADES | Precision: 0.848 | Recall: 0.951 | F1: 0.897
+
+Macro F1: 0.6696 | Weighted F1: 0.6697
+Epoch 18 [train]: 100%|██████████| 357/357 [00:10<00:00, 35.15it/s]
+Epoch 18 [val]: 100%|██████████| 30/30 [00:00<00:00, 127.15it/s]
+
+📊 Epoch 18/100
+Train Loss: 0.5414 | Val Loss: 0.9341 | Acc: 0.6753
+
+Per-class metrics:
+NSR    | Precision: 0.710 | Recall: 0.644 | F1: 0.675
+AF_FLUTTER | Precision: 0.780 | Recall: 0.905 | F1: 0.838
+PAC    | Precision: 0.591 | Recall: 0.553 | F1: 0.571
+PVC    | Precision: 0.628 | Recall: 0.848 | F1: 0.722
+BBB    | Precision: 0.697 | Recall: 0.435 | F1: 0.535
+SVT    | Precision: 0.604 | Recall: 0.727 | F1: 0.660
+AV_BLOCK | Precision: 0.606 | Recall: 0.624 | F1: 0.615
+TORSADES | Precision: 0.867 | Recall: 0.951 | F1: 0.907
+
+Macro F1: 0.6904 | Weighted F1: 0.6697
+💾 Zapisano model do model_mobile_single.pt
+Epoch 19 [train]: 100%|██████████| 357/357 [00:10<00:00, 34.71it/s]
+Epoch 19 [val]: 100%|██████████| 30/30 [00:00<00:00, 131.55it/s]
+
+📊 Epoch 19/100
+Train Loss: 0.5286 | Val Loss: 0.9797 | Acc: 0.6742
+
+Per-class metrics:
+NSR    | Precision: 0.684 | Recall: 0.667 | F1: 0.675
+AF_FLUTTER | Precision: 0.846 | Recall: 0.894 | F1: 0.869
+PAC    | Precision: 0.548 | Recall: 0.428 | F1: 0.481
+PVC    | Precision: 0.670 | Recall: 0.836 | F1: 0.744
+BBB    | Precision: 0.528 | Recall: 0.597 | F1: 0.560
+SVT    | Precision: 0.526 | Recall: 0.682 | F1: 0.594
+AV_BLOCK | Precision: 0.652 | Recall: 0.587 | F1: 0.618
+TORSADES | Precision: 0.907 | Recall: 0.951 | F1: 0.929
+
+Macro F1: 0.6837 | Weighted F1: 0.6710
+Epoch 20 [train]: 100%|██████████| 357/357 [00:10<00:00, 34.63it/s]
+Epoch 20 [val]: 100%|██████████| 30/30 [00:00<00:00, 132.43it/s]
+
+📊 Epoch 20/100
+Train Loss: 0.5275 | Val Loss: 0.9758 | Acc: 0.6584
+
+Per-class metrics:
+NSR    | Precision: 0.774 | Recall: 0.543 | F1: 0.638
+AF_FLUTTER | Precision: 0.717 | Recall: 0.915 | F1: 0.804
+PAC    | Precision: 0.579 | Recall: 0.579 | F1: 0.579
+PVC    | Precision: 0.716 | Recall: 0.764 | F1: 0.739
+BBB    | Precision: 0.507 | Recall: 0.586 | F1: 0.544
+SVT    | Precision: 0.493 | Recall: 0.750 | F1: 0.595
+AV_BLOCK | Precision: 0.603 | Recall: 0.620 | F1: 0.611
+TORSADES | Precision: 0.929 | Recall: 0.951 | F1: 0.940
+
+Macro F1: 0.6812 | Weighted F1: 0.6558
+Epoch 21 [train]: 100%|██████████| 357/357 [00:10<00:00, 35.19it/s]
+Epoch 21 [val]: 100%|██████████| 30/30 [00:00<00:00, 131.98it/s]
+
+📊 Epoch 21/100
+Train Loss: 0.5138 | Val Loss: 0.9260 | Acc: 0.6889
+
+Per-class metrics:
+NSR    | Precision: 0.666 | Recall: 0.722 | F1: 0.693
+AF_FLUTTER | Precision: 0.833 | Recall: 0.898 | F1: 0.864
+PAC    | Precision: 0.619 | Recall: 0.459 | F1: 0.527
+PVC    | Precision: 0.728 | Recall: 0.764 | F1: 0.746
+BBB    | Precision: 0.708 | Recall: 0.445 | F1: 0.547
+SVT    | Precision: 0.700 | Recall: 0.636 | F1: 0.667
+AV_BLOCK | Precision: 0.610 | Recall: 0.661 | F1: 0.634
+TORSADES | Precision: 0.929 | Recall: 0.951 | F1: 0.940
+
+Macro F1: 0.7021 | Weighted F1: 0.6839
+💾 Zapisano model do model_mobile_single.pt
+Epoch 22 [train]: 100%|██████████| 357/357 [00:10<00:00, 34.76it/s]
+Epoch 22 [val]: 100%|██████████| 30/30 [00:00<00:00, 133.24it/s]
+
+📊 Epoch 22/100
+Train Loss: 0.5181 | Val Loss: 0.9576 | Acc: 0.6763
+
+Per-class metrics:
+NSR    | Precision: 0.689 | Recall: 0.693 | F1: 0.691
+AF_FLUTTER | Precision: 0.813 | Recall: 0.890 | F1: 0.850
+PAC    | Precision: 0.571 | Recall: 0.579 | F1: 0.575
+PVC    | Precision: 0.589 | Recall: 0.842 | F1: 0.693
+BBB    | Precision: 0.694 | Recall: 0.450 | F1: 0.546
+SVT    | Precision: 0.465 | Recall: 0.750 | F1: 0.574
+AV_BLOCK | Precision: 0.654 | Recall: 0.569 | F1: 0.609
+TORSADES | Precision: 0.929 | Recall: 0.951 | F1: 0.940
+
+Macro F1: 0.6847 | Weighted F1: 0.6720
+Epoch 23 [train]: 100%|██████████| 357/357 [00:10<00:00, 34.20it/s]
+Epoch 23 [val]: 100%|██████████| 30/30 [00:00<00:00, 131.61it/s]
+
+📊 Epoch 23/100
+Train Loss: 0.4995 | Val Loss: 0.9430 | Acc: 0.6847
+
+Per-class metrics:
+NSR    | Precision: 0.729 | Recall: 0.619 | F1: 0.669
+AF_FLUTTER | Precision: 0.857 | Recall: 0.890 | F1: 0.873
+PAC    | Precision: 0.552 | Recall: 0.597 | F1: 0.574
+PVC    | Precision: 0.667 | Recall: 0.836 | F1: 0.742
+BBB    | Precision: 0.667 | Recall: 0.503 | F1: 0.573
+SVT    | Precision: 0.589 | Recall: 0.750 | F1: 0.660
+AV_BLOCK | Precision: 0.600 | Recall: 0.657 | F1: 0.627
+TORSADES | Precision: 0.907 | Recall: 0.951 | F1: 0.929
+
+Macro F1: 0.7060 | Weighted F1: 0.6829
+Epoch 24 [train]: 100%|██████████| 357/357 [00:10<00:00, 34.23it/s]
+Epoch 24 [val]: 100%|██████████| 30/30 [00:00<00:00, 129.99it/s]
+
+📊 Epoch 24/100
+Train Loss: 0.4914 | Val Loss: 0.9530 | Acc: 0.6837
+
+Per-class metrics:
+NSR    | Precision: 0.742 | Recall: 0.613 | F1: 0.672
+AF_FLUTTER | Precision: 0.849 | Recall: 0.898 | F1: 0.873
+PAC    | Precision: 0.471 | Recall: 0.623 | F1: 0.537
+PVC    | Precision: 0.718 | Recall: 0.818 | F1: 0.765
+BBB    | Precision: 0.635 | Recall: 0.518 | F1: 0.571
+SVT    | Precision: 0.698 | Recall: 0.682 | F1: 0.690
+AV_BLOCK | Precision: 0.610 | Recall: 0.652 | F1: 0.631
+TORSADES | Precision: 0.886 | Recall: 0.951 | F1: 0.918
+
+Macro F1: 0.7068 | Weighted F1: 0.6833
+Epoch 25 [train]: 100%|██████████| 357/357 [00:10<00:00, 34.61it/s]
+Epoch 25 [val]: 100%|██████████| 30/30 [00:00<00:00, 131.82it/s]
+
+📊 Epoch 25/100
+Train Loss: 0.4908 | Val Loss: 1.0105 | Acc: 0.6732
+
+Per-class metrics:
+NSR    | Precision: 0.701 | Recall: 0.667 | F1: 0.684
+AF_FLUTTER | Precision: 0.853 | Recall: 0.859 | F1: 0.856
+PAC    | Precision: 0.639 | Recall: 0.390 | F1: 0.484
+PVC    | Precision: 0.556 | Recall: 0.897 | F1: 0.687
+BBB    | Precision: 0.571 | Recall: 0.550 | F1: 0.560
+SVT    | Precision: 0.533 | Recall: 0.727 | F1: 0.615
+AV_BLOCK | Precision: 0.647 | Recall: 0.610 | F1: 0.628
+TORSADES | Precision: 0.867 | Recall: 0.951 | F1: 0.907
+
+Macro F1: 0.6775 | Weighted F1: 0.6691
+Epoch 26 [train]: 100%|██████████| 357/357 [00:10<00:00, 34.75it/s]
+Epoch 26 [val]: 100%|██████████| 30/30 [00:00<00:00, 132.13it/s]
+
+📊 Epoch 26/100
+Train Loss: 0.4813 | Val Loss: 0.9642 | Acc: 0.6921
+
+Per-class metrics:
+NSR    | Precision: 0.737 | Recall: 0.695 | F1: 0.716
+AF_FLUTTER | Precision: 0.841 | Recall: 0.876 | F1: 0.858
+PAC    | Precision: 0.544 | Recall: 0.579 | F1: 0.561
+PVC    | Precision: 0.665 | Recall: 0.867 | F1: 0.753
+BBB    | Precision: 0.601 | Recall: 0.529 | F1: 0.563
+SVT    | Precision: 0.528 | Recall: 0.636 | F1: 0.577
+AV_BLOCK | Precision: 0.647 | Recall: 0.608 | F1: 0.627
+TORSADES | Precision: 0.907 | Recall: 0.951 | F1: 0.929
+
+Macro F1: 0.6979 | Weighted F1: 0.6902
+Epoch 27 [train]: 100%|██████████| 357/357 [00:10<00:00, 34.76it/s]
+Epoch 27 [val]: 100%|██████████| 30/30 [00:00<00:00, 133.04it/s]
+
+📊 Epoch 27/100
+Train Loss: 0.4420 | Val Loss: 0.9372 | Acc: 0.6942
+
+Per-class metrics:
+NSR    | Precision: 0.704 | Recall: 0.697 | F1: 0.700
+AF_FLUTTER | Precision: 0.855 | Recall: 0.876 | F1: 0.866
+PAC    | Precision: 0.538 | Recall: 0.579 | F1: 0.558
+PVC    | Precision: 0.710 | Recall: 0.830 | F1: 0.765
+BBB    | Precision: 0.626 | Recall: 0.508 | F1: 0.561
+SVT    | Precision: 0.537 | Recall: 0.659 | F1: 0.592
+AV_BLOCK | Precision: 0.656 | Recall: 0.632 | F1: 0.644
+TORSADES | Precision: 0.907 | Recall: 0.951 | F1: 0.929
+
+Macro F1: 0.7018 | Weighted F1: 0.6925
+Epoch 28 [train]: 100%|██████████| 357/357 [00:10<00:00, 34.76it/s]
+Epoch 28 [val]: 100%|██████████| 30/30 [00:00<00:00, 130.50it/s]
+
+📊 Epoch 28/100
+Train Loss: 0.4251 | Val Loss: 0.9374 | Acc: 0.6932
+
+Per-class metrics:
+NSR    | Precision: 0.685 | Recall: 0.705 | F1: 0.695
+AF_FLUTTER | Precision: 0.874 | Recall: 0.880 | F1: 0.877
+PAC    | Precision: 0.568 | Recall: 0.553 | F1: 0.561
+PVC    | Precision: 0.731 | Recall: 0.824 | F1: 0.775
+BBB    | Precision: 0.674 | Recall: 0.487 | F1: 0.565
+SVT    | Precision: 0.547 | Recall: 0.659 | F1: 0.598
+AV_BLOCK | Precision: 0.626 | Recall: 0.636 | F1: 0.631
+TORSADES | Precision: 0.907 | Recall: 0.951 | F1: 0.929
+
+Macro F1: 0.7037 | Weighted F1: 0.6909
+ Early stopping triggered
+
+Process finished with exit code 0

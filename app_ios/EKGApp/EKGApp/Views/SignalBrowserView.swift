@@ -49,8 +49,18 @@ struct SignalBrowserView: View {
             }
             .navigationTitle("Saved Records")
             .toolbar {
-                EditButton()
+                ToolbarItem(placement: .navigationBarLeading) {
+                    EditButton()
+                }
+
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: loadFilenames) {
+                        Image(systemName: "arrow.clockwise")
+                    }
+                    .accessibilityLabel("Refresh file list")
+                }
             }
+
             .onAppear(perform: loadFilenames)
             .sheet(isPresented: $showShareSheet) {
                 if let url = fileToShareURL {
@@ -63,8 +73,16 @@ struct SignalBrowserView: View {
     private func loadFilenames() {
         let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         do {
-            let files = try FileManager.default.contentsOfDirectory(atPath: dir.path)
-            filenames = files.filter { $0.hasSuffix(".json") && $0.hasPrefix("signal_") }
+            let urls = try FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: [.contentModificationDateKey], options: .skipsHiddenFiles)
+            let jsonFiles = urls.filter { $0.pathExtension == "json" }
+
+            let sortedFiles = jsonFiles.sorted {
+                let date1 = (try? $0.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
+                let date2 = (try? $1.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
+                return date1 > date2 // 🔁 newest first
+            }
+
+            filenames = sortedFiles.map { $0.lastPathComponent }
         } catch {
             print("❌ Error reading files: \(error)")
         }

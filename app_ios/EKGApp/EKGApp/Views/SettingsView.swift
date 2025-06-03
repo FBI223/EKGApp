@@ -5,31 +5,62 @@ import Charts
 import Combine
 
 
-
-
 class AppSettings: ObservableObject {
     static let shared = AppSettings()
 
-    @Published var samplesPerTick: Int = 10
-    @Published var updateInterval: Float = 0.05
+    @Published var samplesPerTick: Int = 10 {
+        didSet { print("samplesPerTick changed from \(oldValue) to \(samplesPerTick)") }
+    }
 
-    @Published var windowLengthRythm: Int = 1280
-    @Published var windowLengthBeat: Int = 192
-    @Published var windowLengthRythmResampled: Int = 3600
-    @Published var windowLengthBeatResampled: Int = 540
+    @Published var updateInterval: Float = 0.05 {
+        didSet { print("updateInterval changed from \(oldValue) to \(updateInterval)") }
+    }
 
-    @Published var analysisWindowSeconds: Float = 1.5
-    @Published var darkModeEnabled: Bool = true
-    @Published var showDebugInfo: Bool = true
-    @Published var sampleRateIn: Int = 128
-    @Published var yAxisRange: ClosedRange<Float> = -3...3
-    
-    @Published var userAge: Int = 25
-    @Published var userSex: Int = 1  // 0 = Male, 1 = Female
+    @Published var windowLengthRythm: Int = 1280 {
+        didSet { print("windowLengthRythm changed from \(oldValue) to \(windowLengthRythm)") }
+    }
 
+    @Published var windowLengthBeat: Int = 192 {
+        didSet { print("windowLengthBeat changed from \(oldValue) to \(windowLengthBeat)") }
+    }
 
-    
+    @Published var windowLengthRythmResampled: Int = 3600 {
+        didSet { print("windowLengthRythmResampled changed from \(oldValue) to \(windowLengthRythmResampled)") }
+    }
+
+    @Published var windowLengthBeatResampled: Int = 540 {
+        didSet { print("windowLengthBeatResampled changed from \(oldValue) to \(windowLengthBeatResampled)") }
+    }
+
+    @Published var analysisWindowSeconds: Float = 1.5 {
+        didSet { print("analysisWindowSeconds changed from \(oldValue) to \(analysisWindowSeconds)") }
+    }
+
+    @Published var darkModeEnabled: Bool = true {
+        didSet { print("darkModeEnabled changed from \(oldValue) to \(darkModeEnabled)") }
+    }
+
+    @Published var showDebugInfo: Bool = true {
+        didSet { print("showDebugInfo changed from \(oldValue) to \(showDebugInfo)") }
+    }
+
+    @Published var sampleRateIn: Int = 128 {
+        didSet { print("sampleRateIn changed from \(oldValue) to \(sampleRateIn)") }
+    }
+
+    @Published var yAxisRange: ClosedRange<Float> = -3...3 {
+        didSet { print("yAxisRange changed from \(oldValue) to \(yAxisRange)") }
+    }
+
+    @Published var userAge: Int = 25 {
+        didSet { print("userAge changed from \(oldValue) to \(userAge)") }
+    }
+
+    @Published var userSex: Int = 1 {  // 0 = Male, 1 = Female
+        didSet { print("userSex changed from \(oldValue) to \(userSex)") }
+    }
 }
+
 
 
 

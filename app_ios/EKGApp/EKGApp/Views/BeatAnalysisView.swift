@@ -12,6 +12,7 @@ struct BeatAnalysisView: View {
     @State private var lastDetectedTimes: [Date] = []
     @State private var bpm: Int = 0
 
+    @State private var showInvalidDeviceAlert = false
 
     @Environment(\.dismiss) var dismiss
     @ObservedObject private var settings = AppSettings.shared
@@ -129,6 +130,18 @@ struct BeatAnalysisView: View {
             .background(backgroundColor.ignoresSafeArea())
         }
         .preferredColorScheme(settings.darkModeEnabled ? .dark : .light)
+        
+        
+        .onChange(of: ble.connectedPeripheral) {
+            if ble.connectedPeripheral != nil {
+                ble.startScanWithTimeoutAfterConnect {
+                    showInvalidDeviceAlert = true
+                }
+            }
+        }
+
+
+        
         .onAppear {
             ble.startScan()
         }
@@ -137,7 +150,15 @@ struct BeatAnalysisView: View {
             stopProcessing()
             ble.reset()
         }
+        
+        .alert("Invalid Device", isPresented: $showInvalidDeviceAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("❌ Please choose a valid ECG monitor device")
+        }
+
     }
+    
 
 
     func startProcessing() {

@@ -10,6 +10,13 @@ struct SignalRecorderView: View {
     @State private var isRecording = false
     @State private var timer: AnyCancellable?
     @ObservedObject private var settings = AppSettings.shared
+    
+    
+    @State private var recordingStartTime: Date?
+    @State private var recordingEndTime: Date?
+    
+    @State private var showInvalidDeviceAlert = false
+
 
     let maxWindowSize = 1000
     let samplesPerTick = 10
@@ -61,11 +68,16 @@ struct SignalRecorderView: View {
                 .tint(isProcessing ? .red : .green)
 
                 Button(isRecording ? "Stop Recording" : "Record") {
-                    isRecording.toggle()
-                    if !isRecording {
+                    if isRecording {
+                        recordingEndTime = Date()
                         saveRecording()
+                    } else {
+                        recordingStartTime = Date()
+                        recordingBuffer = []
                     }
+                    isRecording.toggle()
                 }
+
                 .buttonStyle(.borderedProminent)
                 .tint(isRecording ? .orange : .blue)
                 .disabled(!isProcessing)
@@ -74,13 +86,35 @@ struct SignalRecorderView: View {
 
         }
         .padding()
+        
+        .onChange(of: ble.connectedPeripheral) {
+            if ble.connectedPeripheral != nil {
+                ble.startScanWithTimeoutAfterConnect {
+                    showInvalidDeviceAlert = true
+                }
+            }
+        }
+        
         .onAppear {
             ble.startScan()
         }
+        
+        
+        
         .onDisappear {
             stopStream()
             ble.reset()
         }
+        
+        
+        .alert("Invalid Device", isPresented: $showInvalidDeviceAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("❌ Please choose a valid ECG monitor device")
+        }
+        
+        
+        
     }
 
     private func startStream() {
@@ -90,6 +124,12 @@ struct SignalRecorderView: View {
         timer = Timer.publish(every: updateInterval, on: .main, in: .common)
             .autoconnect()
             .sink { _ in tick() }
+        
+        ble.startScanWithTimeoutAfterConnect {
+            showInvalidDeviceAlert = true
+        }
+
+        
     }
 
     private func stopStream() {
@@ -119,15 +159,30 @@ struct SignalRecorderView: View {
     }
     
     private func saveRecording() {
+        let fs = settings.sampleRateIn
+        let start = recordingStartTime ?? Date()
+        let end = recordingEndTime ?? Date()
+        
+        print("💾 Saving with fs = \(fs)")
+
+        
+        let formatter = ISO8601DateFormatter()
+        let startStr = formatter.string(from: start)
+        let endStr = formatter.string(from: end)
+        
         let jsonObject: [String: Any] = [
-            "fs": settings.sampleRateIn,
+            "fs": fs,
             "lead": "II",
+            "start_time": startStr,
+            "end_time": endStr,
             "signal": recordingBuffer
         ]
-
+        
         do {
             let data = try JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted)
-            let filename = "signal_\(Int(Date().timeIntervalSince1970)).json"
+            let fileFormatter = DateFormatter()
+            fileFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
+            let filename = "ecg_\(fileFormatter.string(from: start)).json"
             let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent(filename)
 
             try data.write(to: url)
@@ -136,6 +191,7 @@ struct SignalRecorderView: View {
             print("❌ Error saving: \(error)")
         }
     }
+
 
     
 }

@@ -9,6 +9,7 @@ class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPer
     @Published var eventLogs: [String] = []
     @Published var latestMetaMessage: String? = nil
 
+
     private var central: CBCentralManager!
     private let serviceUUID = CBUUID(string: "bd37e8b4-1bcf-4f42-bdd1-bebea1a51a1a")
     private let charUUID = CBUUID(string: "7a1e8b7d-9a3e-4657-927b-339adddc2a5b")
@@ -17,6 +18,20 @@ class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPer
         super.init()
         central = CBCentralManager(delegate: self, queue: nil)
     }
+    
+    
+    func startScanWithTimeoutAfterConnect(timeout: TimeInterval = 1.5, onInvalid: @escaping () -> Void) {
+        rawBuffer.removeAll()
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + timeout) {
+            // jeśli po `timeout` nie mamy żadnych próbek – uznaj, że urządzenie jest nieprawidłowe
+            if self.rawBuffer.isEmpty {
+                self.disconnect()
+                onInvalid()
+            }
+        }
+    }
+
 
     func reset() {
         stopScan()

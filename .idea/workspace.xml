@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="added ios_app in main">
+    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="updated rythm model in ios app">
       <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp.xcodeproj/project.xcworkspace/xcuserdata/marcinsztukowski.xcuserdatad/UserInterfaceState.xcuserstate" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp.xcodeproj/project.xcworkspace/xcuserdata/marcinsztukowski.xcuserdatad/UserInterfaceState.xcuserstate" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -65,79 +65,79 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Python.aami_pipeline.executor": "Run",
-    "Python.aami_pipeline_lstm.executor": "Run",
-    "Python.aami_pipeline_lstm_fixed.executor": "Run",
-    "Python.aami_smaller_model (1).executor": "Run",
-    "Python.binary (1).executor": "Run",
-    "Python.consts.executor": "Run",
-    "Python.conversion.executor": "Run",
-    "Python.conversion3.executor": "Run",
-    "Python.convert.executor": "Run",
-    "Python.convert2 (1).executor": "Run",
-    "Python.convert2.executor": "Run",
-    "Python.convert_mlpackage (1).executor": "Run",
-    "Python.convert_mlpackage.executor": "Run",
-    "Python.convert_mlpackage_multi.executor": "Run",
-    "Python.convert_mlpackage_single.executor": "Run",
-    "Python.convert_onnx_multi.executor": "Run",
-    "Python.convert_onnx_single.executor": "Run",
-    "Python.convert_tf_multi.executor": "Run",
-    "Python.convert_tf_single.executor": "Run",
-    "Python.convert_tflite_single.executor": "Run",
-    "Python.deaugmentation.executor": "Run",
-    "Python.debug.executor": "Run",
-    "Python.ecg_pipeline.executor": "Run",
-    "Python.estimator.executor": "Run",
-    "Python.gpu_efficiency_test.executor": "Run",
-    "Python.inference (1).executor": "Run",
-    "Python.inference (2).executor": "Run",
-    "Python.inference.executor": "Run",
-    "Python.main (1).executor": "Run",
-    "Python.main (2).executor": "Run",
-    "Python.main (3).executor": "Run",
-    "Python.main (4).executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.main2 (1).executor": "Run",
-    "Python.main3 (1).executor": "Run",
-    "Python.main_multi.executor": "Run",
-    "Python.main_multi_cspc.executor": "Run",
-    "Python.main_single.executor": "Run",
-    "Python.main_single_2.executor": "Run",
-    "Python.main_torch.executor": "Run",
-    "Python.rythm.executor": "Run",
-    "Python.rythm1.executor": "Run",
-    "Python.rythm2.executor": "Run",
-    "Python.rythm_chat.executor": "Run",
-    "Python.rythm_model.executor": "Run",
-    "Python.rytm12.executor": "Run",
-    "Python.rytm3.executor": "Run",
-    "Python.test_augmentation (1).executor": "Run",
-    "Python.test_augmentation (2).executor": "Run",
-    "Python.test_augmentation.executor": "Run",
-    "Python.test_on_arduino.executor": "Run",
-    "Python.validate_model.executor": "Run",
-    "Python.visualize.executor": "Run",
-    "Python.visualize_ble.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "/Users/marcinsztukowski/PycharmProjects/ECG_PROJ/app_ios",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "run.code.analysis.last.selected.profile": "aDefault",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Python.aami_pipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python.aami_pipeline_lstm.executor&quot;: &quot;Run&quot;,
+    &quot;Python.aami_pipeline_lstm_fixed.executor&quot;: &quot;Run&quot;,
+    &quot;Python.aami_smaller_model (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.binary (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.consts.executor&quot;: &quot;Run&quot;,
+    &quot;Python.conversion.executor&quot;: &quot;Run&quot;,
+    &quot;Python.conversion3.executor&quot;: &quot;Run&quot;,
+    &quot;Python.convert.executor&quot;: &quot;Run&quot;,
+    &quot;Python.convert2 (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.convert2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.convert_mlpackage (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.convert_mlpackage.executor&quot;: &quot;Run&quot;,
+    &quot;Python.convert_mlpackage_multi.executor&quot;: &quot;Run&quot;,
+    &quot;Python.convert_mlpackage_single.executor&quot;: &quot;Run&quot;,
+    &quot;Python.convert_onnx_multi.executor&quot;: &quot;Run&quot;,
+    &quot;Python.convert_onnx_single.executor&quot;: &quot;Run&quot;,
+    &quot;Python.convert_tf_multi.executor&quot;: &quot;Run&quot;,
+    &quot;Python.convert_tf_single.executor&quot;: &quot;Run&quot;,
+    &quot;Python.convert_tflite_single.executor&quot;: &quot;Run&quot;,
+    &quot;Python.deaugmentation.executor&quot;: &quot;Run&quot;,
+    &quot;Python.debug.executor&quot;: &quot;Run&quot;,
+    &quot;Python.ecg_pipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python.estimator.executor&quot;: &quot;Run&quot;,
+    &quot;Python.gpu_efficiency_test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.inference (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.inference (2).executor&quot;: &quot;Run&quot;,
+    &quot;Python.inference.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.main (2).executor&quot;: &quot;Run&quot;,
+    &quot;Python.main (3).executor&quot;: &quot;Run&quot;,
+    &quot;Python.main (4).executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main2 (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.main3 (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.main_multi.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main_multi_cspc.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main_single.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main_single_2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main_torch.executor&quot;: &quot;Run&quot;,
+    &quot;Python.rythm.executor&quot;: &quot;Run&quot;,
+    &quot;Python.rythm1.executor&quot;: &quot;Run&quot;,
+    &quot;Python.rythm2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.rythm_chat.executor&quot;: &quot;Run&quot;,
+    &quot;Python.rythm_model.executor&quot;: &quot;Run&quot;,
+    &quot;Python.rytm12.executor&quot;: &quot;Run&quot;,
+    &quot;Python.rytm3.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test_augmentation (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.test_augmentation (2).executor&quot;: &quot;Run&quot;,
+    &quot;Python.test_augmentation.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test_on_arduino.executor&quot;: &quot;Run&quot;,
+    &quot;Python.validate_model.executor&quot;: &quot;Run&quot;,
+    &quot;Python.visualize.executor&quot;: &quot;Run&quot;,
+    &quot;Python.visualize_ble.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/marcinsztukowski/PycharmProjects/ECG_PROJ/app_ios&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;aDefault&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
       <console-settings sdk-home="$PROJECT_DIR$/../../../../Program Files/Python312/python.exe">
@@ -307,10 +307,10 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.main_single_2" />
       <item itemvalue="Python.conversion" />
       <item itemvalue="Python.convert2" />
       <item itemvalue="Python.main" />
+      <item itemvalue="Python.main_single_2" />
       <item itemvalue="Python.main_torch" />
       <item itemvalue="Python.rythm_model" />
     </list>
@@ -684,7 +684,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748960933559</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="updated rythm model in ios app">
+      <option name="closed" value="true" />
+      <created>1748961285305</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1748961285305</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -712,7 +720,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="small model for 'N' 'V' '/' 'R' 'L' 'A' '!' 'E'" />
     <MESSAGE value="reduce size of repo" />
     <MESSAGE value="reduce size of repo 2" />
     <MESSAGE value="added model prediction function" />
@@ -737,7 +744,8 @@
     <MESSAGE value="deleted ios app" />
     <MESSAGE value="deleted ios_app form main" />
     <MESSAGE value="added ios_app in main" />
-    <option name="LAST_COMMIT_MESSAGE" value="added ios_app in main" />
+    <MESSAGE value="updated rythm model in ios app" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated rythm model in ios app" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ECG_PROJ$convert2.coverage" NAME="convert2 Coverage Results" MODIFIED="1748199585343" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />

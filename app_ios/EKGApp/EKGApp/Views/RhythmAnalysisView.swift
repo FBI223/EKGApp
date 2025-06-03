@@ -20,6 +20,9 @@ struct RhythmAnalysisView: View {
 
     @State private var timer: AnyCancellable?
     @State private var isProcessing = false
+    
+    @State private var showInvalidDeviceAlert = false
+
 
     @Environment(\.dismiss) var dismiss
     @ObservedObject private var settings = AppSettings.shared
@@ -132,16 +135,40 @@ struct RhythmAnalysisView: View {
             .background(backgroundColor.ignoresSafeArea())
         }
         .preferredColorScheme(settings.darkModeEnabled ? .dark : .light)
+        
+        
+        
+        .onChange(of: ble.connectedPeripheral) {
+            if ble.connectedPeripheral != nil {
+                ble.startScanWithTimeoutAfterConnect {
+                    showInvalidDeviceAlert = true
+                }
+            }
+        }
+        
+        
         .onAppear {
             ble.disconnect()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 ble.startScan()
             }
         }
+        
+        
+        
         .onDisappear {
             stopProcessing()
             ble.reset()
         }
+        
+        
+        .alert("Invalid Device", isPresented: $showInvalidDeviceAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("❌ Please choose a valid ECG monitor device")
+        }
+        
+        
     }
 
     

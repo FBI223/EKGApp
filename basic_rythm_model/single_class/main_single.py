@@ -536,7 +536,8 @@ def load_demo(path):
     age, sex, _ = parse_header(path + '.hea')
     if not np.isfinite(age): age = AGE_MEAN
     if not np.isfinite(sex): sex = 0.0
-    return [age, sex]
+    return [float(age), float(sex)]
+
 
 
 def normalize(sig):
@@ -689,7 +690,13 @@ def parse_header(header_path):
                         age = None
                 elif line.startswith('# Sex:'):
                     sex_str = line.split(':')[1].strip().lower()
-                    sex = 1.0 if 'female' in sex_str else 0.0
+                    if 'female' in sex_str:
+                        sex = 1.0
+                    elif 'male' in sex_str:
+                        sex = 0.0
+                    else:
+                        sex = 0.0  # fallback
+
                 elif 'Dx:' in line:
                     raw = line.split(':')[1].split(',')
                     codes = [CODE_EQUIV.get(c.strip(), c.strip()) for c in raw]
@@ -703,7 +710,8 @@ def parse_header(header_path):
     if sex is None:
         sex = 0.0
 
-    return age, sex, codes
+    return float(age), float(sex), codes
+
 
 
 

@@ -1,11 +1,13 @@
-
 from onnx_tf.backend import prepare
 import onnx
-import numpy as np
-
 
 SAVE_NAME = "model_mobile_single"
 
-onnx_model = onnx.load( SAVE_NAME + ".onnx")
+# Załaduj model ONNX
+onnx_model = onnx.load(SAVE_NAME + ".onnx")
+
+# Przygotuj reprezentację TensorFlow (upewnij się, że używa float32 tylko)
 tf_rep = prepare(onnx_model)
+
+# Eksportuj jako SavedModel
 tf_rep.export_graph(SAVE_NAME + "_tf")

@@ -24,10 +24,5 @@ torch.onnx.export(
     SAVE_NAME + ".onnx",
     input_names=["ecg", "demo"],
     output_names=["output"],
-    dynamic_axes={
-        "ecg": {0: "batch"},
-        "demo": {0: "batch"},
-        "output": {0: "batch"}
-    },
-    opset_version=OPSET_VERSION
+    opset_version=11  # <= OK
 )

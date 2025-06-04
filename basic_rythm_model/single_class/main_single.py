@@ -322,6 +322,7 @@ class SE_MobileNet1D_LSTM(nn.Module):
         )
 
     def forward(self, x, demo):
+        demo = demo.float()
         x = self.stem(x)
         x = self.block1(x)
         x = self.block2(x)

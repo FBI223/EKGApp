@@ -4,14 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="updated rythm model in ios app">
+    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="changed conversions to float 32">
+      <change beforePath="$PROJECT_DIR$/.idea/ECG_PROJ.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ECG_PROJ.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic_rythm_model/single_class/convert_mlpackage_single.py" beforeDir="false" afterPath="$PROJECT_DIR$/basic_rythm_model/single_class/convert_mlpackage_single.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic_rythm_model/single_class/convert_onnx_single.py" beforeDir="false" afterPath="$PROJECT_DIR$/basic_rythm_model/single_class/convert_onnx_single.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic_rythm_model/single_class/convert_tf_single.py" beforeDir="false" afterPath="$PROJECT_DIR$/basic_rythm_model/single_class/convert_tf_single.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic_rythm_model/single_class/convert_tflite_single.py" beforeDir="false" afterPath="$PROJECT_DIR$/basic_rythm_model/single_class/convert_tflite_single.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_rythm_model/single_class/float32_model/model_mobile_single.mlpackage/Data/com.apple.CoreML/model.mlmodel" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_rythm_model/single_class/float32_model/model_mobile_single.mlpackage/Data/com.apple.CoreML/weights/weight.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_rythm_model/single_class/float32_model/model_mobile_single.mlpackage/Manifest.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_rythm_model/single_class/float32_model/model_mobile_single.onnx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_rythm_model/single_class/float32_model/model_mobile_single.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_rythm_model/single_class/float32_model/model_mobile_single.tflite" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_rythm_model/single_class/float32_model/model_mobile_single_tf/fingerprint.pb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_rythm_model/single_class/float32_model/model_mobile_single_tf/saved_model.pb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_rythm_model/single_class/float32_model/model_mobile_single_tf/variables/variables.data-00000-of-00001" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic_rythm_model/single_class/float32_model/model_mobile_single_tf/variables/variables.index" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/basic_rythm_model/single_class/main_single.py" beforeDir="false" afterPath="$PROJECT_DIR$/basic_rythm_model/single_class/main_single.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/basic_rythm_model/single_class/model_mobile_single.tflite" beforeDir="false" afterPath="$PROJECT_DIR$/basic_rythm_model/single_class/model_mobile_single.tflite" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -166,14 +173,14 @@
       <recent name="$PROJECT_DIR$/basic_rythm_model/single_class/model 2 af st no georgia" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/basic_rythm_model/single_class/model_float32" />
+      <recent name="$PROJECT_DIR$/basic_rythm_model/single_class/model_float32/cm" />
+      <recent name="$PROJECT_DIR$/basic_rythm_model/single_class/float32_model" />
       <recent name="$PROJECT_DIR$/basic_rythm_model/single_class/model_no_lstm" />
       <recent name="$PROJECT_DIR$/basic_rythm_model/single_class/model_lstm" />
-      <recent name="$PROJECT_DIR$/basic_rythm_model/single_class/model 3 no st  no georgia" />
-      <recent name="$PROJECT_DIR$/basic_rythm_model/single_class" />
-      <recent name="$PROJECT_DIR$/basic_rythm_model/single_class/model 2 af st no georgia" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.convert_tflite_single">
+  <component name="RunManager" selected="Python.convert_mlpackage_single">
     <configuration name="convert2" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ECG_PROJ" />
       <option name="ENV_FILES" value="" />
@@ -322,10 +329,10 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.convert_mlpackage_single" />
         <item itemvalue="Python.convert_tflite_single" />
         <item itemvalue="Python.convert_tf_single" />
         <item itemvalue="Python.convert_onnx_single" />
-        <item itemvalue="Python.convert_mlpackage_single" />
         <item itemvalue="Python.convert2" />
       </list>
     </recent_temporary>
@@ -465,7 +472,7 @@
       <workItem from="1748656407893" duration="52798000" />
       <workItem from="1748846195873" duration="1841000" />
       <workItem from="1748867379371" duration="41244000" />
-      <workItem from="1749016494555" duration="1678000" />
+      <workItem from="1749016494555" duration="3246000" />
     </task>
     <task id="LOCAL-00001" summary="quite ok model for recognizing 'N' 'V' 'A' 'S' 'L' 'R' classes">
       <option name="closed" value="true" />
@@ -699,7 +706,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748961285305</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="changed conversions to float 32">
+      <option name="closed" value="true" />
+      <created>1749018490167</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1749018490167</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -727,7 +742,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="reduce size of repo" />
     <MESSAGE value="reduce size of repo 2" />
     <MESSAGE value="added model prediction function" />
     <MESSAGE value="added main model with supeklasses" />
@@ -752,7 +766,8 @@
     <MESSAGE value="deleted ios_app form main" />
     <MESSAGE value="added ios_app in main" />
     <MESSAGE value="updated rythm model in ios app" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated rythm model in ios app" />
+    <MESSAGE value="changed conversions to float 32" />
+    <option name="LAST_COMMIT_MESSAGE" value="changed conversions to float 32" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ECG_PROJ$convert2.coverage" NAME="convert2 Coverage Results" MODIFIED="1748975974095" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
@@ -788,7 +803,7 @@
     <SUITE FILE_PATH="coverage/ECG_PROJ$rytm12.coverage" NAME="rytm12 Coverage Results" MODIFIED="1748264135303" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/rythm2" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$rythm1.coverage" NAME="rythm1 Coverage Results" MODIFIED="1748253842260" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/rythm1" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$deaugmentation.coverage" NAME="deaugmentation Coverage Results" MODIFIED="1742915824582" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$main_single_2.coverage" NAME="main_single_2 Coverage Results" MODIFIED="1748975985108" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/basic_rythm_model/single_class" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$main_single_2.coverage" NAME="main_single_2 Coverage Results" MODIFIED="1749018934786" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/basic_rythm_model/single_class" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$binary__1_.coverage" NAME="binary (1) Coverage Results" MODIFIED="1743107922127" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/binary_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$conversion3.coverage" NAME="conversion3 Coverage Results" MODIFIED="1748196313888" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$rythm.coverage" NAME="rythm Coverage Results" MODIFIED="1748174671444" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/rythm_model" />

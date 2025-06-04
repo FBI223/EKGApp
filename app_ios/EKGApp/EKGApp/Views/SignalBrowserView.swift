@@ -1,5 +1,3 @@
-// Wersja z ikonami 24x24, by było więcej miejsca na nazwę pliku
-
 import SwiftUI
 import Charts
 import UniformTypeIdentifiers
@@ -9,44 +7,68 @@ struct SignalBrowserView: View {
     @State private var showShareSheet = false
     @State private var fileToShareURL: URL? = nil
 
+    @State private var selectedFileToOpen: String? = nil
+    @State private var showAlert = false
+
     var body: some View {
         NavigationView {
-            List {
-                ForEach(filenames, id: \.self) { filename in
-                    HStack(spacing: 16) {
-                        NavigationLink(destination: SignalPlaybackView(filename: filename)) {
-                            Text(filename)
-                                .lineLimit(1)
-                                .truncationMode(.middle)
-                                .font(.headline)
-                        }
-                        Spacer()
-                        Button {
-                            shareFile(named: filename)
-                        } label: {
-                            Image(systemName: "square.and.arrow.up")
-                                .resizable()
-                                .frame(width: 24, height: 24)
-                                .foregroundColor(.blue)
-                                .contentShape(Rectangle())
-                        }
-                        .buttonStyle(BorderlessButtonStyle())
+            VStack {
+                List {
+                    ForEach(filenames, id: \.self) { filename in
+                        HStack(spacing: 16) {
+                            Button {
+                                checkFileAndNavigate(filename)
+                            } label: {
+                                Text(filename)
+                                    .lineLimit(1)
+                                    .truncationMode(.middle)
+                                    .font(.headline)
+                                    .foregroundColor(.primary)
+                            }
 
-                        Button {
-                            deleteFile(named: filename)
-                        } label: {
-                            Image(systemName: "trash")
-                                .resizable()
-                                .frame(width: 24, height: 24)
-                                .foregroundColor(.red)
-                                .contentShape(Rectangle())
+                            Spacer()
+
+                            Button {
+                                shareFile(named: filename)
+                            } label: {
+                                Image(systemName: "square.and.arrow.up")
+                                    .resizable()
+                                    .frame(width: 24, height: 24)
+                                    .foregroundColor(.blue)
+                                    .contentShape(Rectangle())
+                            }
+                            .buttonStyle(BorderlessButtonStyle())
+
+                            Button {
+                                deleteFile(named: filename)
+                            } label: {
+                                Image(systemName: "trash")
+                                    .resizable()
+                                    .frame(width: 24, height: 24)
+                                    .foregroundColor(.red)
+                                    .contentShape(Rectangle())
+                            }
+                            .buttonStyle(BorderlessButtonStyle())
                         }
-                        .buttonStyle(BorderlessButtonStyle())
+                        .padding(.vertical, 6)
                     }
-                    .padding(.vertical, 6)
+                    .onDelete(perform: deleteFiles)
                 }
-                .onDelete(perform: deleteFiles)
+
+                // Ukryty NavigationLink aktywowany tylko gdy plik OK
+                NavigationLink(
+                    destination: selectedFileToOpen.map { SignalPlaybackView(filename: $0) },
+                    isActive: Binding(
+                        get: { selectedFileToOpen != nil },
+                        set: { if !$0 { selectedFileToOpen = nil } }
+                    )
+                ) {
+                    EmptyView()
+                }
+                .hidden()
+
             }
+
             .navigationTitle("Saved Records")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -67,6 +89,35 @@ struct SignalBrowserView: View {
                     ActivityView(activityItems: [url])
                 }
             }
+
+            .alert("Cant open fle", isPresented: $showAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text("This ECG recording is not valid and cannot be viewed.")
+            }
+        }
+    }
+
+    private func checkFileAndNavigate(_ filename: String) {
+        let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let fileURL = dir.appendingPathComponent(filename)
+
+        do {
+            let data = try Data(contentsOf: fileURL)
+            if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let fs = json["fs"] as? Int,
+               let signal = json["signal"] as? [Double] {
+                if signal.count >= fs {
+                    selectedFileToOpen = filename
+                } else {
+                    showAlert = true
+                }
+            } else {
+                showAlert = true
+            }
+        } catch {
+            print("❌ File load error: \(error)")
+            showAlert = true
         }
     }
 
@@ -79,7 +130,7 @@ struct SignalBrowserView: View {
             let sortedFiles = jsonFiles.sorted {
                 let date1 = (try? $0.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
                 let date2 = (try? $1.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
-                return date1 > date2 // 🔁 newest first
+                return date1 > date2
             }
 
             filenames = sortedFiles.map { $0.lastPathComponent }

@@ -3,6 +3,8 @@ import CoreBluetooth
 
 class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     @Published var rawBuffer = [Float]()
+    private var tempBuffer = [Float]()
+    private var isDeviceValid = false
     @Published var devices: [CBPeripheral] = []
     @Published var connectedPeripheral: CBPeripheral?
     @Published var statusMessage = "Waiting for Bluetooth..."
@@ -22,21 +24,29 @@ class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPer
     
     func startScanWithTimeoutAfterConnect(timeout: TimeInterval = 1.5, onInvalid: @escaping () -> Void) {
         rawBuffer.removeAll()
+        tempBuffer.removeAll()
+        isDeviceValid = false
 
         DispatchQueue.main.asyncAfter(deadline: .now() + timeout) {
-            // jeśli po `timeout` nie mamy żadnych próbek – uznaj, że urządzenie jest nieprawidłowe
-            if self.rawBuffer.isEmpty {
+            if self.tempBuffer.isEmpty {
                 self.disconnect()
                 onInvalid()
+            } else {
+                self.rawBuffer = self.tempBuffer
+                self.tempBuffer.removeAll()
+                self.isDeviceValid = true
+                self.log("✅ Device validated, data will now be processed")
             }
         }
     }
+
 
 
     func reset() {
         stopScan()
         disconnect()
         rawBuffer.removeAll()
+        isDeviceValid = false
         devices.removeAll()
         latestMetaMessage = nil
         connectedPeripheral = nil
@@ -132,18 +142,21 @@ class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPer
         guard let data = char.value else { return }
 
         if let text = String(data: data, encoding: .utf8), text.starts(with: "META;") {
-            DispatchQueue.main.async {
-                self.latestMetaMessage = text
-            }
+            DispatchQueue.main.async { self.latestMetaMessage = text }
             log("📥 Received META")
         } else {
             var value: Float = 0
             _ = withUnsafeMutableBytes(of: &value) { data.copyBytes(to: $0) }
             DispatchQueue.main.async {
-                self.rawBuffer.append(value)
+                if self.isDeviceValid {
+                    self.rawBuffer.append(value)
+                } else {
+                    self.tempBuffer.append(value)
+                }
             }
         }
     }
+
 
     func log(_ text: String) {
         DispatchQueue.main.async {

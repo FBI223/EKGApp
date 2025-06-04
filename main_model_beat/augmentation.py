@@ -5,7 +5,7 @@ import wfdb
 from scipy.signal import butter, sosfilt
 from tqdm import tqdm
 
-from main_model.consts import (
+from main_model_beat.consts import (
     FS,
     NOISE_STD_DEFAULT,
     DRIFT_STD,
@@ -19,7 +19,7 @@ from main_model.consts import (
     DROP_SEGMENT_MIN,
     DROP_SEGMENT_MAX, ANNOTATION_MAP, WINDOW_SIZE, DB_PATHS
 )
-from main_model.main import extract_beats_with_resampling
+from main_model_beat.main_keras import extract_beats_with_resampling
 
 
 # --- Dataset generation ---

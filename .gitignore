@@ -13,9 +13,9 @@
 /databases/nsrdb/
 /databases/mnist/
 /databases/rythm/
-/basic_rythm_model/single_class/d.npz
-/basic_rythm_model/single_class/dau.npz
-/basic_rythm_model/single_class/X.npz
-/basic_rythm_model/single_class/Xau.npz
-/basic_rythm_model/single_class/y.npz
-/basic_rythm_model/single_class/yau.npz
+/main_model_rythm/single_class/d.npz
+/main_model_rythm/single_class/dau.npz
+/main_model_rythm/single_class/X.npz
+/main_model_rythm/single_class/Xau.npz
+/main_model_rythm/single_class/y.npz
+/main_model_rythm/single_class/yau.npz

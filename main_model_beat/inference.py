@@ -4,7 +4,7 @@ from biosppy.signals import ecg
 from scipy.signal import resample
 import tensorflow as tf
 
-from main_model.consts import ANNOTATION_MAP
+from main_model_beat.consts import ANNOTATION_MAP
 
 # --- Stałe ---
 FS_TARGET = 360

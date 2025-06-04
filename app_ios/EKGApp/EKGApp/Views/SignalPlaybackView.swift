@@ -14,9 +14,31 @@ struct SignalPlaybackView: View {
     @State private var startTime: Date?
     @State private var endTime: Date?
     @State private var durationSeconds: Int?
+    @State private var lastScale: CGFloat = 1.0
 
     var body: some View {
         VStack(spacing: 16) {
+            
+            // === Przycisk "⟵ Reset Chart" nad informacjami ===
+            HStack {
+                Button(action: {
+                    offset = 0
+                    windowSize = 700
+                    yScale = 2.0
+                }) {
+                    Label("Reset Chart", systemImage: "arrow.uturn.left")
+                        .labelStyle(.titleAndIcon)
+                        .font(.subheadline)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                }
+                .buttonStyle(.bordered)
+
+                Spacer()
+            }
+            .padding(.horizontal)
+            .padding(.top, 4)
+            
             // === Informacje nagłówkowe ===
             VStack(spacing: 6) {
                 Text(filename)
@@ -55,6 +77,28 @@ struct SignalPlaybackView: View {
             .background(Color.black.opacity(0.05))
             .cornerRadius(10)
             .gesture(
+                MagnificationGesture()
+                    .onChanged { scale in
+                        let delta = scale / lastScale
+                        lastScale = scale
+
+                        if delta > 1.01 {
+                            windowSize = max(100, Int(CGFloat(windowSize) / delta))
+                            yScale = max(0.5, yScale / Float(delta))
+                        } else if delta < 0.99 {
+                            windowSize = min(5000, Int(CGFloat(windowSize) / delta))
+                            yScale = min(10.0, yScale / Float(delta))
+                        }
+                        
+                        
+                        // ⛔️ Zabezpieczenie: offset nie może wyjść poza sygnał
+                        offset = min(offset, max(0, signal.count - windowSize))
+                    }
+                    .onEnded { _ in
+                        lastScale = 1.0
+                    }
+            )
+            .simultaneousGesture(
                 DragGesture()
                     .onChanged { value in
                         let dragAmount = Int(value.translation.width / 4)
@@ -108,8 +152,19 @@ struct SignalPlaybackView: View {
                let rawFs = json["fs"] as? Int,
                let rawSignal = json["signal"] as? [Double] {
 
+                guard rawSignal.count >= rawFs else {
+                    print("❌ Signal too short (<1 sec). Skipping.")
+                    return
+                }
+
                 fs = rawFs
                 signal = rawSignal.map { Float($0) }
+
+                // Ustaw rozsądny windowSize
+                let minWindowSize = rawFs
+                let defaultWindow = 700
+                let maxWindowSize = 5000
+                windowSize = max(minWindowSize, min(defaultWindow, rawSignal.count))
 
                 if let rawLead = json["lead"] as? String {
                     lead = rawLead

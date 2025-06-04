@@ -15,7 +15,7 @@ import pandas as pd
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import accuracy_score, f1_score, confusion_matrix, classification_report
 from torch.utils.data import DataLoader, TensorDataset
-from main_model.consts import BATCH_SIZE, EPOCHS, NUM_CLASSES, WINDOW_SIZE, INV_ANNOTATION_MAP, FOLDS
+from main_model_beat.consts import BATCH_SIZE, EPOCHS, NUM_CLASSES, WINDOW_SIZE, INV_ANNOTATION_MAP, FOLDS
 import random
 from sklearn.metrics import cohen_kappa_score
 

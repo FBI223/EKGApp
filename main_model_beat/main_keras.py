@@ -29,7 +29,7 @@ import tensorflow as tf
 import tf2onnx
 from tensorflow.keras import Input, Model
 from tensorflow.keras.layers import Conv1D, MaxPooling1D, GRU, Dense, Dropout, BatchNormalization, Bidirectional
-from main_model.consts import (
+from main_model_beat.consts import (
     INV_ANNOTATION_MAP, ANNOTATION_MAP, WINDOW_SIZE, EPOCHS, BATCH_SIZE, DB_PATHS, FS_TARGET, NUM_CLASSES
 )
 

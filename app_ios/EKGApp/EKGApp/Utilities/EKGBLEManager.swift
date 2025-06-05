@@ -4,7 +4,7 @@ import CoreBluetooth
 class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     @Published var rawBuffer = [Float]()
     private var tempBuffer = [Float]()
-    private var isDeviceValid = false
+    @Published var isDeviceValid = false
     @Published var devices: [CBPeripheral] = []
     @Published var connectedPeripheral: CBPeripheral?
     @Published var statusMessage = "Waiting for Bluetooth..."
@@ -15,7 +15,7 @@ class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPer
     private var central: CBCentralManager!
     private let serviceUUID = CBUUID(string: "bd37e8b4-1bcf-4f42-bdd1-bebea1a51a1a")
     private let charUUID = CBUUID(string: "7a1e8b7d-9a3e-4657-927b-339adddc2a5b")
-
+    
     override init() {
         super.init()
         central = CBCentralManager(delegate: self, queue: nil)

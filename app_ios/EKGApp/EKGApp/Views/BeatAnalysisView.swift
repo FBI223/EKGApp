@@ -11,28 +11,27 @@ struct BeatAnalysisView: View {
     
     @State private var lastDetectedTimes: [Date] = []
     @State private var bpm: Int = 0
-
+    
     @State private var showInvalidDeviceAlert = false
-
+    
     @Environment(\.dismiss) var dismiss
     @ObservedObject private var settings = AppSettings.shared
-
+    
     var backgroundColor: Color { settings.darkModeEnabled ? .black : .white }
     var foregroundColor: Color { settings.darkModeEnabled ? .white : .black }
     var chartColor: Color { settings.darkModeEnabled ? .cyan : .blue }
-
-    @State private var fs_main = 128
+    
     @State private var qrsCount = 0
     @State private var classCounts: [String: Int] = ["N": 0, "S": 0, "V": 0, "F": 0, "Q": 0]
-
+    
     let maxWindowSize = 700
     let maxTotalSamples = 5000
     let samplesPerTick = 10
     let updateInterval = 0.05
     let segmentRadius = 96
-
+    
     private let classifier = EKGClassifier()
-
+    
     var body: some View {
         GeometryReader { geometry in
             ScrollView {
@@ -42,7 +41,7 @@ struct BeatAnalysisView: View {
                             Text("Select ECG Device")
                                 .font(.headline)
                                 .foregroundColor(foregroundColor)
-
+                            
                             List(ble.devices, id: \.identifier) { device in
                                 Button {
                                     ble.connect(to: device)
@@ -79,16 +78,16 @@ struct BeatAnalysisView: View {
                             .background(backgroundColor)
                             .cornerRadius(10)
                             .padding(.horizontal)
-
+                            
                             Text("❤️ BPM: \(bpm)")
                                 .font(.title3)
                                 .bold()
                                 .foregroundColor(.red)
-
+                            
                             Text("QRS Beat Count: \(qrsCount)")
                                 .font(.title3)
                                 .foregroundColor(foregroundColor)
-
+                            
                             HStack {
                                 ForEach(["N", "S", "V", "F", "Q"], id: \.self) { k in
                                     VStack {
@@ -102,14 +101,17 @@ struct BeatAnalysisView: View {
                                     .frame(maxWidth: .infinity)
                                 }
                             }
-
+                            
                             HStack(spacing: 20) {
                                 Button(isProcessing ? "Stop" : "Start") {
                                     isProcessing ? stopProcessing() : startProcessing()
                                 }
                                 .buttonStyle(.borderedProminent)
                                 .tint(isProcessing ? .red : .green)
+                                .disabled(!ble.isDeviceValid && !isProcessing)
+                                .opacity((!ble.isDeviceValid && !isProcessing) ? 0.4 : 1.0)
 
+                                
                                 Button("Disconnect") {
                                     stopProcessing()
                                     ble.reset()
@@ -139,8 +141,8 @@ struct BeatAnalysisView: View {
                 }
             }
         }
-
-
+        
+        
         
         .onAppear {
             ble.startScan()
@@ -156,46 +158,46 @@ struct BeatAnalysisView: View {
         } message: {
             Text("❌ Please choose a valid ECG monitor device")
         }
-
+        
     }
     
-
-
+    
+    
     func startProcessing() {
         samples = []
         recordingBuffer = []
         qrsCount = 0
         classCounts = ["N": 0, "S": 0, "V": 0, "F": 0, "Q": 0]
         isProcessing = true
-
+        
         timer = Timer.publish(every: updateInterval, on: .main, in: .common)
             .autoconnect()
             .sink { _ in updateSamples() }
     }
-
+    
     func stopProcessing() {
         isProcessing = false
         timer?.cancel()
     }
     
     private func updateBPM(from qrsPeaks: [Int]) {
-        let fs = Float(settings.sampleRateIn)
-
+        let fs: Float = 360  // ✅ bo R-peaki są wykrywane po resamplingu
+        
         guard qrsPeaks.count >= 2 else {
             bpm = 0
             return
         }
-
+        
         let rrIntervals: [Float] = zip(qrsPeaks.dropFirst(), qrsPeaks).map { Float($0 - $1) / fs }
         let avgRR = rrIntervals.reduce(0, +) / Float(rrIntervals.count)
         
         bpm = avgRR > 0 ? Int(60.0 / avgRR) : 0
     }
-
-
+    
+    
     private func updateSamples() {
         guard isProcessing, !ble.rawBuffer.isEmpty else { return }
-
+        
         for _ in 0..<samplesPerTick {
             if let v = ble.rawBuffer.first {
                 ble.rawBuffer.removeFirst()
@@ -205,42 +207,57 @@ struct BeatAnalysisView: View {
                 }
             }
         }
-
+        
         while samples.count >= maxWindowSize {
             let window = Array(samples.prefix(maxWindowSize))
             classifyWindow(window)
             samples.removeFirst(maxWindowSize)
         }
     }
-
+    
     
     private func classifyWindow(_ window: [Float]) {
-        let peaks = RPeakDetector.detectRPeaks(signal: window, fs: fs_main)
+        // 1. Resample from 128 Hz → 360 Hz
+        let resampled = Resampler.resample(input: window, srcRate: 128, dstRate: 360)
+
+        // 2. Detect R-peaks
+        let peaks = RPeakDetector.detectRPeaks(signal: resampled, fs: 360, sensitivity: 0.7)
+        var classifiedPeaks: [Int] = []
 
         for localPeak in peaks {
+            // 3. Wytnij segment 540 próbek (±270)
             var segment: [Float] = []
-
-            for i in (localPeak - segmentRadius)...(localPeak + segmentRadius) {
-                if i >= 0 && i < window.count {
-                    segment.append(window[i])
+            for i in (localPeak - 270)...(localPeak + 269) {
+                if i >= 0 && i < resampled.count {
+                    segment.append(resampled[i])
                 } else {
-                    segment.append(0.0)  // zero-padding
+                    segment.append(0.0)
                 }
             }
 
-            // ⛔️ Pomijaj błędne segmenty
-            guard segment.count == 2 * segmentRadius + 1 else { continue }
+            // 4. Upewnij się, że segment ma dokładnie 540 próbek
+            if segment.count != 540 {
+                segment = Array(segment.prefix(540))
+                if segment.count < 540 {
+                    segment += Array(repeating: 0.0, count: 540 - segment.count)
+                }
+            }
 
-            qrsCount += 1
+            // 5. Przekaż do klasyfikatora
             let predicted = classifier.predict(input: segment)
-            print("QRS at local index \(localPeak): \(predicted)")
-            classCounts[predicted, default: 0] += 1
+            if predicted != "?" {
+                classCounts[predicted, default: 0] += 1
+                qrsCount += 1
+                classifiedPeaks.append(localPeak)
+            }
         }
+        print("🔍 \(peaks.count) peaks in resampled window (\(resampled.count) samples)")
+        print("🔍 \(classifiedPeaks.count) classified peaks")
 
-        // ✅ Aktualizacja BPM na końcu
-        updateBPM(from: peaks)
+
+        // 6. Aktualizuj BPM
+        updateBPM(from: classifiedPeaks)
     }
 
     
 }
-

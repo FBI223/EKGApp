@@ -17,7 +17,17 @@ struct RhythmAnalysisView: View {
         "AV_BLOCK": 0,
         "TORSADES": 0
     ]
+    
+    @State private var bpmClassCounts: [String: Int] = [
+        "BRADYCARDIA": 0,
+        "TACHYCARDIA": 0
+    ]
+    @State private var isBradycardia = false
+    @State private var isTachycardia = false
 
+
+    @State private var bpm: Int = 0
+    
     @State private var timer: AnyCancellable?
     @State private var isProcessing = false
     
@@ -76,7 +86,37 @@ struct RhythmAnalysisView: View {
                             Text(prediction)
                                 .font(.system(size: 32, weight: .semibold, design: .rounded))
                                 .foregroundColor(.orange)
+                            
+                            
+                            
+                            Text("❤️ BPM: \(bpm)")
+                                .font(.title3)
+                                .bold()
+                                .foregroundColor(.red)
+                            
+                            
+                            HStack {
+                                if isBradycardia {
+                                    Label("Bradycardia Detected", systemImage: "arrow.down.heart")
+                                        .foregroundColor(.blue)
+                                }
+                                if isTachycardia {
+                                    Label("Tachycardia Detected", systemImage: "arrow.up.heart")
+                                        .foregroundColor(.red)
+                                }
+                                if !isBradycardia && !isTachycardia {
+                                    Text("—")
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            .font(.caption)
 
+                            
+
+                            Divider().padding(.top, 4)
+    
+                            
+                            
                             Chart {
                                 let visible = Array(rhythmBuffer.suffix(windowLength))
                                 ForEach(0..<visible.count, id: \.self) { i in
@@ -94,6 +134,8 @@ struct RhythmAnalysisView: View {
                             .cornerRadius(10)
                             .padding(.horizontal)
 
+                            Divider().padding(.top, 4)              
+                            
                             HStack {
                                 ForEach( ["NSR", "AF_FLUTTER", "PAC", "PVC", "BBB", "SVT", "AV_BLOCK", "TORSADES"] , id: \.self) { key in
                                     VStack {
@@ -107,6 +149,8 @@ struct RhythmAnalysisView: View {
                                     .frame(maxWidth: .infinity)
                                 }
                             }
+                            
+                            Divider().padding(.top, 4)
 
                             HStack(spacing: 20) {
                                 Button(isProcessing ? "Stop" : "Start") {
@@ -114,6 +158,7 @@ struct RhythmAnalysisView: View {
                                 }
                                 .buttonStyle(.borderedProminent)
                                 .tint(isProcessing ? .red : .green)
+                                .disabled(!ble.isDeviceValid && !isProcessing) // 🚫 zablokuj jeśli nie przeszło walidacji
 
                                 Button("Disconnect") {
                                     stopProcessing()
@@ -188,7 +233,18 @@ struct RhythmAnalysisView: View {
         isProcessing = false
         timer?.cancel()
     }
+    
+    
+    func computeBPM(signal: [Float], fs: Int) -> Int {
+        let peaks = RPeakDetector.detectRPeaks(signal: signal, fs: fs)
+        guard peaks.count >= 2 else { return 0 }
 
+        let rr = zip(peaks.dropFirst(), peaks).map { Float($0 - $1) / Float(fs) }
+        let avgRR = rr.reduce(0, +) / Float(rr.count)
+        return avgRR > 0 ? Int(60.0 / avgRR) : 0
+    }
+
+    
     func updateRhythm() {
         guard isProcessing, !ble.rawBuffer.isEmpty else { return }
 
@@ -204,14 +260,21 @@ struct RhythmAnalysisView: View {
 
         if rhythmBuffer.count >= windowLength {
             let ecg1280 = Array(rhythmBuffer.suffix(windowLength))
-            let age = settings.userAge      // dodaj to w AppSettings jeśli nie masz
-            let sex = settings.userSex      // 0.0 = mężczyzna, 1.0 = kobieta
+            let age = settings.userAge
+            let sex = settings.userSex
 
+            // === Klasyfikacja rytmu ===
             let predictedClass = model.predict(ecgInput: ecg1280, age: Float(age), sex: Float(sex))
             prediction = predictedClass
             rhythmClassCounts[predictedClass, default: 0] += 1
-
             print("[Rhythm] 10s classified as \(predictedClass)")
+
+            // === Obliczenie BPM i klasy HR ===
+            bpm = computeBPM(signal: ecg1280, fs: 128)
+            isBradycardia = bpm < 60
+            isTachycardia = bpm > 100
+
+
             rhythmBuffer.removeFirst(windowLength)
         }
 

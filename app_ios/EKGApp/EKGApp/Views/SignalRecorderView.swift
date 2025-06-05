@@ -84,6 +84,8 @@ struct SignalRecorderView: View {
                                 }
                                 .buttonStyle(.borderedProminent)
                                 .tint(isProcessing ? .red : .green)
+                                .disabled(!ble.isDeviceValid && !isProcessing) // 🚫 Zablokuj, jeśli nieprzetestowane
+
 
                                 Button(isRecording ? "Stop Recording" : "Record") {
                                     if isRecording {

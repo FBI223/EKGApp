@@ -11,12 +11,8 @@ class EKGClassifier {
     }
 
     func predict(input: [Float]) -> String {
-        let resampled = resampleLinear(
-            signal: input,
-            from: Float(settings.sampleRateIn),
-            to: Float(360),
-            outputCount: settings.windowLengthBeatResampled
-        )
+        let resampled = input  // ✅ wejście już jest w 360 Hz i ma 540 próbek
+
 
         let mlArray = try! MLMultiArray(shape: [1, 1, NSNumber(value: settings.windowLengthBeatResampled)], dataType: .float32)
         for i in 0..<settings.windowLengthBeatResampled {

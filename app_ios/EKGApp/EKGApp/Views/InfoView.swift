@@ -24,9 +24,12 @@ struct InfoView: View {
         ("PVC", "Premature Ventricular Contractions — early ventricular beats."),
         ("BBB", "Bundle Branch Block — delay/block in conduction pathway."),
         ("SVT", "Supraventricular Tachycardia — rapid atrial heartbeat."),
-        ("AV_BLOCK", "Atrioventricular Block — impaired conduction atria to ventricles."),
-        ("TORSADES", "Torsades de Pointes — dangerous ventricular tachycardia.")
+        ("AV_BLOCK", "Atrioventricular Block — impaired conduction from atria to ventricles."),
+        ("TORSADES", "Torsades de Pointes — polymorphic ventricular tachycardia, potentially fatal."),
+        ("BRADYCARDIA", "Bradycardia — abnormally slow heart rate, typically < 60 bpm."),
+        ("TACHYCARDIA", "Tachycardia — abnormally fast heart rate, typically > 100 bpm.")
     ]
+
 
     var body: some View {
         NavigationView {

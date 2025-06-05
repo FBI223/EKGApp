@@ -19,25 +19,6 @@ struct SignalPlaybackView: View {
     var body: some View {
         VStack(spacing: 16) {
             
-            // === Przycisk "⟵ Reset Chart" nad informacjami ===
-            HStack {
-                Button(action: {
-                    offset = 0
-                    windowSize = 700
-                    yScale = 2.0
-                }) {
-                    Label("Reset Chart", systemImage: "arrow.uturn.left")
-                        .labelStyle(.titleAndIcon)
-                        .font(.subheadline)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                }
-                .buttonStyle(.bordered)
-
-                Spacer()
-            }
-            .padding(.horizontal)
-            .padding(.top, 4)
             
             // === Informacje nagłówkowe ===
             VStack(spacing: 6) {
@@ -107,10 +88,24 @@ struct SignalPlaybackView: View {
                     }
             )
 
-            // === Suwaki ===
-            VStack(alignment: .leading) {
+            
+
+            // === Nawigacja + suwaki + reset ===
+            VStack(alignment: .leading, spacing: 12) {
+                Button(action: {
+                    offset = 0
+                    windowSize = 700
+                    yScale = 2.0
+                }) {
+                    Label("Reset Chart", systemImage: "arrow.uturn.left")
+                        .labelStyle(.titleAndIcon)
+                        .font(.subheadline)
+                }
+                .buttonStyle(.bordered)
+
                 Text("🧭 Navigate")
                     .font(.subheadline)
+                    .bold()
 
                 HStack {
                     Text("Window: \(windowSize)")
@@ -125,18 +120,31 @@ struct SignalPlaybackView: View {
                     Slider(value: $yScale, in: 0.5...10.0, step: 0.5)
                 }
 
-                if signal.count > windowSize {
-                    HStack {
-                        Text("Offset: \(offset)")
-                        Slider(value: Binding(
-                            get: { Double(offset) },
-                            set: { newValue in
-                                offset = min(Int(newValue), max(0, signal.count - windowSize))
-                            }
-                        ), in: 0...Double(signal.count - windowSize), step: 1)
-                    }
+                HStack {
+                    Text("Offset: \(offset)")
+                        .opacity(signal.count > windowSize ? 1 : 0.3)
+
+                    Slider(value: Binding(
+                        get: { Double(offset) },
+                        set: { newValue in
+                            offset = min(Int(newValue), max(0, signal.count - windowSize))
+                        }
+                    ), in: 0...Double(max(1, signal.count - windowSize)), step: 1)
+                    .disabled(signal.count <= windowSize)
+                    .opacity(signal.count > windowSize ? 1 : 0.3)
                 }
             }
+            .frame(maxWidth: 600, alignment: .leading) // 👈 szersze okno na suwaki
+            .padding()
+            .background(Color(.systemBackground))
+            .cornerRadius(10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+            )
+            .padding(.horizontal)
+
+
 
             Spacer()
         }

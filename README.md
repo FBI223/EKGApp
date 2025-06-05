@@ -1,35 +1,5 @@
 
 
-## 🧪 Training Procedures
-
-### Rhythm Classifier
-- **Augmentation**: Oversampling of minority classes, additive noise, amplitude scaling
-- **Loss**: CrossEntropyLoss with optional class weighting
-- **Optimization**: Adam optimizer, ReduceLROnPlateau, early stopping
-- **Export Flow**: PyTorch → ONNX → TensorFlow → TFLite/CoreML
-
-### Beat Classifier
-- **Training**: SMOTE-based balancing, k-fold cross-validation (Stratified)
-- **Metrics**: Accuracy, macro-F1, Cohen’s kappa
-- **Deployment**: TorchScript & ONNX exported
-
----
-
-## 💾 ECG Recording Format (.json)
-
-```json
-{
-  "fs": 500,
-  "lead": "II",
-  "start_time": "2025-06-01T12:01:00Z",
-  "end_time": "2025-06-01T12:01:10Z",
-  "signal": [0.004, 0.005, 0.00]
-}
-
-```
-
-
-
 
 
 # 📱 ECGApp – Mobile ECG Viewer & Classifier

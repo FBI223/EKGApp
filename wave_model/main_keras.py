@@ -1,71 +1,41 @@
-import os
+
 import sys
 import gc
-import signal
 import glob
-import numpy as np
 import wfdb
 import matplotlib.pyplot as plt
-
-from random import randint, choice
-from sklearn.model_selection import train_test_split
+from tensorflow.keras.layers import ZeroPadding1D, Conv1DTranspose, BatchNormalization
+import os
+import numpy as np
+from sklearn.model_selection import KFold
+import signal
+from random import randint
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, classification_report
-
 import tensorflow as tf
 import tensorflow.keras.backend as K
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Input, Conv1D, MaxPooling1D, UpSampling1D, concatenate
+from tensorflow.keras.layers import Input, Conv1D, MaxPooling1D, concatenate
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 
-from scipy.interpolate import CubicSpline
-from PyQt6 import QtWidgets, QtGui
 
 
-# Preferowane odprowadzenia
 # Preferowane leady
-PREFERRED_LEADS = ["MLII", "II", "ECG1" ,"mlii","ii" , "ecg1" ]
+PREFERRED_LEADS = [ "II","ii"  ]
 # Ścieżki do baz danych
-QTDB_PATH = "C:/Users/msztu/Documents/EKG4/qtdb/"
 LUDB_PATH = "ludb/data/"
 MODEL_PATH = "unet_ecg_fold5.h5"  # Model UNet
 TARGET_FS = 500
 WINDOW_SIZE = 2000
 BAD_PATIENTS = [7, 34, 90,  95, 104, 111]
 BAD_PATIENTS_II = []
+BAD_PATIENTS_III = [95,104,111]
 
 # Mapowanie symboli na klasy (0=none, 1=P, 2=QRS, 3=T)
 WAVE_MAP = {'p': 1, 'N': 2, 't': 3}  # 0 = none
+TOLERANCE = 150
 
 
 
-if not os.path.exists(MODEL_PATH):
-    raise FileNotFoundError(f"❌ Brak pliku modelu {MODEL_PATH}")
-print("[INFO] Załadowano model UNet")
-model = tf.keras.models.load_model(MODEL_PATH)
-
-
-
-
-
-
-
-def list_available_leads():
-    """Znajduje dostępne leady w plikach .hea i wypisuje debugowanie."""
-    records = glob.glob(os.path.join(QTDB_PATH, "*.hea"))
-    lead_info = {}
-
-    print("[DEBUG] Sprawdzanie dostępnych leadów w bazie QTDB...")
-
-    for record in records:
-        record_name = os.path.splitext(os.path.basename(record))[0]
-        try:
-            record_info = wfdb.rdrecord(os.path.join(QTDB_PATH, record_name))
-            lead_info[record_name] = record_info.sig_name
-            print(f"[INFO] Rekord: {record_name}, Lead-y: {record_info.sig_name}")
-        except Exception as e:
-            print(f"[ERROR] Nie udało się wczytać {record_name}: {e}")
-
-    return lead_info
 
 
 def augment_signal(signal):
@@ -96,44 +66,6 @@ def augment_signal(signal):
     return augmented_signal
 
 
-def augment_signalv1(signal):
-    """Dodaje różne realistyczne zakłócenia do sygnału EKG."""
-    L = len(signal)
-
-    # 1. Dodanie szumu Gaussowskiego (małe zakłócenia elektryczne)
-    noise = np.random.normal(0, 0.01, L)
-
-    # 2. Dryft bazowy (symulacja oddychania, niskoczęstotliwościowy trend)
-    drift = 0.05 * np.sin(np.linspace(0, 2*np.pi, L))
-
-    # 3. Zakłócenia od mikro skurczów mięśni (szybkie, losowe zmiany)
-    muscle_noise = 0.02 * np.random.randn(L) * np.sin(np.linspace(0, 50*np.pi, L))
-
-    # 4. Zakłócenia elektryczne 50Hz (lekkie zakłócenia sieci elektrycznej)
-    electric_noise = 0.01 * np.sin(2 * np.pi * 50 * np.linspace(0, 1, L))
-
-    # Wybieramy losowe zakłócenie
-    perturbation = np.random.choice([0, 1, 2, 3])
-
-    if perturbation == 0:
-        augmented_signal = signal + noise
-    elif perturbation == 1:
-        augmented_signal = signal + drift
-    elif perturbation == 2:
-        augmented_signal = signal + muscle_noise
-    else:
-        augmented_signal = signal + electric_noise
-
-    return augmented_signal
-
-
-def resample_signal(signal, orig_fs=500, target_fs=500):
-    if orig_fs == target_fs:
-        return signal
-    time_orig = np.linspace(0, len(signal) / orig_fs, num=len(signal))
-    time_target = np.linspace(0, len(signal) / orig_fs, num=int(len(signal) * target_fs / orig_fs))
-    interpolator = CubicSpline(time_orig, signal)
-    return interpolator(time_target)
 
 
 def cleanup_resources(signum, frame):
@@ -191,7 +123,7 @@ def load_ecg(record_name):
 def load_all_records_ludb():
     data_list = []
     for record_id in range(1, 201):
-        if record_id in BAD_PATIENTS_II:
+        if record_id in BAD_PATIENTS_III:
             print(f"[DEBUG] Pomijam pacjenta {record_id}")
             continue
         record_name = str(record_id)
@@ -260,7 +192,6 @@ def generate_training_fragments(signal, labels, num_fragments=5):
     return X_segments, Y_segments, X_aug_segments, Y_aug_segments
 
 
-from tensorflow.keras.layers import ZeroPadding1D, Conv1DTranspose, BatchNormalization
 
 def build_unet(input_length):
     inputs = Input(shape=(input_length, 1))
@@ -382,7 +313,7 @@ def extract_segments_from_prediction(pred_labels):
         segments.append((start, len(pred_labels) - 1, current_class))
     return segments
 
-def evaluate_onset_offset(true_segments, pred_segments, tolerance=150):
+def evaluate_onset_offset(true_segments, pred_segments, tolerance=TOLERANCE):
     used_pred = set()
     TP = 0
     for (true_start, true_end, true_class) in true_segments:
@@ -403,15 +334,8 @@ def evaluate_onset_offset(true_segments, pred_segments, tolerance=150):
     FN = len(true_segments) - TP
     return TP, FP, FN
 
-def evaluate_onset_offset_for_dataset(model, X, Y, tolerance=150):
-    """
-    Przechodzi po wszystkich fragmentach w X, Y.
-    Dla każdego:
-      - pred_labels = argmax(model.predict(X[i]))
-      - true_labels = argmax(Y[i])
-      - wyodrębnij segmenty, porównaj onset/offset
-    Zwraca 3 liczby: sumaryczne TP, FP, FN.
-    """
+def evaluate_onset_offset_for_dataset(model, X, Y, tolerance=TOLERANCE):
+
     preds = model.predict(X)
     total_TP = 0
     total_FP = 0
@@ -423,7 +347,7 @@ def evaluate_onset_offset_for_dataset(model, X, Y, tolerance=150):
         pred_segments = extract_segments_from_prediction(pred_labels)
         true_segments = extract_segments_from_prediction(true_labels)
 
-        TP, FP, FN = evaluate_onset_offset(true_segments, pred_segments, tolerance=tolerance)
+        TP, FP, FN = evaluate_onset_offset(true_segments, pred_segments, tolerance=TOLERANCE)
         total_TP += TP
         total_FP += FP
         total_FN += FN
@@ -431,48 +355,102 @@ def evaluate_onset_offset_for_dataset(model, X, Y, tolerance=150):
     return total_TP, total_FP, total_FN
 
 
-def main():
-    import numpy as np
-    from sklearn.model_selection import KFold
-    from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
+def validate_annotations_all_records():
+    broken_records = []
 
-    import signal
+    for record_id in range(1, 201):
+        if record_id in BAD_PATIENTS:
+            continue
+
+        record_name = str(record_id)
+        signal, annotation = load_ecg(record_name)
+        if signal is None or annotation is None:
+            print(f"[DEBUG] Pominięto {record_name}")
+            continue
+
+        symbols = annotation.symbol
+        errors = []
+        stack = []
+
+        for i, sym in enumerate(symbols):
+            if sym == '(':
+                if stack:
+                    errors.append(f"[{record_name}] Zagnieżdżony nawias '(' przy indexie {i}")
+                stack.append(i)
+            elif sym == ')':
+                if not stack:
+                    errors.append(f"[{record_name}] Samotny nawias ')' bez odpowiadającego '(' przy indexie {i}")
+                else:
+                    open_idx = stack.pop()
+                    # Zakazane: nawias domknięty natychmiast po wcześniejszym
+                    if open_idx + 1 == i:
+                        errors.append(f"[{record_name}] Pusta para nawiasów '()' przy indexie {open_idx}")
+
+        # Jeśli po przejściu coś zostało w stosie, to otwarte nawiasy
+        if stack:
+            for idx in stack:
+                errors.append(f"[{record_name}] Niezamknięty nawias '(' przy indexie {idx}")
+
+        if errors:
+            print(f"\n❌ Błędy w rekordzie {record_name}:")
+            for err in errors:
+                print("  " + err)
+            broken_records.append(record_name)
+        else:
+            print(f"[DEBUG] ✅ Rekord {record_name} – poprawna sekwencja nawiasów")
+
+    print("\n=== Podsumowanie ===")
+    print(f"Niepoprawne rekordy: {broken_records}")
+    return broken_records
+
+
+
+
+def main():
     signal.signal(signal.SIGINT, cleanup_resources)
 
-    print("[DEBUG] Rozpoczynam wczytywanie rekordów...")
-    all_data = load_all_records_ludb()
-    print(f"[DEBUG] Załadowano {len(all_data)} rekordów.")
+    X_PATH =  "X_total.npy"
+    Y_PATH =  "Y_total.npy"
 
-    X_fragments = []
-    Y_fragments = []
-    X_aug_fragments = []
-    Y_aug_fragments = []
+    if os.path.exists(X_PATH) and os.path.exists(Y_PATH):
+        print("[DEBUG] Wczytywanie zapisanych fragmentów z dysku...")
+        X_total = np.load(X_PATH)
+        Y_total = np.load(Y_PATH)
+    else:
+        print("[DEBUG] Rozpoczynam wczytywanie rekordów...")
+        all_data = load_all_records_ludb()
+        print(f"[DEBUG] Załadowano {len(all_data)} rekordów.")
 
-    for idx, (signal_ecg, ann) in enumerate(all_data):
-        print(f"[DEBUG] Procesuję pacjenta idx={idx}, sygnał shape={signal_ecg.shape}")
-        labels_full = create_label_array(signal_ecg, ann)
-        X_segs, Y_segs, X_aug_segs, Y_aug_segs = generate_training_fragments(signal_ecg, labels_full, num_fragments=10)
-        print(f"[DEBUG] Pacjent idx={idx}: wygenerowano {len(X_segs)} fragmentów + {len(X_aug_segs)} augmentowanych")
-        X_fragments.extend(X_segs)
-        Y_fragments.extend(Y_segs)
-        X_aug_fragments.extend(X_aug_segs)
-        Y_aug_fragments.extend(Y_aug_segs)
+        X_fragments, Y_fragments = [], []
+        X_aug_fragments, Y_aug_fragments = [], []
 
-    X_total = np.array(X_fragments + X_aug_fragments, dtype=np.float32).reshape(-1, WINDOW_SIZE, 1)
-    Y_total = np.array(Y_fragments + Y_aug_fragments, dtype=np.int32)
-    print(f"[DEBUG] Łącznie fragmentów: {len(X_total)} (oryginalne + augmentowane)")
+        for idx, (signal_ecg, ann) in enumerate(all_data):
+            print(f"[DEBUG] Procesuję pacjenta idx={idx}, sygnał shape={signal_ecg.shape}")
+            labels_full = create_label_array(signal_ecg, ann)
+            X_segs, Y_segs, X_aug_segs, Y_aug_segs = generate_training_fragments(signal_ecg, labels_full, num_fragments=10)
+            print(f"[DEBUG] Pacjent idx={idx}: wygenerowano {len(X_segs)} fragmentów + {len(X_aug_segs)} augmentowanych")
+            X_fragments.extend(X_segs)
+            Y_fragments.extend(Y_segs)
+            X_aug_fragments.extend(X_aug_segs)
+            Y_aug_fragments.extend(Y_aug_segs)
 
-    # One-hot encoding etykiet
+        X_total = np.array(X_fragments + X_aug_fragments, dtype=np.float32).reshape(-1, WINDOW_SIZE, 1)
+        Y_total = np.array(Y_fragments + Y_aug_fragments, dtype=np.int32)
+        np.save(X_PATH, X_total)
+        np.save(Y_PATH, Y_total)
+        print(f"[DEBUG] Zapisano X_total: {X_total.shape}, Y_total: {Y_total.shape}")
+
+    print(f"[DEBUG] Łącznie fragmentów: {len(X_total)}")
+
+    # One-hot encoding
     Y_onehot = np.zeros((len(Y_total), WINDOW_SIZE, 4), dtype=np.float32)
     for i in range(len(Y_total)):
         Y_onehot[i, np.arange(WINDOW_SIZE), Y_total[i]] = 1.0
 
-    # K-Fold Cross Validation
     kfold = KFold(n_splits=5, shuffle=True, random_state=42)
     fold_results = []
-    fold = 1
 
-    for train_idx, val_idx in kfold.split(X_total):
+    for fold, (train_idx, val_idx) in enumerate(kfold.split(X_total), start=1):
         print(f"\n[DEBUG] Rozpoczynam fold {fold}")
         X_train, X_val = X_total[train_idx], X_total[val_idx]
         y_train, y_val = Y_onehot[train_idx], Y_onehot[val_idx]
@@ -493,15 +471,11 @@ def main():
             verbose=1
         )
 
-        # Ocena na zbiorze walidacyjnym
         results = model.evaluate(X_val, y_val, verbose=0)
-        # Zakładając, że model.compile(...) ma kolejno: loss, accuracy, Precision, Recall
-        loss, accuracy, precision, recall = results[0], results[1], results[2], results[3]
+        loss, accuracy, precision, recall = results[:4]
         print(f"[DEBUG] Fold {fold} - Val Loss: {loss:.4f}, Accuracy: {accuracy:.4f}, Precision: {precision:.4f}, Recall: {recall:.4f}")
         fold_results.append((loss, accuracy, precision, recall))
-        fold += 1
 
-    # Uśrednienie wyników z k-fold
     avg_loss = np.mean([res[0] for res in fold_results])
     avg_acc = np.mean([res[1] for res in fold_results])
     avg_prec = np.mean([res[2] for res in fold_results])
@@ -513,10 +487,9 @@ def main():
     print(f"Precision: {avg_prec:.4f}")
     print(f"Recall:    {avg_rec:.4f}")
 
-    # Opcjonalnie: Wyświetlenie macierzy konfuzji i raportu klasyfikacji na ostatnim foldzie
-    print("\n[DEBUG] Ewaluacja onset/offset na ostatnim foldzie (z tolerancją 150):")
+    print("\n[DEBUG] Ewaluacja onset/offset na ostatnim foldzie (tolerancja 150):")
     plot_confusion_matrix_samples(model, X_val, y_val)
-    total_TP, total_FP, total_FN = evaluate_onset_offset_for_dataset(model, X_val, y_val, tolerance=150)
+    total_TP, total_FP, total_FN = evaluate_onset_offset_for_dataset(model, X_val, y_val, tolerance=TOLERANCE)
     precision_metric = total_TP / (total_TP + total_FP + 1e-9)
     recall_metric = total_TP / (total_TP + total_FN + 1e-9)
     f1 = 2 * precision_metric * recall_metric / (precision_metric + recall_metric + 1e-9)
@@ -526,160 +499,9 @@ def main():
 
 
 
-def load_test_data(num_samples=100):
-    """Losuje `num_samples` pacjentów i zwraca sygnał EKG + adnotacje."""
-    available_patients = [str(i) for i in range(1, 201) if i not in BAD_PATIENTS_II]
-    selected_patients = np.random.choice(available_patients, num_samples, replace=False)
-
-    X_test, Y_test, records = [], [], []
-    for record_name in selected_patients:
-        signal, annotation = load_ecg(record_name)
-        if signal is None or annotation is None:
-            continue
-
-        labels = create_label_array(signal, annotation)
-
-        # Pobranie fragmentu o długości WINDOW_SIZE
-        if len(signal) > WINDOW_SIZE:
-            start_idx = np.random.randint(0, len(signal) - WINDOW_SIZE)
-            X_segment = signal[start_idx:start_idx + WINDOW_SIZE].copy()
-            Y_segment = labels[start_idx:start_idx + WINDOW_SIZE].copy()
-
-            # Normalizacja
-            X_segment = (X_segment - np.mean(X_segment)) / (np.std(X_segment) + 1e-8)
-
-            X_test.append(X_segment)
-            Y_test.append(Y_segment)
-            records.append(record_name)
-
-    X_test = np.array(X_test, dtype=np.float32).reshape(-1, WINDOW_SIZE, 1)
-    Y_test = np.array(Y_test, dtype=np.int32)
-
-    return X_test, Y_test, records
-
-
-
-def plot_predictions(X_test, Y_test, pred_labels, records):
-    """Tworzy dwa wykresy: jeden dla rzeczywistych adnotacji, drugi dla predykcji."""
-    os.makedirs("trained_models/v4_sota/predictions", exist_ok=True)
-
-    for i in range(len(X_test)):
-        fig, axs = plt.subplots(2, 1, figsize=(12, 8), sharex=True)
-
-        # Górny wykres - rzeczywiste adnotacje
-        axs[0].plot(X_test[i], label="Sygnał EKG", color="black", linewidth=1)
-        axs[0].set_title(f"Pacjent {records[i]} - Oryginalne adnotacje (GT)")
-        axs[0].set_ylabel("Amplituda")
-
-        true_p = np.where(Y_test[i] == 1)[0]
-        true_qrs = np.where(Y_test[i] == 2)[0]
-        true_t = np.where(Y_test[i] == 3)[0]
-
-        axs[0].scatter(true_p, X_test[i][true_p], color="blue", label="GT: P", marker="o", s=40)
-        axs[0].scatter(true_qrs, X_test[i][true_qrs], color="red", label="GT: QRS", marker="o", s=40)
-        axs[0].scatter(true_t, X_test[i][true_t], color="green", label="GT: T", marker="o", s=40)
-        axs[0].legend()
-        axs[0].grid()
-
-        # Dolny wykres - predykcja modelu
-        axs[1].plot(X_test[i], label="Sygnał EKG", color="black", linewidth=1)
-        axs[1].set_title(f"Pacjent {records[i]} - Predykcja modelu")
-        axs[1].set_xlabel("Próbki")
-        axs[1].set_ylabel("Amplituda")
-
-        pred_p = np.where(pred_labels[i] == 1)[0]
-        pred_qrs = np.where(pred_labels[i] == 2)[0]
-        pred_t = np.where(pred_labels[i] == 3)[0]
-
-        axs[1].scatter(pred_p, X_test[i][pred_p], color="blue", label="Pred: P", marker="x", s=30)
-        axs[1].scatter(pred_qrs, X_test[i][pred_qrs], color="red", label="Pred: QRS", marker="x", s=30)
-        axs[1].scatter(pred_t, X_test[i][pred_t], color="green", label="Pred: T", marker="x", s=30)
-        axs[1].legend()
-        axs[1].grid()
-
-        save_path = f"predictions/ecg_prediction_{records[i]}.png"
-        plt.savefig(save_path)
-        plt.close()
-
-    print(f"[INFO] Zapisano wykresy do folderu 'predictions/'")
-
-
-def run_model_inference_on_ludb():
-    X_test, Y_test, records = load_test_data(num_samples=50)
-    preds = model.predict(X_test)
-    pred_labels = np.argmax(preds, axis=-1)
-
-    plot_predictions(X_test, Y_test, pred_labels, records)
-
-
-
-
-# Podział sygnału na fragmenty
-def segment_signal(signal, window_size):
-    num_segments = len(signal) // window_size
-    segments = [signal[i * window_size:(i + 1) * window_size] for i in range(num_segments)]
-    return np.array(segments)
-
-
-
-# Wczytanie sygnału i predykcja
-def process_and_predict(record_name):
-    record_path = os.path.join(QTDB_PATH, record_name)
-    try:
-        record = wfdb.rdrecord(record_path)
-        best_lead = None
-        for lead in PREFERRED_LEADS:
-            if lead in record.sig_name:
-                best_lead = record.p_signal[:, record.sig_name.index(lead)]
-                break
-        if best_lead is None:
-            print(f"[WARNING] Brak odpowiedniego leadu w {record_name}")
-            return None, None
-
-        resampled_signal = resample_signal(best_lead, record.fs, TARGET_FS)
-        return resampled_signal, record_name
-    except Exception as e:
-        print(f"[ERROR] Nie udało się wczytać {record_name}: {e}")
-        return None, None
-
-# Wizualizacja wyników
-def plot_prediction(signal, pred_labels, record_name):
-    plt.figure(figsize=(12, 6))
-    plt.plot(signal, label="Sygnał EKG", color="black")
-    p_idx = np.where(pred_labels == 1)[0]
-    qrs_idx = np.where(pred_labels == 2)[0]
-    t_idx = np.where(pred_labels == 3)[0]
-    plt.scatter(p_idx, signal[p_idx], color="blue", label="P", marker="o")
-    plt.scatter(qrs_idx, signal[qrs_idx], color="red", label="QRS", marker="x")
-    plt.scatter(t_idx, signal[t_idx], color="green", label="T", marker="s")
-    plt.title(f"Predykcja dla {record_name}")
-    plt.legend()
-    plt.grid()
-    plt.show()
-
-
-"""
-def run_single_prediction():
-    record_name = choice(list(OK_RECORDS_QTDB))
-    signal, record_name = process_and_predict(record_name)
-    if signal is None or len(signal) < WINDOW_SIZE:
-        print(f"[ERROR] Sygnał {record_name} jest zbyt krótki")
-        return
-
-    start_idx = np.random.randint(0, len(signal) - WINDOW_SIZE)
-    signal_fragment = signal[start_idx:start_idx + WINDOW_SIZE]
-    signal_fragment = (signal_fragment - np.mean(signal_fragment)) / (np.std(signal_fragment) + 1e-8)
-    signal_input = signal_fragment.reshape(1, WINDOW_SIZE, 1)
-
-    preds = model.predict(signal_input)
-    pred_labels = np.argmax(preds, axis=-1).flatten()
-
-    plot_prediction(signal_fragment, pred_labels, record_name)
-"""
 
 if __name__ == "__main__":
     main()
-    #run_model_inference_on_ludb()
 
 
 

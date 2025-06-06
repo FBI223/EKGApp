@@ -4,7 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="added readme.md and cleared folders" />
+    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="added readme.md and cleared folders">
+      <change beforePath="$PROJECT_DIR$/arduino/arduino.ino" beforeDir="false" afterPath="$PROJECT_DIR$/arduino/simulation/arduino.ino" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/arduino/convert.py" beforeDir="false" afterPath="$PROJECT_DIR$/arduino/simulation/convert.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/arduino/ekg802_5min_signal.h" beforeDir="false" afterPath="$PROJECT_DIR$/arduino/simulation/ekg802_5min_signal.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/arduino/ekg820_5min_signal.h" beforeDir="false" afterPath="$PROJECT_DIR$/arduino/simulation/ekg820_5min_signal.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/arduino/ekg823_5min_signal.h" beforeDir="false" afterPath="$PROJECT_DIR$/arduino/simulation/ekg823_5min_signal.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/arduino/visualize_ble.py" beforeDir="false" afterPath="$PROJECT_DIR$/arduino/simulation/visualize_ble.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/arduino/visualize_serial.py" beforeDir="false" afterPath="$PROJECT_DIR$/arduino/simulation/visualize_serial.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -307,12 +315,12 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Python.main_single_2" />
       <item itemvalue="Python.check_model_graph" />
       <item itemvalue="Python.convert_onnx_single" />
       <item itemvalue="Python.convert_tf_single" />
       <item itemvalue="Python.convert_tflite_single" />
       <item itemvalue="Python.fix_graph" />
-      <item itemvalue="Python.main_single_2" />
     </list>
     <recent_temporary>
       <list>
@@ -783,8 +791,8 @@
     <option name="LAST_COMMIT_MESSAGE" value="removed dyynamic axes from onnx conversion" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ECG_PROJ$convert2.coverage" NAME="convert2 Coverage Results" MODIFIED="1748975974095" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$aami_smaller_model__1_.coverage" NAME="aami_smaller_model (1) Coverage Results" MODIFIED="1744731314107" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/arduino_smaller_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$convert2.coverage" NAME="convert2 Coverage Results" MODIFIED="1748975974095" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$convert_mlpackage.coverage" NAME="convert_mlpackage_multi Coverage Results" MODIFIED="1748719481362" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/basic_rythm_model/multi_class" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$rythm2.coverage" NAME="rythm2 Coverage Results" MODIFIED="1748505505445" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/rythm2" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$main__3_.coverage" NAME="main (3) Coverage Results" MODIFIED="1744317401664" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mohamed_model" />
@@ -792,14 +800,14 @@
     <SUITE FILE_PATH="coverage/ECG_PROJ$debug.coverage" NAME="debug Coverage Results" MODIFIED="1744896966073" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/multi_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$test_augmentation__1_.coverage" NAME="test_augmentation (1) Coverage Results" MODIFIED="1742916994228" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model/data_manipulation" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$conversion.coverage" NAME="conversion Coverage Results" MODIFIED="1748197512973" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$main.coverage" NAME="main Coverage Results" MODIFIED="1748295083634" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/rythm_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$main3__1_.coverage" NAME="main3 (1) Coverage Results" MODIFIED="1742380110082" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/wave_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$main.coverage" NAME="main Coverage Results" MODIFIED="1748295083634" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/rythm_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$main2__1_.coverage" NAME="main2 (1) Coverage Results" MODIFIED="1742380131642" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/visualize_data" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$inference__1_.coverage" NAME="inference (1) Coverage Results" MODIFIED="1744460164248" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$estimator.coverage" NAME="estimator Coverage Results" MODIFIED="1742994438486" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$aami_pipeline.coverage" NAME="aami_pipeline Coverage Results" MODIFIED="1744720077284" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/arduino_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$aami_pipeline_lstm_fixed.coverage" NAME="aami_pipeline_lstm_fixed Coverage Results" MODIFIED="1744719616502" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/arduino_lstm_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$main__4_.coverage" NAME="main (4) Coverage Results" MODIFIED="1743418981569" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/wave_model" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$aami_pipeline_lstm_fixed.coverage" NAME="aami_pipeline_lstm_fixed Coverage Results" MODIFIED="1744719616502" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/arduino_lstm_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$test_augmentation.coverage" NAME="test_augmentation Coverage Results" MODIFIED="1742916870454" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$main_multi.coverage" NAME="main_multi Coverage Results" MODIFIED="1748722129076" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/basic_rythm_model/multi_class" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$rythm_model.coverage" NAME="rythm_model Coverage Results" MODIFIED="1748125221801" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/rythm_model" />
@@ -816,7 +824,7 @@
     <SUITE FILE_PATH="coverage/ECG_PROJ$rytm12.coverage" NAME="rytm12 Coverage Results" MODIFIED="1748264135303" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/rythm2" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$rythm1.coverage" NAME="rythm1 Coverage Results" MODIFIED="1748253842260" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/rythm1" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$deaugmentation.coverage" NAME="deaugmentation Coverage Results" MODIFIED="1742915824582" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />
-    <SUITE FILE_PATH="coverage/ECG_PROJ$main_single_2.coverage" NAME="main_single_2 Coverage Results" MODIFIED="1749022019186" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/basic_rythm_model/single_class" />
+    <SUITE FILE_PATH="coverage/ECG_PROJ$main_single_2.coverage" NAME="main_single_2 Coverage Results" MODIFIED="1749220941509" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/basic_rythm_model/single_class" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$binary__1_.coverage" NAME="binary (1) Coverage Results" MODIFIED="1743107922127" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/binary_model" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$check_model_graph.coverage" NAME="check_model_graph Coverage Results" MODIFIED="1749023179801" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/basic_rythm_model/single_class" />
     <SUITE FILE_PATH="coverage/ECG_PROJ$conversion3.coverage" NAME="conversion3 Coverage Results" MODIFIED="1748196313888" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/main_model" />

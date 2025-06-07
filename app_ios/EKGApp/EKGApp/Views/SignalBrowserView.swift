@@ -2,60 +2,81 @@ import SwiftUI
 import Charts
 import UniformTypeIdentifiers
 
-struct SignalBrowserView: View {
-    @State private var filenames: [String] = []
-    @State private var showShareSheet = false
-    @State private var fileToShareURL: URL? = nil
+struct ECGRecordingSet: Identifiable {
+    var id: String { baseName }
+    let baseName: String
+    let json: URL
+    let wfdbDat: URL
+    let wfdbHea: URL
+    let mat: URL
+}
 
+struct SignalBrowserView: View {
+    @State private var recordings: [ECGRecordingSet] = []
+    @State private var showShareSheet = false
+    @State private var fileToShareURLs: [URL] = []
     @State private var selectedFileToOpen: String? = nil
     @State private var showAlert = false
 
     var body: some View {
         NavigationView {
-            VStack {
-                List {
-                    ForEach(filenames, id: \.self) { filename in
-                        HStack(spacing: 16) {
-                            Button {
-                                checkFileAndNavigate(filename)
-                            } label: {
-                                Text(filename)
-                                    .lineLimit(1)
-                                    .truncationMode(.middle)
-                                    .font(.headline)
-                                    .foregroundColor(.primary)
-                            }
-
-                            Spacer()
-
-                            Button {
-                                shareFile(named: filename)
-                            } label: {
-                                Image(systemName: "square.and.arrow.up")
-                                    .resizable()
-                                    .frame(width: 24, height: 24)
-                                    .foregroundColor(.blue)
-                                    .contentShape(Rectangle())
-                            }
-                            .buttonStyle(BorderlessButtonStyle())
-
-                            Button {
-                                deleteFile(named: filename)
-                            } label: {
-                                Image(systemName: "trash")
-                                    .resizable()
-                                    .frame(width: 24, height: 24)
-                                    .foregroundColor(.red)
-                                    .contentShape(Rectangle())
-                            }
-                            .buttonStyle(BorderlessButtonStyle())
+            List {
+                ForEach(recordings) { rec in
+                    HStack(spacing: 16) {
+                        Button {
+                            checkFileAndNavigate(rec.json)
+                        } label: {
+                            Text(rec.baseName + ".json")
+                                .lineLimit(1)
+                                .truncationMode(.middle)
+                                .font(.headline)
+                                .foregroundColor(.primary)
                         }
-                        .padding(.vertical, 6)
+
+                        Spacer()
+
+                        Menu {
+                            Button("📤 JSON") { shareFiles(urls: [rec.json]) }
+                            Button("📤 WFDB (.dat + .hea)") {
+                                shareFiles(urls: [rec.wfdbDat, rec.wfdbHea])
+                            }
+                            Button("📤 MATLAB (.mat)") { shareFiles(urls: [rec.mat]) }
+                        } label: {
+                            Image(systemName: "square.and.arrow.up")
+                                .resizable()
+                                .frame(width: 24, height: 24)
+                                .foregroundColor(.blue)
+                        }
+                        .buttonStyle(BorderlessButtonStyle())
+
+                        Button {
+                            deleteRecording(rec)
+                        } label: {
+                            Image(systemName: "trash")
+                                .resizable()
+                                .frame(width: 24, height: 24)
+                                .foregroundColor(.red)
+                        }
+                        .buttonStyle(BorderlessButtonStyle())
                     }
-                    .onDelete(perform: deleteFiles)
+                }
+                .onDelete(perform: deleteAtOffsets)
+            }
+            .navigationTitle("Saved Records")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    EditButton()
                 }
 
-                // Ukryty NavigationLink aktywowany tylko gdy plik OK
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: loadRecordings) {
+                        Image(systemName: "arrow.clockwise")
+                    }
+                }
+            }
+
+            // Navigation
+            .background(
                 NavigationLink(
                     destination: selectedFileToOpen.map { SignalPlaybackView(filename: $0) },
                     isActive: Binding(
@@ -64,33 +85,18 @@ struct SignalBrowserView: View {
                     )
                 ) {
                     EmptyView()
-                }
-                .hidden()
+                }.hidden()
+            )
 
-            }
+            .onAppear(perform: loadRecordings)
 
-            .navigationTitle("Saved Records")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    EditButton()
-                }
-
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: loadFilenames) {
-                        Image(systemName: "arrow.clockwise")
-                    }
-                    .accessibilityLabel("Refresh file list")
-                }
-            }
-
-            .onAppear(perform: loadFilenames)
             .sheet(isPresented: $showShareSheet) {
-                if let url = fileToShareURL {
-                    ActivityView(activityItems: [url])
+                if !fileToShareURLs.isEmpty {
+                    ActivityView(activityItems: fileToShareURLs)
                 }
             }
 
-            .alert("Cant open fle", isPresented: $showAlert) {
+            .alert("Invalid File", isPresented: $showAlert) {
                 Button("OK", role: .cancel) { }
             } message: {
                 Text("This ECG recording is not valid and cannot be viewed.")
@@ -98,17 +104,14 @@ struct SignalBrowserView: View {
         }
     }
 
-    private func checkFileAndNavigate(_ filename: String) {
-        let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let fileURL = dir.appendingPathComponent(filename)
-
+    private func checkFileAndNavigate(_ fileURL: URL) {
         do {
             let data = try Data(contentsOf: fileURL)
             if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
                let fs = json["fs"] as? Int,
                let signal = json["signal"] as? [Double] {
                 if signal.count >= fs {
-                    selectedFileToOpen = filename
+                    selectedFileToOpen = fileURL.lastPathComponent
                 } else {
                     showAlert = true
                 }
@@ -121,71 +124,61 @@ struct SignalBrowserView: View {
         }
     }
 
-    private func loadFilenames() {
+    private func loadRecordings() {
         let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         do {
-            let urls = try FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: [.contentModificationDateKey], options: .skipsHiddenFiles)
-            let jsonFiles = urls.filter { $0.pathExtension == "json" }
+            let allFiles = try FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: [.contentModificationDateKey], options: .skipsHiddenFiles)
 
-            let sortedFiles = jsonFiles.sorted {
-                let date1 = (try? $0.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
-                let date2 = (try? $1.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
-                return date1 > date2
+            let jsons = allFiles.filter { $0.pathExtension == "json" }
+            var sets: [ECGRecordingSet] = []
+
+            for json in jsons {
+                let base = json.deletingPathExtension().lastPathComponent
+                let dat = dir.appendingPathComponent("\(base).dat")
+                let hea = dir.appendingPathComponent("\(base).hea")
+                let mat = dir.appendingPathComponent("\(base).mat")
+                sets.append(.init(baseName: base, json: json, wfdbDat: dat, wfdbHea: hea, mat: mat))
             }
 
-            filenames = sortedFiles.map { $0.lastPathComponent }
+            recordings = sets.sorted {
+                let d1 = (try? $0.json.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
+                let d2 = (try? $1.json.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
+                return d1 > d2
+            }
         } catch {
-            print("❌ Error reading files: \(error)")
+            print("❌ Failed to read files: \(error)")
         }
     }
 
-    private func deleteFile(named filename: String) {
-        let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let fileURL = dir.appendingPathComponent(filename)
-        do {
-            try FileManager.default.removeItem(at: fileURL)
-            print("🗑️ Deleted \(filename)")
-            loadFilenames()
-        } catch {
-            print("❌ Error deleting \(filename): \(error)")
+    private func shareFiles(urls: [URL]) {
+        if urls.contains(where: { !FileManager.default.fileExists(atPath: $0.path) }) {
+            print("❌ One or more files to share not found")
+            return
         }
+        fileToShareURLs = urls
+        showShareSheet = true
     }
 
-    private func deleteFiles(at offsets: IndexSet) {
+    private func deleteRecording(_ rec: ECGRecordingSet) {
+        for url in [rec.json, rec.wfdbDat, rec.wfdbHea, rec.mat] {
+            try? FileManager.default.removeItem(at: url)
+        }
+        loadRecordings()
+    }
+
+    private func deleteAtOffsets(_ offsets: IndexSet) {
         for index in offsets {
-            let filename = filenames[index]
-            deleteFile(named: filename)
-        }
-    }
-
-    private func shareFile(named filename: String) {
-        let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        fileToShareURL = dir.appendingPathComponent(filename)
-        if fileToShareURL != nil {
-            showShareSheet = true
-        } else {
-            print("❌ Share file URL nil")
+            deleteRecording(recordings[index])
         }
     }
 }
 
-// UIKit wrapper do natywnego arkusza udostępniania
 struct ActivityView: UIViewControllerRepresentable {
     let activityItems: [Any]
     let applicationActivities: [UIActivity]? = nil
 
     func makeUIViewController(context: Context) -> UIActivityViewController {
         let controller = UIActivityViewController(activityItems: activityItems, applicationActivities: applicationActivities)
-        controller.completionWithItemsHandler = { activityType, completed, returnedItems, error in
-            if completed {
-                print("✅ Shared successfully")
-            } else {
-                print("ℹ️ Share cancelled or failed")
-            }
-            if let error = error {
-                print("❌ Share error: \(error)")
-            }
-        }
         return controller
     }
 

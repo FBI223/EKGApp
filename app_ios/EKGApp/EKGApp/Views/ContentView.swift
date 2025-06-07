@@ -14,91 +14,101 @@ struct ContentView: View {
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 16) {
+            VStack(spacing: 12) {
                 // Górna ikona i tytuł
-                VStack(spacing: 8) {
+                VStack(spacing: 6) {
                     Image(systemName: "waveform.path.ecg.rectangle")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 44, height: 44)
+                        .frame(width: 40, height: 40)
                         .foregroundColor(.red)
                     Text("EKG App")
-                        .font(.largeTitle)
+                        .font(.title)
                         .fontWeight(.semibold)
                         .foregroundColor(foregroundColor)
                 }
-                .padding(.top, 32)
+                .padding(.top, 24)
 
                 // Przyciski
-                VStack(spacing: 16) {
+                VStack(spacing: 12) {
                     NavigationLink(destination: BeatAnalysisView()) {
                         Text("📈 Beat Analysis")
-                            .font(.title2)
+                            .font(.title3)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
+                            .padding(.vertical, 10)
                             .background(Color(red: 0.39, green: 0.0, blue: 0.0))
                             .foregroundColor(.white)
-                            .cornerRadius(16)
+                            .cornerRadius(14)
                     }
 
                     NavigationLink(destination: RhythmAnalysisView()) {
                         Text("📈 Rhythm Analysis")
-                            .font(.title2)
+                            .font(.title3)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
+                            .padding(.vertical, 10)
                             .background(Color(red: 0.39, green: 0.0, blue: 0.0))
                             .foregroundColor(.white)
-                            .cornerRadius(16)
+                            .cornerRadius(14)
+                    }
+
+                    NavigationLink(destination: WaveAnalysisView()) {
+                        Text("📈 Wave Analysis")
+                            .font(.title3)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background(Color(red: 0.39, green: 0.0, blue: 0.0))
+                            .foregroundColor(.white)
+                            .cornerRadius(14)
                     }
 
                     NavigationLink(destination: SignalRecorderView()) {
                         Text("📡 Signal Recorder")
-                            .font(.title2)
+                            .font(.title3)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
+                            .padding(.vertical, 10)
                             .background(Color(red: 0.39, green: 0.0, blue: 0.0))
                             .foregroundColor(.white)
-                            .cornerRadius(16)
+                            .cornerRadius(14)
                     }
 
                     NavigationLink(destination: SignalBrowserView()) {
                         Text("📁 Record Browser")
-                            .font(.title2)
+                            .font(.title3)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
+                            .padding(.vertical, 10)
                             .background(Color(red: 0.39, green: 0.0, blue: 0.0))
                             .foregroundColor(.white)
-                            .cornerRadius(16)
+                            .cornerRadius(14)
                     }
 
                     NavigationLink(destination: KnowledgeView()) {
                         Text("📚 Knowledge")
-                            .font(.title2)
+                            .font(.title3)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
+                            .padding(.vertical, 10)
                             .background(Color(red: 0.39, green: 0.0, blue: 0.0))
                             .foregroundColor(.white)
-                            .cornerRadius(16)
+                            .cornerRadius(14)
                     }
 
                     NavigationLink(destination: InfoView()) {
                         Text("ℹ️ Label Info")
-                            .font(.title2)
+                            .font(.title3)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
+                            .padding(.vertical, 10)
                             .background(Color(red: 0.39, green: 0.0, blue: 0.0))
                             .foregroundColor(.white)
-                            .cornerRadius(16)
+                            .cornerRadius(14)
                     }
 
                     NavigationLink(destination: SettingsView()) {
                         Text("⚙️ Settings")
-                            .font(.title2)
+                            .font(.title3)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
+                            .padding(.vertical, 10)
                             .background(Color(red: 0.39, green: 0.0, blue: 0.0))
                             .foregroundColor(.white)
-                            .cornerRadius(16)
+                            .cornerRadius(14)
                     }
                 }
 

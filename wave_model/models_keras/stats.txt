@@ -1,0 +1,330 @@
+/home/msztu223/miniconda3/envs/tflite_convert/bin/python /home/msztu223/PycharmProjects/ECG_PROJ/wave_model/main_keras.py
+2025-06-06 22:11:09.415733: I tensorflow/tsl/cuda/cudart_stub.cc:28] Could not find cuda drivers on your machine, GPU will not be used.
+2025-06-06 22:11:09.448075: E tensorflow/compiler/xla/stream_executor/cuda/cuda_dnn.cc:9342] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+2025-06-06 22:11:09.448101: E tensorflow/compiler/xla/stream_executor/cuda/cuda_fft.cc:609] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+2025-06-06 22:11:09.448129: E tensorflow/compiler/xla/stream_executor/cuda/cuda_blas.cc:1518] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2025-06-06 22:11:09.454112: I tensorflow/tsl/cuda/cudart_stub.cc:28] Could not find cuda drivers on your machine, GPU will not be used.
+2025-06-06 22:11:09.454264: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2025-06-06 22:11:10.113396: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+[DEBUG] Wczytywanie zapisanych fragmentów z dysku...
+[DEBUG] Łącznie fragmentów: 4000
+
+[DEBUG] Rozpoczynam fold 1
+2025-06-06 22:11:11.204507: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:894] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2025-06-06 22:11:11.246429: W tensorflow/core/common_runtime/gpu/gpu_device.cc:2211] Cannot dlopen some GPU libraries. Please make sure the missing libraries mentioned above are installed properly if you would like to use GPU. Follow the guide at https://www.tensorflow.org/install/gpu for how to download and setup the required libraries for your platform.
+Skipping registering GPU devices...
+[DEBUG] Model UNet zbudowany
+Epoch 1/25
+50/50 [==============================] - ETA: 0s - loss: 1.0984 - accuracy: 0.5888 - precision: 0.8408 - recall: 0.2756
+/home/msztu223/miniconda3/envs/tflite_convert/lib/python3.10/site-packages/keras/src/engine/training.py:3079: UserWarning: You are saving your model as an HDF5 file via `model.save()`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')`.
+  saving_api.save_model(
+Epoch 1: val_loss improved from inf to 1.04910, saving model to unet_ecg_fold1.h5
+50/50 [==============================] - 17s 230ms/step - loss: 1.0984 - accuracy: 0.5888 - precision: 0.8408 - recall: 0.2756 - val_loss: 1.0491 - val_accuracy: 0.6599 - val_precision: 0.9088 - val_recall: 0.1714 - lr: 0.0010
+Epoch 2/25
+50/50 [==============================] - ETA: 0s - loss: 0.6295 - accuracy: 0.8230 - precision: 0.9255 - recall: 0.7079
+Epoch 2: val_loss improved from 1.04910 to 0.92859, saving model to unet_ecg_fold1.h5
+50/50 [==============================] - 11s 217ms/step - loss: 0.6295 - accuracy: 0.8230 - precision: 0.9255 - recall: 0.7079 - val_loss: 0.9286 - val_accuracy: 0.6742 - val_precision: 0.7096 - val_recall: 0.6294 - lr: 0.0010
+Epoch 3/25
+50/50 [==============================] - ETA: 0s - loss: 0.4693 - accuracy: 0.8839 - precision: 0.9410 - recall: 0.7997
+Epoch 3: val_loss improved from 0.92859 to 0.84955, saving model to unet_ecg_fold1.h5
+50/50 [==============================] - 11s 216ms/step - loss: 0.4693 - accuracy: 0.8839 - precision: 0.9410 - recall: 0.7997 - val_loss: 0.8496 - val_accuracy: 0.7107 - val_precision: 0.7405 - val_recall: 0.6477 - lr: 0.0010
+Epoch 4/25
+50/50 [==============================] - ETA: 0s - loss: 0.3821 - accuracy: 0.9265 - precision: 0.9505 - recall: 0.8871
+Epoch 4: val_loss improved from 0.84955 to 0.65751, saving model to unet_ecg_fold1.h5
+50/50 [==============================] - 11s 215ms/step - loss: 0.3821 - accuracy: 0.9265 - precision: 0.9505 - recall: 0.8871 - val_loss: 0.6575 - val_accuracy: 0.7850 - val_precision: 0.8145 - val_recall: 0.7446 - lr: 0.0010
+Epoch 5/25
+50/50 [==============================] - ETA: 0s - loss: 0.3170 - accuracy: 0.9385 - precision: 0.9524 - recall: 0.9294
+Epoch 5: val_loss improved from 0.65751 to 0.49842, saving model to unet_ecg_fold1.h5
+50/50 [==============================] - 11s 214ms/step - loss: 0.3170 - accuracy: 0.9385 - precision: 0.9524 - recall: 0.9294 - val_loss: 0.4984 - val_accuracy: 0.8440 - val_precision: 0.8652 - val_recall: 0.8172 - lr: 0.0010
+Epoch 6/25
+50/50 [==============================] - ETA: 0s - loss: 0.2562 - accuracy: 0.9480 - precision: 0.9573 - recall: 0.9418
+Epoch 6: val_loss improved from 0.49842 to 0.34730, saving model to unet_ecg_fold1.h5
+50/50 [==============================] - 11s 215ms/step - loss: 0.2562 - accuracy: 0.9480 - precision: 0.9573 - recall: 0.9418 - val_loss: 0.3473 - val_accuracy: 0.9205 - val_precision: 0.9277 - val_recall: 0.9145 - lr: 0.0010
+Epoch 7/25
+50/50 [==============================] - ETA: 0s - loss: 0.2101 - accuracy: 0.9547 - precision: 0.9622 - recall: 0.9491
+Epoch 7: val_loss improved from 0.34730 to 0.27342, saving model to unet_ecg_fold1.h5
+50/50 [==============================] - 11s 217ms/step - loss: 0.2101 - accuracy: 0.9547 - precision: 0.9622 - recall: 0.9491 - val_loss: 0.2734 - val_accuracy: 0.9406 - val_precision: 0.9490 - val_recall: 0.9359 - lr: 0.0010
+Epoch 8/25
+50/50 [==============================] - ETA: 0s - loss: 0.1755 - accuracy: 0.9606 - precision: 0.9665 - recall: 0.9555
+Epoch 8: val_loss improved from 0.27342 to 0.24526, saving model to unet_ecg_fold1.h5
+50/50 [==============================] - 12s 236ms/step - loss: 0.1755 - accuracy: 0.9606 - precision: 0.9665 - recall: 0.9555 - val_loss: 0.2453 - val_accuracy: 0.9412 - val_precision: 0.9504 - val_recall: 0.9362 - lr: 0.0010
+Epoch 9/25
+50/50 [==============================] - ETA: 0s - loss: 0.1513 - accuracy: 0.9644 - precision: 0.9690 - recall: 0.9594
+Epoch 9: val_loss improved from 0.24526 to 0.23265, saving model to unet_ecg_fold1.h5
+50/50 [==============================] - 13s 261ms/step - loss: 0.1513 - accuracy: 0.9644 - precision: 0.9690 - recall: 0.9594 - val_loss: 0.2327 - val_accuracy: 0.9428 - val_precision: 0.9523 - val_recall: 0.9371 - lr: 0.0010
+Epoch 10/25
+50/50 [==============================] - ETA: 0s - loss: 0.1339 - accuracy: 0.9668 - precision: 0.9707 - recall: 0.9624
+Epoch 10: val_loss improved from 0.23265 to 0.21952, saving model to unet_ecg_fold1.h5
+50/50 [==============================] - 11s 227ms/step - loss: 0.1339 - accuracy: 0.9668 - precision: 0.9707 - recall: 0.9624 - val_loss: 0.2195 - val_accuracy: 0.9425 - val_precision: 0.9516 - val_recall: 0.9364 - lr: 0.0010
+Epoch 11/25
+50/50 [==============================] - ETA: 0s - loss: 0.1233 - accuracy: 0.9679 - precision: 0.9713 - recall: 0.9641
+Epoch 11: val_loss improved from 0.21952 to 0.15983, saving model to unet_ecg_fold1.h5
+50/50 [==============================] - 15s 299ms/step - loss: 0.1233 - accuracy: 0.9679 - precision: 0.9713 - recall: 0.9641 - val_loss: 0.1598 - val_accuracy: 0.9588 - val_precision: 0.9650 - val_recall: 0.9527 - lr: 0.0010
+Epoch 12/25
+50/50 [==============================] - ETA: 0s - loss: 0.1114 - accuracy: 0.9698 - precision: 0.9726 - recall: 0.9665
+Epoch 12: val_loss improved from 0.15983 to 0.13190, saving model to unet_ecg_fold1.h5
+50/50 [==============================] - 13s 262ms/step - loss: 0.1114 - accuracy: 0.9698 - precision: 0.9726 - recall: 0.9665 - val_loss: 0.1319 - val_accuracy: 0.9633 - val_precision: 0.9676 - val_recall: 0.9585 - lr: 0.0010
+Epoch 13/25
+50/50 [==============================] - ETA: 0s - loss: 0.0983 - accuracy: 0.9724 - precision: 0.9749 - recall: 0.9698
+Epoch 13: val_loss improved from 0.13190 to 0.12469, saving model to unet_ecg_fold1.h5
+50/50 [==============================] - 19s 380ms/step - loss: 0.0983 - accuracy: 0.9724 - precision: 0.9749 - recall: 0.9698 - val_loss: 0.1247 - val_accuracy: 0.9650 - val_precision: 0.9683 - val_recall: 0.9614 - lr: 0.0010
+Epoch 14/25
+50/50 [==============================] - ETA: 0s - loss: 0.0912 - accuracy: 0.9735 - precision: 0.9755 - recall: 0.9710
+Epoch 14: val_loss improved from 0.12469 to 0.09608, saving model to unet_ecg_fold1.h5
+50/50 [==============================] - 15s 299ms/step - loss: 0.0912 - accuracy: 0.9735 - precision: 0.9755 - recall: 0.9710 - val_loss: 0.0961 - val_accuracy: 0.9723 - val_precision: 0.9747 - val_recall: 0.9695 - lr: 0.0010
+Epoch 15/25
+50/50 [==============================] - ETA: 0s - loss: 0.0827 - accuracy: 0.9754 - precision: 0.9772 - recall: 0.9733
+Epoch 15: val_loss improved from 0.09608 to 0.08933, saving model to unet_ecg_fold1.h5
+50/50 [==============================] - 17s 343ms/step - loss: 0.0827 - accuracy: 0.9754 - precision: 0.9772 - recall: 0.9733 - val_loss: 0.0893 - val_accuracy: 0.9733 - val_precision: 0.9752 - val_recall: 0.9710 - lr: 0.0010
+Epoch 16/25
+50/50 [==============================] - ETA: 0s - loss: 0.0753 - accuracy: 0.9770 - precision: 0.9785 - recall: 0.9752
+Epoch 16: val_loss improved from 0.08933 to 0.08502, saving model to unet_ecg_fold1.h5
+50/50 [==============================] - 17s 347ms/step - loss: 0.0753 - accuracy: 0.9770 - precision: 0.9785 - recall: 0.9752 - val_loss: 0.0850 - val_accuracy: 0.9738 - val_precision: 0.9754 - val_recall: 0.9720 - lr: 0.0010
+Epoch 17/25
+50/50 [==============================] - ETA: 0s - loss: 0.0730 - accuracy: 0.9771 - precision: 0.9784 - recall: 0.9755
+Epoch 17: val_loss improved from 0.08502 to 0.08185, saving model to unet_ecg_fold1.h5
+50/50 [==============================] - 12s 240ms/step - loss: 0.0730 - accuracy: 0.9771 - precision: 0.9784 - recall: 0.9755 - val_loss: 0.0818 - val_accuracy: 0.9742 - val_precision: 0.9756 - val_recall: 0.9727 - lr: 0.0010
+Epoch 18/25
+50/50 [==============================] - ETA: 0s - loss: 0.0735 - accuracy: 0.9763 - precision: 0.9775 - recall: 0.9749
+Epoch 18: val_loss did not improve from 0.08185
+50/50 [==============================] - 12s 238ms/step - loss: 0.0735 - accuracy: 0.9763 - precision: 0.9775 - recall: 0.9749 - val_loss: 0.0822 - val_accuracy: 0.9735 - val_precision: 0.9748 - val_recall: 0.9719 - lr: 0.0010
+Epoch 19/25
+50/50 [==============================] - ETA: 0s - loss: 0.0660 - accuracy: 0.9783 - precision: 0.9794 - recall: 0.9771
+Epoch 19: val_loss improved from 0.08185 to 0.07252, saving model to unet_ecg_fold1.h5
+50/50 [==============================] - 12s 238ms/step - loss: 0.0660 - accuracy: 0.9783 - precision: 0.9794 - recall: 0.9771 - val_loss: 0.0725 - val_accuracy: 0.9765 - val_precision: 0.9774 - val_recall: 0.9755 - lr: 0.0010
+Epoch 20/25
+50/50 [==============================] - ETA: 0s - loss: 0.0594 - accuracy: 0.9803 - precision: 0.9812 - recall: 0.9793
+Epoch 20: val_loss improved from 0.07252 to 0.07029, saving model to unet_ecg_fold1.h5
+50/50 [==============================] - 11s 220ms/step - loss: 0.0594 - accuracy: 0.9803 - precision: 0.9812 - recall: 0.9793 - val_loss: 0.0703 - val_accuracy: 0.9770 - val_precision: 0.9779 - val_recall: 0.9760 - lr: 0.0010
+Epoch 21/25
+50/50 [==============================] - ETA: 0s - loss: 0.0562 - accuracy: 0.9811 - precision: 0.9819 - recall: 0.9802
+Epoch 21: val_loss improved from 0.07029 to 0.06583, saving model to unet_ecg_fold1.h5
+50/50 [==============================] - 14s 278ms/step - loss: 0.0562 - accuracy: 0.9811 - precision: 0.9819 - recall: 0.9802 - val_loss: 0.0658 - val_accuracy: 0.9784 - val_precision: 0.9791 - val_recall: 0.9775 - lr: 0.0010
+Epoch 22/25
+50/50 [==============================] - ETA: 0s - loss: 0.0562 - accuracy: 0.9808 - precision: 0.9815 - recall: 0.9800
+Epoch 22: val_loss did not improve from 0.06583
+50/50 [==============================] - 11s 228ms/step - loss: 0.0562 - accuracy: 0.9808 - precision: 0.9815 - recall: 0.9800 - val_loss: 0.0669 - val_accuracy: 0.9779 - val_precision: 0.9786 - val_recall: 0.9770 - lr: 0.0010
+Epoch 23/25
+50/50 [==============================] - ETA: 0s - loss: 0.0547 - accuracy: 0.9810 - precision: 0.9816 - recall: 0.9802
+Epoch 23: val_loss improved from 0.06583 to 0.06270, saving model to unet_ecg_fold1.h5
+50/50 [==============================] - 12s 249ms/step - loss: 0.0547 - accuracy: 0.9810 - precision: 0.9816 - recall: 0.9802 - val_loss: 0.0627 - val_accuracy: 0.9790 - val_precision: 0.9796 - val_recall: 0.9782 - lr: 0.0010
+Epoch 24/25
+50/50 [==============================] - ETA: 0s - loss: 0.0493 - accuracy: 0.9828 - precision: 0.9834 - recall: 0.9822
+Epoch 24: val_loss improved from 0.06270 to 0.06227, saving model to unet_ecg_fold1.h5
+50/50 [==============================] - 12s 248ms/step - loss: 0.0493 - accuracy: 0.9828 - precision: 0.9834 - recall: 0.9822 - val_loss: 0.0623 - val_accuracy: 0.9789 - val_precision: 0.9794 - val_recall: 0.9782 - lr: 0.0010
+Epoch 25/25
+50/50 [==============================] - ETA: 0s - loss: 0.0490 - accuracy: 0.9826 - precision: 0.9832 - recall: 0.9820
+Epoch 25: val_loss improved from 0.06227 to 0.05628, saving model to unet_ecg_fold1.h5
+50/50 [==============================] - 11s 229ms/step - loss: 0.0490 - accuracy: 0.9826 - precision: 0.9832 - recall: 0.9820 - val_loss: 0.0563 - val_accuracy: 0.9808 - val_precision: 0.9813 - val_recall: 0.9802 - lr: 0.0010
+[DEBUG] Fold 1 - Val Loss: 0.0563, Accuracy: 0.9808, Precision: 0.9813, Recall: 0.9802
+
+[DEBUG] Rozpoczynam fold 2
+[DEBUG] Model UNet zbudowany
+Epoch 1/25
+50/50 [==============================] - ETA: 0s - loss: 1.0406 - accuracy: 0.6379 - precision_1: 0.7261 - recall_1: 0.2758
+Epoch 1: val_loss improved from inf to 1.23212, saving model to unet_ecg_fold2.h5
+50/50 [==============================] - 17s 237ms/step - loss: 1.0406 - accuracy: 0.6379 - precision_1: 0.7261 - recall_1: 0.2758 - val_loss: 1.2321 - val_accuracy: 0.6335 - val_precision_1: 0.9803 - val_recall_1: 0.0233 - lr: 0.0010
+Epoch 2/25
+50/50 [==============================] - ETA: 0s - loss: 0.5091 - accuracy: 0.9077 - precision_1: 0.9354 - recall_1: 0.8503
+Epoch 2: val_loss improved from 1.23212 to 1.02511, saving model to unet_ecg_fold2.h5
+50/50 [==============================] - 14s 275ms/step - loss: 0.5091 - accuracy: 0.9077 - precision_1: 0.9354 - recall_1: 0.8503 - val_loss: 1.0251 - val_accuracy: 0.7124 - val_precision_1: 0.7542 - val_recall_1: 0.1696 - lr: 0.0010
+Epoch 3/25
+50/50 [==============================] - ETA: 0s - loss: 0.3432 - accuracy: 0.9351 - precision_1: 0.9489 - recall_1: 0.9165
+Epoch 3: val_loss improved from 1.02511 to 0.80159, saving model to unet_ecg_fold2.h5
+50/50 [==============================] - 13s 262ms/step - loss: 0.3432 - accuracy: 0.9351 - precision_1: 0.9489 - recall_1: 0.9165 - val_loss: 0.8016 - val_accuracy: 0.7618 - val_precision_1: 0.7751 - val_recall_1: 0.7360 - lr: 0.0010
+Epoch 4/25
+50/50 [==============================] - ETA: 0s - loss: 0.2640 - accuracy: 0.9456 - precision_1: 0.9553 - recall_1: 0.9333
+Epoch 4: val_loss improved from 0.80159 to 0.43361, saving model to unet_ecg_fold2.h5
+50/50 [==============================] - 13s 255ms/step - loss: 0.2640 - accuracy: 0.9456 - precision_1: 0.9553 - recall_1: 0.9333 - val_loss: 0.4336 - val_accuracy: 0.8814 - val_precision_1: 0.8936 - val_recall_1: 0.8647 - lr: 0.0010
+Epoch 5/25
+50/50 [==============================] - ETA: 0s - loss: 0.2120 - accuracy: 0.9524 - precision_1: 0.9594 - recall_1: 0.9437
+Epoch 5: val_loss improved from 0.43361 to 0.30521, saving model to unet_ecg_fold2.h5
+50/50 [==============================] - 11s 222ms/step - loss: 0.2120 - accuracy: 0.9524 - precision_1: 0.9594 - recall_1: 0.9437 - val_loss: 0.3052 - val_accuracy: 0.9173 - val_precision_1: 0.9252 - val_recall_1: 0.9074 - lr: 0.0010
+Epoch 6/25
+50/50 [==============================] - ETA: 0s - loss: 0.1785 - accuracy: 0.9564 - precision_1: 0.9617 - recall_1: 0.9499
+Epoch 6: val_loss improved from 0.30521 to 0.23186, saving model to unet_ecg_fold2.h5
+50/50 [==============================] - 11s 218ms/step - loss: 0.1785 - accuracy: 0.9564 - precision_1: 0.9617 - recall_1: 0.9499 - val_loss: 0.2319 - val_accuracy: 0.9354 - val_precision_1: 0.9409 - val_recall_1: 0.9289 - lr: 0.0010
+Epoch 7/25
+50/50 [==============================] - ETA: 0s - loss: 0.1541 - accuracy: 0.9599 - precision_1: 0.9642 - recall_1: 0.9548
+Epoch 7: val_loss improved from 0.23186 to 0.17135, saving model to unet_ecg_fold2.h5
+50/50 [==============================] - 11s 224ms/step - loss: 0.1541 - accuracy: 0.9599 - precision_1: 0.9642 - recall_1: 0.9548 - val_loss: 0.1714 - val_accuracy: 0.9507 - val_precision_1: 0.9549 - val_recall_1: 0.9459 - lr: 0.0010
+Epoch 8/25
+50/50 [==============================] - ETA: 0s - loss: 0.1358 - accuracy: 0.9626 - precision_1: 0.9661 - recall_1: 0.9586
+Epoch 8: val_loss improved from 0.17135 to 0.13835, saving model to unet_ecg_fold2.h5
+50/50 [==============================] - 11s 223ms/step - loss: 0.1358 - accuracy: 0.9626 - precision_1: 0.9661 - recall_1: 0.9586 - val_loss: 0.1383 - val_accuracy: 0.9599 - val_precision_1: 0.9631 - val_recall_1: 0.9561 - lr: 0.0010
+Epoch 9/25
+50/50 [==============================] - ETA: 0s - loss: 0.1200 - accuracy: 0.9659 - precision_1: 0.9687 - recall_1: 0.9626
+Epoch 9: val_loss improved from 0.13835 to 0.12622, saving model to unet_ecg_fold2.h5
+50/50 [==============================] - 11s 222ms/step - loss: 0.1200 - accuracy: 0.9659 - precision_1: 0.9687 - recall_1: 0.9626 - val_loss: 0.1262 - val_accuracy: 0.9620 - val_precision_1: 0.9647 - val_recall_1: 0.9590 - lr: 0.0010
+Epoch 10/25
+50/50 [==============================] - ETA: 0s - loss: 0.1102 - accuracy: 0.9673 - precision_1: 0.9698 - recall_1: 0.9645
+Epoch 10: val_loss improved from 0.12622 to 0.11587, saving model to unet_ecg_fold2.h5
+50/50 [==============================] - 12s 241ms/step - loss: 0.1102 - accuracy: 0.9673 - precision_1: 0.9698 - recall_1: 0.9645 - val_loss: 0.1159 - val_accuracy: 0.9644 - val_precision_1: 0.9668 - val_recall_1: 0.9618 - lr: 0.0010
+Epoch 11/25
+50/50 [==============================] - ETA: 0s - loss: 0.0991 - accuracy: 0.9699 - precision_1: 0.9720 - recall_1: 0.9676
+Epoch 11: val_loss improved from 0.11587 to 0.11141, saving model to unet_ecg_fold2.h5
+50/50 [==============================] - 12s 240ms/step - loss: 0.0991 - accuracy: 0.9699 - precision_1: 0.9720 - recall_1: 0.9676 - val_loss: 0.1114 - val_accuracy: 0.9645 - val_precision_1: 0.9665 - val_recall_1: 0.9621 - lr: 0.0010
+Epoch 12/25
+50/50 [==============================] - ETA: 0s - loss: 0.0914 - accuracy: 0.9714 - precision_1: 0.9732 - recall_1: 0.9694
+Epoch 12: val_loss improved from 0.11141 to 0.09699, saving model to unet_ecg_fold2.h5
+50/50 [==============================] - 11s 220ms/step - loss: 0.0914 - accuracy: 0.9714 - precision_1: 0.9732 - recall_1: 0.9694 - val_loss: 0.0970 - val_accuracy: 0.9685 - val_precision_1: 0.9701 - val_recall_1: 0.9666 - lr: 0.0010
+Epoch 13/25
+50/50 [==============================] - ETA: 0s - loss: 0.0847 - accuracy: 0.9731 - precision_1: 0.9747 - recall_1: 0.9714
+Epoch 13: val_loss improved from 0.09699 to 0.09035, saving model to unet_ecg_fold2.h5
+50/50 [==============================] - 12s 232ms/step - loss: 0.0847 - accuracy: 0.9731 - precision_1: 0.9747 - recall_1: 0.9714 - val_loss: 0.0903 - val_accuracy: 0.9710 - val_precision_1: 0.9724 - val_recall_1: 0.9693 - lr: 0.0010
+Epoch 14/25
+50/50 [==============================] - ETA: 0s - loss: 0.0789 - accuracy: 0.9744 - precision_1: 0.9758 - recall_1: 0.9729
+Epoch 14: val_loss improved from 0.09035 to 0.08571, saving model to unet_ecg_fold2.h5
+50/50 [==============================] - 12s 241ms/step - loss: 0.0789 - accuracy: 0.9744 - precision_1: 0.9758 - recall_1: 0.9729 - val_loss: 0.0857 - val_accuracy: 0.9716 - val_precision_1: 0.9728 - val_recall_1: 0.9702 - lr: 0.0010
+Epoch 15/25
+50/50 [==============================] - ETA: 0s - loss: 0.0759 - accuracy: 0.9748 - precision_1: 0.9761 - recall_1: 0.9734
+Epoch 15: val_loss improved from 0.08571 to 0.08208, saving model to unet_ecg_fold2.h5
+50/50 [==============================] - 11s 219ms/step - loss: 0.0759 - accuracy: 0.9748 - precision_1: 0.9761 - recall_1: 0.9734 - val_loss: 0.0821 - val_accuracy: 0.9728 - val_precision_1: 0.9740 - val_recall_1: 0.9715 - lr: 0.0010
+Epoch 16/25
+50/50 [==============================] - ETA: 0s - loss: 0.0696 - accuracy: 0.9768 - precision_1: 0.9779 - recall_1: 0.9756
+Epoch 16: val_loss improved from 0.08208 to 0.07547, saving model to unet_ecg_fold2.h5
+50/50 [==============================] - 12s 236ms/step - loss: 0.0696 - accuracy: 0.9768 - precision_1: 0.9779 - recall_1: 0.9756 - val_loss: 0.0755 - val_accuracy: 0.9747 - val_precision_1: 0.9757 - val_recall_1: 0.9736 - lr: 0.0010
+Epoch 17/25
+50/50 [==============================] - ETA: 0s - loss: 0.0663 - accuracy: 0.9776 - precision_1: 0.9785 - recall_1: 0.9765
+Epoch 17: val_loss improved from 0.07547 to 0.07362, saving model to unet_ecg_fold2.h5
+50/50 [==============================] - 11s 225ms/step - loss: 0.0663 - accuracy: 0.9776 - precision_1: 0.9785 - recall_1: 0.9765 - val_loss: 0.0736 - val_accuracy: 0.9750 - val_precision_1: 0.9759 - val_recall_1: 0.9739 - lr: 0.0010
+Epoch 18/25
+50/50 [==============================] - ETA: 0s - loss: 0.0628 - accuracy: 0.9785 - precision_1: 0.9794 - recall_1: 0.9775
+Epoch 18: val_loss did not improve from 0.07362
+50/50 [==============================] - 11s 220ms/step - loss: 0.0628 - accuracy: 0.9785 - precision_1: 0.9794 - recall_1: 0.9775 - val_loss: 0.0750 - val_accuracy: 0.9740 - val_precision_1: 0.9748 - val_recall_1: 0.9731 - lr: 0.0010
+Epoch 19/25
+50/50 [==============================] - ETA: 0s - loss: 0.0598 - accuracy: 0.9793 - precision_1: 0.9801 - recall_1: 0.9784
+Epoch 19: val_loss improved from 0.07362 to 0.06913, saving model to unet_ecg_fold2.h5
+50/50 [==============================] - 11s 218ms/step - loss: 0.0598 - accuracy: 0.9793 - precision_1: 0.9801 - recall_1: 0.9784 - val_loss: 0.0691 - val_accuracy: 0.9759 - val_precision_1: 0.9766 - val_recall_1: 0.9751 - lr: 0.0010
+Epoch 20/25
+50/50 [==============================] - ETA: 0s - loss: 0.0565 - accuracy: 0.9804 - precision_1: 0.9811 - recall_1: 0.9796
+Epoch 20: val_loss improved from 0.06913 to 0.06424, saving model to unet_ecg_fold2.h5
+50/50 [==============================] - 11s 223ms/step - loss: 0.0565 - accuracy: 0.9804 - precision_1: 0.9811 - recall_1: 0.9796 - val_loss: 0.0642 - val_accuracy: 0.9778 - val_precision_1: 0.9785 - val_recall_1: 0.9770 - lr: 0.0010
+Epoch 21/25
+50/50 [==============================] - ETA: 0s - loss: 0.0549 - accuracy: 0.9807 - precision_1: 0.9814 - recall_1: 0.9799
+Epoch 21: val_loss did not improve from 0.06424
+50/50 [==============================] - 13s 252ms/step - loss: 0.0549 - accuracy: 0.9807 - precision_1: 0.9814 - recall_1: 0.9799 - val_loss: 0.0657 - val_accuracy: 0.9771 - val_precision_1: 0.9778 - val_recall_1: 0.9764 - lr: 0.0010
+Epoch 22/25
+50/50 [==============================] - ETA: 0s - loss: 0.0544 - accuracy: 0.9805 - precision_1: 0.9812 - recall_1: 0.9798
+Epoch 22: val_loss improved from 0.06424 to 0.06321, saving model to unet_ecg_fold2.h5
+50/50 [==============================] - 12s 250ms/step - loss: 0.0544 - accuracy: 0.9805 - precision_1: 0.9812 - recall_1: 0.9798 - val_loss: 0.0632 - val_accuracy: 0.9780 - val_precision_1: 0.9786 - val_recall_1: 0.9773 - lr: 0.0010
+Epoch 23/25
+50/50 [==============================] - ETA: 0s - loss: 0.0499 - accuracy: 0.9822 - precision_1: 0.9828 - recall_1: 0.9816
+Epoch 23: val_loss did not improve from 0.06321
+50/50 [==============================] - 13s 267ms/step - loss: 0.0499 - accuracy: 0.9822 - precision_1: 0.9828 - recall_1: 0.9816 - val_loss: 0.0654 - val_accuracy: 0.9769 - val_precision_1: 0.9775 - val_recall_1: 0.9763 - lr: 0.0010
+Epoch 24/25
+50/50 [==============================] - ETA: 0s - loss: 0.0496 - accuracy: 0.9821 - precision_1: 0.9826 - recall_1: 0.9815
+Epoch 24: val_loss improved from 0.06321 to 0.06016, saving model to unet_ecg_fold2.h5
+50/50 [==============================] - 13s 269ms/step - loss: 0.0496 - accuracy: 0.9821 - precision_1: 0.9826 - recall_1: 0.9815 - val_loss: 0.0602 - val_accuracy: 0.9789 - val_precision_1: 0.9794 - val_recall_1: 0.9783 - lr: 0.0010
+Epoch 25/25
+50/50 [==============================] - ETA: 0s - loss: 0.0469 - accuracy: 0.9830 - precision_1: 0.9835 - recall_1: 0.9825
+Epoch 25: val_loss improved from 0.06016 to 0.05678, saving model to unet_ecg_fold2.h5
+50/50 [==============================] - 12s 245ms/step - loss: 0.0469 - accuracy: 0.9830 - precision_1: 0.9835 - recall_1: 0.9825 - val_loss: 0.0568 - val_accuracy: 0.9803 - val_precision_1: 0.9808 - val_recall_1: 0.9797 - lr: 0.0010
+[DEBUG] Fold 2 - Val Loss: 0.0568, Accuracy: 0.9803, Precision: 0.9808, Recall: 0.9797
+
+[DEBUG] Rozpoczynam fold 3
+[DEBUG] Model UNet zbudowany
+Epoch 1/25
+50/50 [==============================] - ETA: 0s - loss: 1.0406 - accuracy: 0.5537 - precision_2: 0.8209 - recall_2: 0.2508
+Epoch 1: val_loss improved from inf to 1.28941, saving model to unet_ecg_fold3.h5
+50/50 [==============================] - 18s 261ms/step - loss: 1.0406 - accuracy: 0.5537 - precision_2: 0.8209 - recall_2: 0.2508 - val_loss: 1.2894 - val_accuracy: 0.5831 - val_precision_2: 0.6378 - val_recall_2: 4.7438e-04 - lr: 0.0010
+Epoch 2/25
+50/50 [==============================] - ETA: 0s - loss: 0.6221 - accuracy: 0.8442 - precision_2: 0.9485 - recall_2: 0.6395
+Epoch 2: val_loss improved from 1.28941 to 0.90134, saving model to unet_ecg_fold3.h5
+50/50 [==============================] - 12s 234ms/step - loss: 0.6221 - accuracy: 0.8442 - precision_2: 0.9485 - recall_2: 0.6395 - val_loss: 0.9013 - val_accuracy: 0.7373 - val_precision_2: 0.8625 - val_recall_2: 0.4185 - lr: 0.0010
+Epoch 3/25
+50/50 [==============================] - ETA: 0s - loss: 0.4517 - accuracy: 0.9008 - precision_2: 0.9587 - recall_2: 0.8067
+Epoch 3: val_loss improved from 0.90134 to 0.64670, saving model to unet_ecg_fold3.h5
+50/50 [==============================] - 11s 225ms/step - loss: 0.4517 - accuracy: 0.9008 - precision_2: 0.9587 - recall_2: 0.8067 - val_loss: 0.6467 - val_accuracy: 0.8035 - val_precision_2: 0.8573 - val_recall_2: 0.7526 - lr: 0.0010
+Epoch 4/25
+50/50 [==============================] - ETA: 0s - loss: 0.3558 - accuracy: 0.9339 - precision_2: 0.9655 - recall_2: 0.8289
+Epoch 4: val_loss improved from 0.64670 to 0.49201, saving model to unet_ecg_fold3.h5
+50/50 [==============================] - 11s 218ms/step - loss: 0.3558 - accuracy: 0.9339 - precision_2: 0.9655 - recall_2: 0.8289 - val_loss: 0.4920 - val_accuracy: 0.8357 - val_precision_2: 0.8813 - val_recall_2: 0.7917 - lr: 0.0010
+Epoch 5/25
+50/50 [==============================] - ETA: 0s - loss: 0.2917 - accuracy: 0.9477 - precision_2: 0.9673 - recall_2: 0.8510
+Epoch 5: val_loss improved from 0.49201 to 0.36888, saving model to unet_ecg_fold3.h5
+50/50 [==============================] - 12s 231ms/step - loss: 0.2917 - accuracy: 0.9477 - precision_2: 0.9673 - recall_2: 0.8510 - val_loss: 0.3689 - val_accuracy: 0.8893 - val_precision_2: 0.9262 - val_recall_2: 0.8157 - lr: 0.0010
+Epoch 6/25
+50/50 [==============================] - ETA: 0s - loss: 0.2456 - accuracy: 0.9529 - precision_2: 0.9643 - recall_2: 0.9392
+Epoch 6: val_loss improved from 0.36888 to 0.28513, saving model to unet_ecg_fold3.h5
+50/50 [==============================] - 11s 220ms/step - loss: 0.2456 - accuracy: 0.9529 - precision_2: 0.9643 - recall_2: 0.9392 - val_loss: 0.2851 - val_accuracy: 0.9320 - val_precision_2: 0.9447 - val_recall_2: 0.9187 - lr: 0.0010
+Epoch 7/25
+50/50 [==============================] - ETA: 0s - loss: 0.2089 - accuracy: 0.9570 - precision_2: 0.9648 - recall_2: 0.9491
+Epoch 7: val_loss improved from 0.28513 to 0.24189, saving model to unet_ecg_fold3.h5
+50/50 [==============================] - 11s 216ms/step - loss: 0.2089 - accuracy: 0.9570 - precision_2: 0.9648 - recall_2: 0.9491 - val_loss: 0.2419 - val_accuracy: 0.9378 - val_precision_2: 0.9460 - val_recall_2: 0.9293 - lr: 0.0010
+Epoch 8/25
+50/50 [==============================] - ETA: 0s - loss: 0.1788 - accuracy: 0.9607 - precision_2: 0.9664 - recall_2: 0.9551
+Epoch 8: val_loss improved from 0.24189 to 0.18712, saving model to unet_ecg_fold3.h5
+50/50 [==============================] - 12s 245ms/step - loss: 0.1788 - accuracy: 0.9607 - precision_2: 0.9664 - recall_2: 0.9551 - val_loss: 0.1871 - val_accuracy: 0.9535 - val_precision_2: 0.9590 - val_recall_2: 0.9479 - lr: 0.0010
+Epoch 9/25
+50/50 [==============================] - ETA: 0s - loss: 0.1521 - accuracy: 0.9650 - precision_2: 0.9697 - recall_2: 0.9608
+Epoch 9: val_loss improved from 0.18712 to 0.15776, saving model to unet_ecg_fold3.h5
+50/50 [==============================] - 13s 257ms/step - loss: 0.1521 - accuracy: 0.9650 - precision_2: 0.9697 - recall_2: 0.9608 - val_loss: 0.1578 - val_accuracy: 0.9614 - val_precision_2: 0.9666 - val_recall_2: 0.9575 - lr: 0.0010
+Epoch 10/25
+50/50 [==============================] - ETA: 0s - loss: 0.1319 - accuracy: 0.9679 - precision_2: 0.9724 - recall_2: 0.9645
+Epoch 10: val_loss improved from 0.15776 to 0.13692, saving model to unet_ecg_fold3.h5
+50/50 [==============================] - 11s 228ms/step - loss: 0.1319 - accuracy: 0.9679 - precision_2: 0.9724 - recall_2: 0.9645 - val_loss: 0.1369 - val_accuracy: 0.9649 - val_precision_2: 0.9695 - val_recall_2: 0.9614 - lr: 0.0010
+Epoch 11/25
+50/50 [==============================] - ETA: 0s - loss: 0.1102 - accuracy: 0.9727 - precision_2: 0.9755 - recall_2: 0.9696
+Epoch 11: val_loss improved from 0.13692 to 0.10705, saving model to unet_ecg_fold3.h5
+50/50 [==============================] - 11s 217ms/step - loss: 0.1102 - accuracy: 0.9727 - precision_2: 0.9755 - recall_2: 0.9696 - val_loss: 0.1070 - val_accuracy: 0.9722 - val_precision_2: 0.9744 - val_recall_2: 0.9697 - lr: 0.0010
+Epoch 12/25
+50/50 [==============================] - ETA: 0s - loss: 0.0960 - accuracy: 0.9744 - precision_2: 0.9763 - recall_2: 0.9721
+Epoch 12: val_loss improved from 0.10705 to 0.10098, saving model to unet_ecg_fold3.h5
+50/50 [==============================] - 11s 219ms/step - loss: 0.0960 - accuracy: 0.9744 - precision_2: 0.9763 - recall_2: 0.9721 - val_loss: 0.1010 - val_accuracy: 0.9698 - val_precision_2: 0.9712 - val_recall_2: 0.9682 - lr: 0.0010
+Epoch 13/25
+50/50 [==============================] - ETA: 0s - loss: 0.0868 - accuracy: 0.9750 - precision_2: 0.9766 - recall_2: 0.9732
+Epoch 13: val_loss improved from 0.10098 to 0.08465, saving model to unet_ecg_fold3.h5
+50/50 [==============================] - 12s 232ms/step - loss: 0.0868 - accuracy: 0.9750 - precision_2: 0.9766 - recall_2: 0.9732 - val_loss: 0.0847 - val_accuracy: 0.9735 - val_precision_2: 0.9745 - val_recall_2: 0.9723 - lr: 0.0010
+Epoch 14/25
+50/50 [==============================] - ETA: 0s - loss: 0.0763 - accuracy: 0.9773 - precision_2: 0.9786 - recall_2: 0.9758
+Epoch 14: val_loss improved from 0.08465 to 0.08136, saving model to unet_ecg_fold3.h5
+50/50 [==============================] - 12s 235ms/step - loss: 0.0763 - accuracy: 0.9773 - precision_2: 0.9786 - recall_2: 0.9758 - val_loss: 0.0814 - val_accuracy: 0.9739 - val_precision_2: 0.9748 - val_recall_2: 0.9729 - lr: 0.0010
+Epoch 15/25
+50/50 [==============================] - ETA: 0s - loss: 0.0710 - accuracy: 0.9779 - precision_2: 0.9790 - recall_2: 0.9767
+Epoch 15: val_loss improved from 0.08136 to 0.07533, saving model to unet_ecg_fold3.h5
+50/50 [==============================] - 11s 216ms/step - loss: 0.0710 - accuracy: 0.9779 - precision_2: 0.9790 - recall_2: 0.9767 - val_loss: 0.0753 - val_accuracy: 0.9748 - val_precision_2: 0.9756 - val_recall_2: 0.9739 - lr: 0.0010
+Epoch 16/25
+50/50 [==============================] - ETA: 0s - loss: 0.0638 - accuracy: 0.9800 - precision_2: 0.9810 - recall_2: 0.9789
+Epoch 16: val_loss improved from 0.07533 to 0.07276, saving model to unet_ecg_fold3.h5
+50/50 [==============================] - 11s 222ms/step - loss: 0.0638 - accuracy: 0.9800 - precision_2: 0.9810 - recall_2: 0.9789 - val_loss: 0.0728 - val_accuracy: 0.9761 - val_precision_2: 0.9769 - val_recall_2: 0.9753 - lr: 0.0010
+Epoch 17/25
+50/50 [==============================] - ETA: 0s - loss: 0.0597 - accuracy: 0.9808 - precision_2: 0.9817 - recall_2: 0.9799
+Epoch 17: val_loss improved from 0.07276 to 0.06424, saving model to unet_ecg_fold3.h5
+50/50 [==============================] - 11s 227ms/step - loss: 0.0597 - accuracy: 0.9808 - precision_2: 0.9817 - recall_2: 0.9799 - val_loss: 0.0642 - val_accuracy: 0.9781 - val_precision_2: 0.9788 - val_recall_2: 0.9774 - lr: 0.0010
+Epoch 18/25
+50/50 [==============================] - ETA: 0s - loss: 0.0565 - accuracy: 0.9815 - precision_2: 0.9822 - recall_2: 0.9807
+Epoch 18: val_loss improved from 0.06424 to 0.06350, saving model to unet_ecg_fold3.h5
+50/50 [==============================] - 11s 225ms/step - loss: 0.0565 - accuracy: 0.9815 - precision_2: 0.9822 - recall_2: 0.9807 - val_loss: 0.0635 - val_accuracy: 0.9782 - val_precision_2: 0.9788 - val_recall_2: 0.9776 - lr: 0.0010
+Epoch 19/25
+50/50 [==============================] - ETA: 0s - loss: 0.0534 - accuracy: 0.9822 - precision_2: 0.9829 - recall_2: 0.9815
+Epoch 19: val_loss did not improve from 0.06350
+50/50 [==============================] - 11s 214ms/step - loss: 0.0534 - accuracy: 0.9822 - precision_2: 0.9829 - recall_2: 0.9815 - val_loss: 0.0643 - val_accuracy: 0.9776 - val_precision_2: 0.9781 - val_recall_2: 0.9770 - lr: 0.0010
+Epoch 20/25
+50/50 [==============================] - ETA: 0s - loss: 0.0530 - accuracy: 0.9820 - precision_2: 0.9826 - recall_2: 0.9813
+Epoch 20: val_loss improved from 0.06350 to 0.05809, saving model to unet_ecg_fold3.h5
+50/50 [==============================] - 17s 351ms/step - loss: 0.0530 - accuracy: 0.9820 - precision_2: 0.9826 - recall_2: 0.9813 - val_loss: 0.0581 - val_accuracy: 0.9798 - val_precision_2: 0.9804 - val_recall_2: 0.9792 - lr: 0.0010
+Epoch 21/25
+50/50 [==============================] - ETA: 0s - loss: 0.0507 - accuracy: 0.9825 - precision_2: 0.9831 - recall_2: 0.9819
+Epoch 21: val_loss did not improve from 0.05809
+50/50 [==============================] - 12s 236ms/step - loss: 0.0507 - accuracy: 0.9825 - precision_2: 0.9831 - recall_2: 0.9819 - val_loss: 0.0583 - val_accuracy: 0.9799 - val_precision_2: 0.9804 - val_recall_2: 0.9794 - lr: 0.0010
+Epoch 22/25
+50/50 [==============================] - ETA: 0s - loss: 0.0479 - accuracy: 0.9834 - precision_2: 0.9839 - recall_2: 0.9828
+Epoch 22: val_loss did not improve from 0.05809
+
+Epoch 22: ReduceLROnPlateau reducing learning rate to 0.0005000000237487257.
+50/50 [==============================] - 11s 224ms/step - loss: 0.0479 - accuracy: 0.9834 - precision_2: 0.9839 - recall_2: 0.9828 - val_loss: 0.0581 - val_accuracy: 0.9791 - val_precision_2: 0.9795 - val_recall_2: 0.9786 - lr: 0.0010
+Epoch 23/25
+50/50 [==============================] - ETA: 0s - loss: 0.0409 - accuracy: 0.9862 - precision_2: 0.9867 - recall_2: 0.9857
+Epoch 23: val_loss improved from 0.05809 to 0.04916, saving model to unet_ecg_fold3.h5
+50/50 [==============================] - 15s 299ms/step - loss: 0.0409 - accuracy: 0.9862 - precision_2: 0.9867 - recall_2: 0.9857 - val_loss: 0.0492 - val_accuracy: 0.9830 - val_precision_2: 0.9835 - val_recall_2: 0.9826 - lr: 5.0000e-04
+Epoch 24/25
+50/50 [==============================] - ETA: 0s - loss: 0.0385 - accuracy: 0.9871 - precision_2: 0.9875 - recall_2: 0.9866
+Epoch 24: val_loss improved from 0.04916 to 0.04760, saving model to unet_ecg_fold3.h5
+50/50 [==============================] - 11s 220ms/step - loss: 0.0385 - accuracy: 0.9871 - precision_2: 0.9875 - recall_2: 0.9866 - val_loss: 0.0476 - val_accuracy: 0.9837 - val_precision_2: 0.9841 - val_recall_2: 0.9833 - lr: 5.0000e-04
+Epoch 25/25
+50/50 [==============================] - ETA: 0s - loss: 0.0366 - accuracy: 0.9878 - precision_2: 0.9882 - recall_2: 0.9873
+Epoch 25: val_loss improved from 0.04760 to 0.04707, saving model to unet_ecg_fold3.h5
+50/50 [==============================] - 11s 216ms/step - loss: 0.0366 - accuracy: 0.9878 - precision_2: 0.9882 - recall_2: 0.9873 - val_loss: 0.0471 - val_accuracy: 0.9839 - val_precision_2: 0.9843 - val_recall_2: 0.9835 - lr: 5.0000e-04
+[DEBUG] Fold 3 - Val Loss: 0.0471, Accuracy: 0.9839, Precision: 0.9843, Recall: 0.9835

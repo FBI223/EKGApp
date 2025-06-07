@@ -156,7 +156,17 @@ struct SignalRecorderView: View {
                             formatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
                             let baseName = "ecg_record_\(formatter.string(from: start))"
 
-                            try saveRecordingToAllFiles(baseName: baseName, fs: fs, start: start, end: end)
+                            try ECGFileSaver.saveAll(
+                                baseName: baseName,
+                                buffer: recordingBuffer,
+                                fs: fs,
+                                gain: signalGain,
+                                leadName: leadName,
+                                start: start,
+                                end: end
+                            )
+                            
+                            
                             showSaveSuccess = true
 
                             print("✅ Saved all formats")
@@ -226,92 +236,13 @@ struct SignalRecorderView: View {
         }
     }
 
-    // MARK: - Save functions
-    
-    
-    private func saveRecordingToAllFiles(baseName: String, fs: Int, start: Date, end: Date) throws {
-        let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        try saveMatFile(to: dir.appendingPathComponent("\(baseName).mat"))
-        try saveDatFile(to: dir.appendingPathComponent("\(baseName).dat"), gain: signalGain)
-        try saveHeaFile(to: dir.appendingPathComponent("\(baseName).hea"), baseName: baseName, fs: fs, gain: signalGain, start: start, end: end)
-        try saveRecordingAsJSON(baseName: baseName, fs: fs, start: start, end: end)  // 👈 dodaj ten wiersz
-    }
 
-    
-    
-    private func saveDatFile(to url: URL, gain: Float) throws {
-        let int16Signal = recordingBuffer.map { Int16($0 * gain) }
-        var datData = Data()
-        for s in int16Signal {
-            var le = s.littleEndian
-            datData.append(Data(bytes: &le, count: 2))
-        }
-        try datData.write(to: url)
-    }
-    
-    
-    private func saveMatFile(to url: URL) throws {
-        let val = [recordingBuffer]  // [[Float]]
-        let dict: [String: Any] = ["val": val]
-        let data = try PropertyListSerialization.data(fromPropertyList: dict, format: .binary, options: 0)
-        try data.write(to: url)
-    }
-
-    
-    private func saveHeaFile(to url: URL, baseName: String, fs: Int, gain: Float, start: Date, end: Date) throws {
-        let settings = AppSettings.shared
-        let nSamples = recordingBuffer.count
-        let bitRes = resolutionBits
-        let format = 16
-        let baseline = 0
-        let adcRes = resolutionBits
-        let adcZero = 0
-        let initVal = 0
-        let checksum = 0
-        let blockSize = 0
-        let sex = settings.userSex == 0 ? "M" : "F"
-        let age = settings.userAge
-
-        let durationSec = Double(nSamples) / Double(fs)
-        let recordingTime = ISO8601DateFormatter().string(from: start)
-
-        let mainLine = "\(baseName) 1 \(fs) \(nSamples) \(bitRes)"
-        let signalLine = "\(baseName).dat \(format) \(Int(gain))/mV \(baseline) 0 \(adcRes) \(adcZero) \(initVal) \(checksum) \(blockSize) \(leadName)"
-        
-        let commentLines = [
-            "# age: \(age)",
-            "# sex: \(sex)",
-            "# duration: \(Int(durationSec)) seconds",
-            "# start_time: \(recordingTime)",
-            "# Recorded via ECG mobile app"
-        ]
-
-        let hea = ([mainLine, signalLine] + commentLines).joined(separator: "\n")
-        try hea.write(to: url, atomically: true, encoding: .utf8)
-    }
-
-
-
-
-    private func saveRecordingAsJSON(baseName: String, fs: Int, start: Date, end: Date) throws {
-        let jsonObject: [String: Any] = [
-            "fs": fs,
-            "lead": "II",
-            "start_time": ISO8601DateFormatter().string(from: start),
-            "end_time": ISO8601DateFormatter().string(from: end),
-            "signal": recordingBuffer
-        ]
-        let data = try JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted)
-        let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("\(baseName).json")
-        try data.write(to: url)
-        print("✅ JSON saved to \(url)")
-    }
 
 
     // MARK: - Delete all files
 
     func deleteRecording(_ rec: ECGRecordingSet) {
-        for url in [rec.json, rec.wfdbDat, rec.wfdbHea, rec.mat] {
+        for url in [rec.json, rec.wfdbDat, rec.wfdbHea] {
             if FileManager.default.fileExists(atPath: url.path) {
                 try? FileManager.default.removeItem(at: url)
                 print("🗑️ Deleted \(url.lastPathComponent)")

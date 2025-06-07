@@ -4,22 +4,39 @@ import Charts
 struct SignalPlaybackView: View {
     let filename: String
 
-    @State private var signal: [Float] = []
+    @State private var signals: [[Float]] = []
+    @State private var leads: [String] = []
+    @State private var selectedLeadIndex: Int = 0
+    private var currentSignal: [Float] {
+        guard selectedLeadIndex < signals.count else { return [] }
+        return signals[selectedLeadIndex]
+    }
+    
     @State private var fs: Int = 128
     @State private var offset: Int = 0
     @State private var windowSize: Int = 700
     @State private var yScale: Float = 3.0
-    @State private var lead: String = "II"
 
     @State private var startTime: Date?
     @State private var endTime: Date?
     @State private var durationSeconds: Int?
     @State private var lastScale: CGFloat = 1.0
 
+
+    
+    
+    func detectECGFormat(url: URL) -> ECGFormat? {
+        let ext = url.pathExtension.lowercased()
+        switch ext {
+        case "json": return .json
+        case "hea": return .wfdb
+        default: return nil
+        }
+    }
+
+    
     var body: some View {
         VStack(spacing: 16) {
-            
-            
             // === Informacje nagłówkowe ===
             VStack(spacing: 6) {
                 Text(filename)
@@ -33,7 +50,7 @@ struct SignalPlaybackView: View {
                         .foregroundColor(.gray)
                 }
 
-                Text("📈 FS: \(fs) Hz, Samples: \(signal.count), Lead: \(lead)")
+                Text("📈 FS: \(fs) Hz, Samples: \(currentSignal.count), Lead: \(leads.indices.contains(selectedLeadIndex) ? leads[selectedLeadIndex] : "—")")
                     .font(.subheadline)
                     .foregroundColor(.gray)
 
@@ -42,12 +59,23 @@ struct SignalPlaybackView: View {
                         .font(.subheadline)
                         .foregroundColor(.gray)
                 }
+
+                if leads.count > 1 {
+                    Picker("Lead", selection: $selectedLeadIndex) {
+                        ForEach(leads.indices, id: \.self) { i in
+                            Text(leads[i]).tag(i)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .padding(.horizontal)
+                }
             }
 
             // === Wykres ===
             Chart {
-                let end = min(offset + windowSize, signal.count)
-                let visible = Array(signal[offset..<end])
+                let sig = currentSignal
+                let end = min(offset + windowSize, sig.count)
+                let visible = Array(sig[offset..<end])
                 ForEach(Array(visible.enumerated()), id: \.offset) { i, v in
                     LineMark(x: .value("Index", offset + i), y: .value("Value", v))
                 }
@@ -70,25 +98,19 @@ struct SignalPlaybackView: View {
                             windowSize = min(5000, Int(CGFloat(windowSize) / delta))
                             yScale = min(10.0, yScale / Float(delta))
                         }
-                        
-                        
-                        // ⛔️ Zabezpieczenie: offset nie może wyjść poza sygnał
-                        offset = min(offset, max(0, signal.count - windowSize))
+
+                        offset = min(offset, max(0, currentSignal.count - windowSize))
                     }
-                    .onEnded { _ in
-                        lastScale = 1.0
-                    }
+                    .onEnded { _ in lastScale = 1.0 }
             )
             .simultaneousGesture(
                 DragGesture()
                     .onChanged { value in
                         let dragAmount = Int(value.translation.width / 4)
                         let newOffset = offset - dragAmount
-                        offset = min(max(0, newOffset), max(0, signal.count - windowSize))
+                        offset = min(max(0, newOffset), max(0, currentSignal.count - windowSize))
                     }
             )
-
-            
 
             // === Nawigacja + suwaki + reset ===
             VStack(alignment: .leading, spacing: 12) {
@@ -103,9 +125,7 @@ struct SignalPlaybackView: View {
                 }
                 .buttonStyle(.bordered)
 
-                Text("🧭 Navigate")
-                    .font(.subheadline)
-                    .bold()
+                Text("🧭 Navigate").font(.subheadline).bold()
 
                 HStack {
                     Text("Window: \(windowSize)")
@@ -121,20 +141,18 @@ struct SignalPlaybackView: View {
                 }
 
                 HStack {
-                    Text("Offset: \(offset)")
-                        .opacity(signal.count > windowSize ? 1 : 0.3)
-
+                    Text("Offset: \(offset)").opacity(currentSignal.count > windowSize ? 1 : 0.3)
                     Slider(value: Binding(
                         get: { Double(offset) },
                         set: { newValue in
-                            offset = min(Int(newValue), max(0, signal.count - windowSize))
+                            offset = min(Int(newValue), max(0, currentSignal.count - windowSize))
                         }
-                    ), in: 0...Double(max(1, signal.count - windowSize)), step: 1)
-                    .disabled(signal.count <= windowSize)
-                    .opacity(signal.count > windowSize ? 1 : 0.3)
+                    ), in: 0...Double(max(1, currentSignal.count - windowSize)), step: 1)
+                    .disabled(currentSignal.count <= windowSize)
+                    .opacity(currentSignal.count > windowSize ? 1 : 0.3)
                 }
             }
-            .frame(maxWidth: 600, alignment: .leading) // 👈 szersze okno na suwaki
+            .frame(maxWidth: 600, alignment: .leading)
             .padding()
             .background(Color(.systemBackground))
             .cornerRadius(10)
@@ -144,55 +162,63 @@ struct SignalPlaybackView: View {
             )
             .padding(.horizontal)
 
-
-
             Spacer()
         }
         .padding()
         .onAppear(perform: load)
     }
+    
+    
 
+
+    
     private func load() {
-        let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent(filename)
-        do {
-            let data = try Data(contentsOf: url)
-            if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-               let rawFs = json["fs"] as? Int,
-               let rawSignal = json["signal"] as? [Double] {
+        let docDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let fullURL = docDir.appendingPathComponent(filename)
+        let ext = fullURL.pathExtension.lowercased()
 
-                guard rawSignal.count >= rawFs else {
-                    print("❌ Signal too short (<1 sec). Skipping.")
-                    return
-                }
-
-                fs = rawFs
-                signal = rawSignal.map { Float($0) }
-
-                // Ustaw rozsądny windowSize
-                let minWindowSize = rawFs
-                let defaultWindow = 700
-                let maxWindowSize = 5000
-                windowSize = max(minWindowSize, min(defaultWindow, rawSignal.count))
-
-                if let rawLead = json["lead"] as? String {
-                    lead = rawLead
-                }
-
-                let isoFormatter = ISO8601DateFormatter()
-                if let startStr = json["start_time"] as? String,
-                   let endStr = json["end_time"] as? String,
-                   let start = isoFormatter.date(from: startStr),
-                   let end = isoFormatter.date(from: endStr) {
-                    startTime = start
-                    endTime = end
-                    durationSeconds = Int(end.timeIntervalSince(start))
-                } else {
-                    durationSeconds = Int(Double(signal.count) / Double(fs))
-                }
-            }
-        } catch {
-            print("❌ Failed to load file \(filename): \(error)")
+        // === Rozpoznaj format ===
+        let format: ECGFormat
+        switch ext {
+        case "json": format = .json
+        case "hea":  format = .wfdb
+        default:
+            print("❌ Unsupported file extension: \(ext)")
+            return
         }
+
+        // === Wczytaj przez unified API ===
+        guard let ecg = ECGLoader.loadMultiLead(from: fullURL, format: format) else {
+            print("❌ Could not load ECG recording: \(filename)")
+            return
+        }
+
+
+        // === Metadane
+        fs = ecg.fs
+        startTime = ecg.startTime
+        endTime = ecg.endTime
+        durationSeconds = ecg.endTime.flatMap { end in
+            ecg.startTime.map { Int(end.timeIntervalSince($0)) }
+        } ?? Int(Double(ecg.signals.first?.count ?? 0) / Double(fs))
+
+        // === Leads
+        leads = ecg.leads
+        signals = ecg.signals
+
+        // === Wybierz kanał II albo pierwszy
+        if let iiIndex = leads.firstIndex(where: { $0.uppercased() == "II" }) {
+            selectedLeadIndex = iiIndex
+        } else {
+            selectedLeadIndex = 0
+        }
+
+        // === Okno
+        let len = currentSignal.count
+        windowSize = max(min(fs, len), min(700, len))
     }
+
+    
+
 }
 

@@ -2,14 +2,6 @@ import SwiftUI
 import Charts
 import UniformTypeIdentifiers
 
-struct ECGRecordingSet: Identifiable {
-    var id: String { baseName }
-    let baseName: String
-    let json: URL
-    let wfdbDat: URL
-    let wfdbHea: URL
-    let mat: URL
-}
 
 struct SignalBrowserView: View {
     @State private var recordings: [ECGRecordingSet] = []
@@ -17,21 +9,32 @@ struct SignalBrowserView: View {
     @State private var fileToShareURLs: [URL] = []
     @State private var selectedFileToOpen: String? = nil
     @State private var showAlert = false
+    
+    
+    
 
     var body: some View {
         NavigationView {
             List {
                 ForEach(recordings) { rec in
                     HStack(spacing: 16) {
-                        Button {
-                            checkFileAndNavigate(rec.json)
+                        
+                        
+                        Menu {
+                            Button("📂 Open JSON") {
+                                checkFileAndNavigate(rec.json, format: .json)
+                            }
+                            Button("📂 Open WFDB") {
+                                checkFileAndNavigate(rec.wfdbHea, format: .wfdb)
+                            }
                         } label: {
-                            Text(rec.baseName + ".json")
+                            Text(rec.baseName)
                                 .lineLimit(1)
                                 .truncationMode(.middle)
                                 .font(.headline)
                                 .foregroundColor(.primary)
                         }
+
 
                         Spacer()
 
@@ -40,7 +43,6 @@ struct SignalBrowserView: View {
                             Button("📤 WFDB (.dat + .hea)") {
                                 shareFiles(urls: [rec.wfdbDat, rec.wfdbHea])
                             }
-                            Button("📤 MATLAB (.mat)") { shareFiles(urls: [rec.mat]) }
                         } label: {
                             Image(systemName: "square.and.arrow.up")
                                 .resizable()
@@ -49,15 +51,6 @@ struct SignalBrowserView: View {
                         }
                         .buttonStyle(BorderlessButtonStyle())
 
-                        Button {
-                            deleteRecording(rec)
-                        } label: {
-                            Image(systemName: "trash")
-                                .resizable()
-                                .frame(width: 24, height: 24)
-                                .foregroundColor(.red)
-                        }
-                        .buttonStyle(BorderlessButtonStyle())
                     }
                 }
                 .onDelete(perform: deleteAtOffsets)
@@ -104,25 +97,15 @@ struct SignalBrowserView: View {
         }
     }
 
-    private func checkFileAndNavigate(_ fileURL: URL) {
-        do {
-            let data = try Data(contentsOf: fileURL)
-            if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-               let fs = json["fs"] as? Int,
-               let signal = json["signal"] as? [Double] {
-                if signal.count >= fs {
-                    selectedFileToOpen = fileURL.lastPathComponent
-                } else {
-                    showAlert = true
-                }
-            } else {
-                showAlert = true
-            }
-        } catch {
-            print("❌ File load error: \(error)")
+    private func checkFileAndNavigate(_ fileURL: URL, format: ECGFormat) {
+        if let _ = ECGLoader.loadMultiLead(from: fileURL, format: format) {
+            selectedFileToOpen = fileURL.lastPathComponent
+        } else {
             showAlert = true
         }
     }
+
+
 
     private func loadRecordings() {
         let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -136,8 +119,7 @@ struct SignalBrowserView: View {
                 let base = json.deletingPathExtension().lastPathComponent
                 let dat = dir.appendingPathComponent("\(base).dat")
                 let hea = dir.appendingPathComponent("\(base).hea")
-                let mat = dir.appendingPathComponent("\(base).mat")
-                sets.append(.init(baseName: base, json: json, wfdbDat: dat, wfdbHea: hea, mat: mat))
+                sets.append(.init(baseName: base, json: json, wfdbDat: dat, wfdbHea: hea))
             }
 
             recordings = sets.sorted {
@@ -160,7 +142,7 @@ struct SignalBrowserView: View {
     }
 
     private func deleteRecording(_ rec: ECGRecordingSet) {
-        for url in [rec.json, rec.wfdbDat, rec.wfdbHea, rec.mat] {
+        for url in [rec.json, rec.wfdbDat, rec.wfdbHea] {
             try? FileManager.default.removeItem(at: url)
         }
         loadRecordings()
@@ -171,6 +153,44 @@ struct SignalBrowserView: View {
             deleteRecording(recordings[index])
         }
     }
+    
+    
+    
+    
+
+
+
+    private func loadJSONMultiLead(from url: URL) -> ECGLoadedMultiLeadData? {
+        do {
+            let data = try Data(contentsOf: url)
+            if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let rawFs = json["fs"] as? Int,
+               let rawSignals = json["signals"] as? [[Double]],
+               let rawLeads = json["leads"] as? [String] {
+
+                let signals = rawSignals.map { $0.map { Float($0) } }
+                let iso = ISO8601DateFormatter()
+                let start = (json["start_time"] as? String).flatMap(iso.date)
+                let end = (json["end_time"] as? String).flatMap(iso.date)
+
+                return ECGLoadedMultiLeadData(
+                    signals: signals,
+                    fs: rawFs,
+                    leads: rawLeads,
+                    startTime: start,
+                    endTime: end
+                )
+            }
+        } catch {
+            print("❌ JSON multi-lead error: \(error)")
+        }
+        return nil
+    }
+
+
+
+    
+    
 }
 
 struct ActivityView: UIViewControllerRepresentable {
@@ -184,4 +204,11 @@ struct ActivityView: UIViewControllerRepresentable {
 
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
+
+
+
+
+
+
+
 

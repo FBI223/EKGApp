@@ -2,7 +2,8 @@ import SwiftUI
 import Charts
 
 struct SignalPlaybackView: View {
-    let filename: String
+    let fileURL: URL
+    let format: ECGFormat
 
     @State private var signals: [[Float]] = []
     @State private var leads: [String] = []
@@ -39,10 +40,11 @@ struct SignalPlaybackView: View {
         VStack(spacing: 16) {
             // === Informacje nagłówkowe ===
             VStack(spacing: 6) {
-                Text(filename)
+                Text(fileURL.lastPathComponent)
                     .font(.headline)
                     .lineLimit(1)
                     .truncationMode(.middle)
+
 
                 if let start = startTime, let end = endTime {
                     Text("📅 \(start.formatted(date: .abbreviated, time: .standard)) → \(end.formatted(date: .abbreviated, time: .standard))")
@@ -169,30 +171,13 @@ struct SignalPlaybackView: View {
     }
     
     
-
-
     
     private func load() {
-        let docDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let fullURL = docDir.appendingPathComponent(filename)
-        let ext = fullURL.pathExtension.lowercased()
-
-        // === Rozpoznaj format ===
-        let format: ECGFormat
-        switch ext {
-        case "json": format = .json
-        case "hea":  format = .wfdb
-        default:
-            print("❌ Unsupported file extension: \(ext)")
+        // === Wczytaj dane przez unified API ===
+        guard let ecg = ECGLoader.loadMultiLead(from: fileURL, format: format) else {
+            print("❌ Could not load ECG recording: \(fileURL.lastPathComponent)")
             return
         }
-
-        // === Wczytaj przez unified API ===
-        guard let ecg = ECGLoader.loadMultiLead(from: fullURL, format: format) else {
-            print("❌ Could not load ECG recording: \(filename)")
-            return
-        }
-
 
         // === Metadane
         fs = ecg.fs
@@ -218,6 +203,7 @@ struct SignalPlaybackView: View {
         windowSize = max(min(fs, len), min(700, len))
     }
 
+    
     
 
 }

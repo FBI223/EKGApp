@@ -4,14 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="added readme.md and cleared folders">
-      <change beforePath="$PROJECT_DIR$/arduino/arduino.ino" beforeDir="false" afterPath="$PROJECT_DIR$/arduino/simulation/arduino.ino" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino/convert.py" beforeDir="false" afterPath="$PROJECT_DIR$/arduino/simulation/convert.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino/ekg802_5min_signal.h" beforeDir="false" afterPath="$PROJECT_DIR$/arduino/simulation/ekg802_5min_signal.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino/ekg820_5min_signal.h" beforeDir="false" afterPath="$PROJECT_DIR$/arduino/simulation/ekg820_5min_signal.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino/ekg823_5min_signal.h" beforeDir="false" afterPath="$PROJECT_DIR$/arduino/simulation/ekg823_5min_signal.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino/visualize_ble.py" beforeDir="false" afterPath="$PROJECT_DIR$/arduino/simulation/visualize_ble.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino/visualize_serial.py" beforeDir="false" afterPath="$PROJECT_DIR$/arduino/simulation/visualize_serial.py" afterDir="false" />
+    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="v 1.2.2 updated loading and savinf ( multiple formats )">
+      <change afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Views/SignalImportView.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/ECG_PROJ.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ECG_PROJ.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp.xcodeproj/project.xcworkspace/xcuserdata/marcinsztukowski.xcuserdatad/UserInterfaceState.xcuserstate" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp.xcodeproj/project.xcworkspace/xcuserdata/marcinsztukowski.xcuserdatad/UserInterfaceState.xcuserstate" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Info.plist" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Info.plist" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Utilities/ECGFileLoader.swift" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Utilities/ECGFileLoader.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Utilities/ECGFileSaver.swift" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Utilities/ECGFileSaver.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Views/SignalBrowserView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Views/SignalBrowserView.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Views/SignalPlaybackView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Views/SignalPlaybackView.swift" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -135,7 +137,7 @@
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/msztu223/PycharmProjects/ECG_PROJ/basic_rythm_model/single_class&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/marcinsztukowski/PycharmProjects/ECG_PROJ/databases&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -161,18 +163,18 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/databases" />
       <recent name="$PROJECT_DIR$/basic_rythm_model/single_class" />
       <recent name="$PROJECT_DIR$/basic_rythm_model/single_class/model_no_lstm_final/float32" />
       <recent name="$PROJECT_DIR$/basic_rythm_model/single_class/float32_model" />
       <recent name="$PROJECT_DIR$/basic_rythm_model/single_class/model_float32" />
-      <recent name="$PROJECT_DIR$/basic_rythm_model/single_class/model_no_lstm" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/databases" />
       <recent name="$PROJECT_DIR$/basic_rythm_model" />
       <recent name="$PROJECT_DIR$/basic_rythm_model/single_class/model_float32" />
       <recent name="$PROJECT_DIR$/basic_rythm_model/single_class/model_float32/cm" />
-      <recent name="$PROJECT_DIR$/basic_rythm_model/single_class/float32_model" />
-      <recent name="$PROJECT_DIR$/basic_rythm_model/single_class/model_no_lstm" />
     </key>
   </component>
   <component name="RunManager" selected="Python.check_model_graph">
@@ -470,6 +472,7 @@
       <workItem from="1748867379371" duration="41244000" />
       <workItem from="1749016494555" duration="6850000" />
       <workItem from="1749023384187" duration="661000" />
+      <workItem from="1749395122656" duration="1912000" />
     </task>
     <task id="LOCAL-00001" summary="quite ok model for recognizing 'N' 'V' 'A' 'S' 'L' 'R' classes">
       <option name="closed" value="true" />
@@ -735,7 +738,31 @@
       <option name="project" value="LOCAL" />
       <updated>1749023283177</updated>
     </task>
-    <option name="localTasksCounter" value="34" />
+    <task id="LOCAL-00034" summary="v 1.2 added wave analysis model to ios app">
+      <option name="closed" value="true" />
+      <created>1749295489018</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1749295489018</updated>
+    </task>
+    <task id="LOCAL-00035" summary="v 1.2.1 updated saving files">
+      <option name="closed" value="true" />
+      <created>1749303850752</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1749303850752</updated>
+    </task>
+    <task id="LOCAL-00036" summary="v 1.2.2 updated loading and savinf ( multiple formats )">
+      <option name="closed" value="true" />
+      <created>1749328261236</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1749328261236</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -763,9 +790,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added mohhamed model without class balance" />
-    <MESSAGE value="added class balance for mohamed model" />
-    <MESSAGE value="changes to mahamed model plus added inference.py and valiadte_model.py" />
     <MESSAGE value="changed r_peak_detection mohamed/main.py" />
     <MESSAGE value="change yaml erquirements file and added inference for main model" />
     <MESSAGE value="small changes to mohamed" />
@@ -788,7 +812,10 @@
     <MESSAGE value="added yet another float 32 model" />
     <MESSAGE value="added yet another float 32 model ( 100 no int64 inside )" />
     <MESSAGE value="removed dyynamic axes from onnx conversion" />
-    <option name="LAST_COMMIT_MESSAGE" value="removed dyynamic axes from onnx conversion" />
+    <MESSAGE value="v 1.2 added wave analysis model to ios app" />
+    <MESSAGE value="v 1.2.1 updated saving files" />
+    <MESSAGE value="v 1.2.2 updated loading and savinf ( multiple formats )" />
+    <option name="LAST_COMMIT_MESSAGE" value="v 1.2.2 updated loading and savinf ( multiple formats )" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ECG_PROJ$aami_smaller_model__1_.coverage" NAME="aami_smaller_model (1) Coverage Results" MODIFIED="1744731314107" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/arduino_smaller_model" />

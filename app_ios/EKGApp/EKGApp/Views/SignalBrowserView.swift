@@ -7,9 +7,12 @@ struct SignalBrowserView: View {
     @State private var recordings: [ECGRecordingSet] = []
     @State private var showShareSheet = false
     @State private var fileToShareURLs: [URL] = []
-    @State private var selectedFileToOpen: String? = nil
+    @State private var selectedFile: (url: URL, format: ECGFormat)? = nil
     @State private var showAlert = false
     
+    // SignalBrowserView.swift
+    @State private var showImportSheet = false
+
     
     
 
@@ -21,11 +24,16 @@ struct SignalBrowserView: View {
                         
                         
                         Menu {
-                            Button("📂 Open JSON") {
-                                checkFileAndNavigate(rec.json, format: .json)
+                            if FileManager.default.fileExists(atPath: rec.json.path) {
+                                Button("📂 Open JSON") {
+                                    checkFileAndNavigate(rec.json, format: .json)
+                                }
                             }
-                            Button("📂 Open WFDB") {
-                                checkFileAndNavigate(rec.wfdbHea, format: .wfdb)
+                            if FileManager.default.fileExists(atPath: rec.wfdbHea.path),
+                               FileManager.default.fileExists(atPath: rec.wfdbDat.path) {
+                                Button("📂 Open WFDB") {
+                                    checkFileAndNavigate(rec.wfdbHea, format: .wfdb)
+                                }
                             }
                         } label: {
                             Text(rec.baseName)
@@ -34,6 +42,7 @@ struct SignalBrowserView: View {
                                 .font(.headline)
                                 .foregroundColor(.primary)
                         }
+
 
 
                         Spacer()
@@ -56,30 +65,45 @@ struct SignalBrowserView: View {
                 .onDelete(perform: deleteAtOffsets)
             }
             .navigationTitle("Saved Records")
+        
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     EditButton()
                 }
 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: loadRecordings) {
-                        Image(systemName: "arrow.clockwise")
+                    HStack {
+                        Button(action: loadRecordings) {
+                            Image(systemName: "arrow.clockwise")
+                        }
+                        Button(action: { showImportSheet = true }) {
+                            Image(systemName: "square.and.arrow.down")
+                        }
                     }
                 }
             }
+            .sheet(isPresented: $showImportSheet) {
+                SignalImportView { urls in
+                    handleImportedFiles(urls)
+                    loadRecordings()
+                }
+            }
+
+            
 
             // Navigation
             .background(
                 NavigationLink(
-                    destination: selectedFileToOpen.map { SignalPlaybackView(filename: $0) },
+                    destination: selectedFile.map { SignalPlaybackView(fileURL: $0.url, format: $0.format) },
                     isActive: Binding(
-                        get: { selectedFileToOpen != nil },
-                        set: { if !$0 { selectedFileToOpen = nil } }
+                        get: { selectedFile != nil },
+                        set: { if !$0 { selectedFile = nil } }
                     )
                 ) {
                     EmptyView()
                 }.hidden()
             )
+
 
             .onAppear(perform: loadRecordings)
 
@@ -98,39 +122,159 @@ struct SignalBrowserView: View {
     }
 
     private func checkFileAndNavigate(_ fileURL: URL, format: ECGFormat) {
+        print("🔎 Trying to open: \(fileURL.lastPathComponent) as \(format)")
+
         if let _ = ECGLoader.loadMultiLead(from: fileURL, format: format) {
-            selectedFileToOpen = fileURL.lastPathComponent
+            print("✅ Loaded. Setting selectedFile...")
+            selectedFile = (fileURL, format)
         } else {
+            print("❌ Failed to load file")
             showAlert = true
         }
     }
 
 
+    
+    
+    private func handleImportedFiles(_ urls: [URL]) {
+        let docDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        var jsonSet = Set<String>()
+        var heaSet = Set<String>()
 
+        for url in urls {
+            let base = url.deletingPathExtension().lastPathComponent
+            let dest = docDir.appendingPathComponent(url.lastPathComponent)
+            try? FileManager.default.copyItem(at: url, to: dest)
+
+            if url.pathExtension.lowercased() == "json" {
+                jsonSet.insert(base)
+            } else if url.pathExtension.lowercased() == "hea" {
+                heaSet.insert(base)
+            }
+        }
+
+        let allBases = jsonSet.union(heaSet)
+
+        for base in allBases {
+            let jsonURL = docDir.appendingPathComponent("\(base).json")
+            let heaURL = docDir.appendingPathComponent("\(base).hea")
+            let datURL = docDir.appendingPathComponent("\(base).dat")
+
+            let jsonExists = FileManager.default.fileExists(atPath: jsonURL.path)
+            let heaExists = FileManager.default.fileExists(atPath: heaURL.path)
+            let datExists = FileManager.default.fileExists(atPath: datURL.path)
+
+            // Jeśli JSON istnieje, ale brakuje HEA/DAT
+            if jsonExists && (!heaExists || !datExists) {
+                if let ecg = ECGLoader.loadMultiLead(from: jsonURL, format: .json),
+                   let signal = ecg.signals.first, ecg.fs > 0 {
+                    do {
+                        try ECGFileSaver.saveDat(to: datURL, buffer: signal, gain: 200.0)
+                        try ECGFileSaver.saveHea(to: heaURL,
+                                                 baseName: base,
+                                                 buffer: signal,
+                                                 fs: ecg.fs,
+                                                 gain: 200.0,
+                                                 leadName: ecg.leads.first ?? "II",
+                                                 start: ecg.startTime ?? Date(),
+                                                 end: ecg.endTime ?? Date())
+                        print("✅ From JSON → created .hea and .dat for \(base)")
+                    } catch {
+                        print("❌ Failed to create .hea/.dat from JSON for \(base): \(error)")
+                    }
+                } else {
+                    print("❌ Could not load JSON or missing signal for \(base)")
+                }
+            }
+
+            // Jeśli HEA i DAT istnieją, ale brak JSON
+            if heaExists && datExists && !jsonExists {
+                if let ecg = ECGLoader.loadMultiLead(from: heaURL, format: .wfdb),
+                   let signal = ecg.signals.first, ecg.fs > 0 {
+                    do {
+                        try ECGFileSaver.saveJSON(to: jsonURL,
+                                                  buffer: signal,
+                                                  fs: ecg.fs,
+                                                  leadName: ecg.leads.first ?? "II",
+                                                  start: ecg.startTime ?? Date(),
+                                                  end: ecg.endTime ?? Date())
+                        print("✅ From HEA → created .json for \(base)")
+                    } catch {
+                        print("❌ Failed to create .json from HEA for \(base): \(error)")
+                    }
+                } else {
+                    print("❌ Could not load HEA or missing signal for \(base)")
+                }
+            }
+        }
+    }
+
+
+    
+    
+    
     private func loadRecordings() {
         let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        do {
-            let allFiles = try FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: [.contentModificationDateKey], options: .skipsHiddenFiles)
 
-            let jsons = allFiles.filter { $0.pathExtension == "json" }
+        do {
+            let allFiles = try FileManager.default.contentsOfDirectory(
+                at: dir,
+                includingPropertiesForKeys: [.contentModificationDateKey],
+                options: .skipsHiddenFiles
+            )
+
+            print("📂 All files in directory:")
+            for f in allFiles { print(" - \(f.lastPathComponent)") }
+
+            var baseSet = Set<String>()
+            var jsonMap: [String: URL] = [:]
+            var heaMap: [String: URL] = [:]
+            var datMap: [String: URL] = [:]
+
+            for file in allFiles {
+                let ext = file.pathExtension.lowercased()
+                let base = file.deletingPathExtension().lastPathComponent
+
+                baseSet.insert(base)
+                if ext == "json" {
+                    jsonMap[base] = file
+                } else if ext == "hea" {
+                    heaMap[base] = file
+                } else if ext == "dat" {
+                    datMap[base] = file
+                }
+            }
+
             var sets: [ECGRecordingSet] = []
 
-            for json in jsons {
-                let base = json.deletingPathExtension().lastPathComponent
-                let dat = dir.appendingPathComponent("\(base).dat")
-                let hea = dir.appendingPathComponent("\(base).hea")
-                sets.append(.init(baseName: base, json: json, wfdbDat: dat, wfdbHea: hea))
+            for base in baseSet {
+                let json = jsonMap[base]
+                let hea = heaMap[base]
+                let dat = datMap[base]
+
+                // Musi istnieć przynajmniej jeden z formatów: JSON lub HEA+DAT
+                if json != nil || (hea != nil && dat != nil) {
+                    sets.append(.init(
+                        baseName: base,
+                        json: json ?? dir.appendingPathComponent("\(base).json"),
+                        wfdbDat: dat ?? dir.appendingPathComponent("\(base).dat"),
+                        wfdbHea: hea ?? dir.appendingPathComponent("\(base).hea")
+                    ))
+                }
             }
 
             recordings = sets.sorted {
-                let d1 = (try? $0.json.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
-                let d2 = (try? $1.json.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
+                let d1 = (try? $0.wfdbHea.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
+                let d2 = (try? $1.wfdbHea.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
                 return d1 > d2
             }
+
         } catch {
             print("❌ Failed to read files: \(error)")
         }
     }
+
+    
 
     private func shareFiles(urls: [URL]) {
         if urls.contains(where: { !FileManager.default.fileExists(atPath: $0.path) }) {

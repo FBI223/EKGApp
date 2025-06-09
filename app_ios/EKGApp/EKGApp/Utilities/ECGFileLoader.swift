@@ -85,96 +85,137 @@ enum ECGLoader {
     }
 
    
-    
-    
-    
     static func loadWFDBMultiLead(baseNameURL: URL) -> ECGLoadedMultiLeadData? {
         let heaURL = baseNameURL.appendingPathExtension("hea")
 
         do {
+            print("📄 Wczytuję HEA z: \(heaURL.path)")
             let meta = try parseHeaFile(at: heaURL)
             let dir = baseNameURL.deletingLastPathComponent()
             var leadsSignals = Array(repeating: [Float](), count: meta.leads.count)
-                
-            var i = 0
-            while i < meta.datFilenames.count {
-                let datURL = dir.appendingPathComponent(meta.datFilenames[i])
+            print("✅ Parsowanie HEA OK — \(meta.leads.count) kanały: \(meta.leads)")
+
+            var leadIndex = 0
+            var datIndex = 0
+            var visitedDATs = Set<String>()
+
+            while datIndex < meta.datFilenames.count {
+                let datFilename = meta.datFilenames[datIndex]
+                let datURL = dir.appendingPathComponent(datFilename)
+
+                // ❌ Unikaj przetwarzania tego samego pliku dwa razy
+                if visitedDATs.contains(datFilename) {
+                    print("⚠️ Pominięto powtórzony plik: \(datFilename)")
+                    datIndex += 1
+                    continue
+                }
+                visitedDATs.insert(datFilename)
+
                 let datData = try Data(contentsOf: datURL)
-                let format = meta.format[i]
-                let gain = meta.gains[i]
+                let format = meta.format[datIndex]
+                let gain = meta.gains[datIndex]
 
-                var signal: [Float] = []
+                print("📦 Przetwarzam \(datFilename), format \(format), gain \(gain)")
 
-                if format == "16" || format == "16+" || format.hasPrefix("16") {
+                if format == "212" {
+                    guard datData.count % 3 == 0 else {
+                        print("⚠️ Format 212: nieoczekiwana liczba bajtów (\(datData.count))")
+                        print("📦 Długość .dat: \(datData.count) bajtów → \(datData.count / 3) trójek")
+                        datIndex += 1
+                        leadIndex += 2
+                        continue
+                    }
+
+                    var signal1: [Float] = []
+                    var signal2: [Float] = []
+
+                    for j in stride(from: 0, to: datData.count, by: 3) {
+                        let byte0 = datData[j]
+                        let byte1 = datData[j + 1]
+                        let byte2 = datData[j + 2]
+
+                        // Dekoduj próbkę 1
+                        var value1 = Int16(Int(byte0) | ((Int(byte2 & 0x0F)) << 8))
+                        if value1 > 2047 { value1 -= 4096 }  // 12-bit signed
+
+                        // Dekoduj próbkę 2
+                        var value2 = Int16(Int(byte1) | ((Int(byte2 & 0xF0)) << 4))
+                        if value2 > 2047 { value2 -= 4096 }
+
+                        signal1.append(Float(value1) / gain)
+                        signal2.append(Float(value2) / gain)
+                    }
+
+
+                    if leadIndex < leadsSignals.count { leadsSignals[leadIndex] = signal1 }
+                    if (leadIndex + 1) < leadsSignals.count { leadsSignals[leadIndex + 1] = signal2 }
+
+                    print("📈 Kanały \(leadIndex), \(leadIndex + 1) → \(signal1.count) próbek")
+
+                    leadIndex += 2
+                    datIndex += 1
+                } else if format.hasPrefix("16") {
+                    var signal: [Float] = []
                     for j in stride(from: 0, to: datData.count, by: 2) {
                         if j + 1 >= datData.count { break }
                         let sample = datData[j..<j+2].withUnsafeBytes { $0.load(as: Int16.self) }
                         signal.append(Float(sample) / gain)
                     }
-                    leadsSignals[i] = signal
-                    i += 1
 
-                } else if format == "212" {
-                    
-                    
-                    guard datData.count % 3 == 0 else {
-                        print("⚠️ 212 format: Unexpected byte count")
-                        i += 2
-                        continue
+                    if leadIndex < leadsSignals.count {
+                        leadsSignals[leadIndex] = signal
                     }
-                    
-                    var signal1: [Float] = []
-                    var signal2: [Float] = []
-                    for j in stride(from: 0, to: datData.count - 2, by: 3) {
-                        let byte1 = datData[j]
-                        let byte2 = datData[j + 1]
-                        let byte3 = datData[j + 2]
+                    print("📈 Kanał \(leadIndex) → \(signal.count) próbek")
 
-                        let s1 = Int16(Int(byte1) | ((Int(byte3 & 0x0F)) << 8))
-                        let s2 = Int16(Int(byte2) | ((Int(byte3 & 0xF0)) << 4))
-
-                        signal1.append(Float(s1) / gain)
-                        signal2.append(Float(s2) / gain)
-                    }
-
-                    if i < leadsSignals.count { leadsSignals[i] = signal1 }
-                    if i + 1 < leadsSignals.count { leadsSignals[i + 1] = signal2 }
-                    i += 2  // 212 contains two channels in one file
-
+                    leadIndex += 1
+                    datIndex += 1
                 } else {
-                    print("❌ Unsupported format \(format)")
-                    i += 1
+                    print("❌ Nieobsługiwany format \(format)")
+                    datIndex += 1
                 }
             }
 
+            if leadsSignals.allSatisfy({ $0.isEmpty }) {
+                print("⚠️ Wszystkie sygnały są puste")
+                return nil
+            }
 
-            let start: Date? = nil
-            let end: Date? = nil
-
-
-
-            return ECGLoadedMultiLeadData(signals: leadsSignals, fs: meta.fs, leads: meta.leads, startTime: start, endTime: end)
-
+            return ECGLoadedMultiLeadData(
+                signals: leadsSignals,
+                fs: meta.fs,
+                leads: meta.leads,
+                startTime: nil,
+                endTime: nil
+            )
         } catch {
-            print("❌ WFDB load error: \(error)")
+            print("❌ Błąd ładowania WFDB: \(error)")
             return nil
         }
     }
 
     
+
     
     
-    
+        
     static func parseHeaFile(at heaURL: URL) throws -> ECGSignalMetadata {
         let text = try String(contentsOf: heaURL)
-        let lines = text.split(separator: "\n").map(String.init)
+        let lines = text.components(separatedBy: .newlines).filter { !$0.isEmpty }
 
-        guard let firstLine = lines.first else { throw NSError(domain: "HEA_PARSE", code: 1) }
-        let parts = firstLine.split(separator: " ")
-        guard parts.count >= 4 else { throw NSError(domain: "HEA_PARSE", code: 2) }
+        print("📄 Wczytuję HEA z: \(heaURL.path)")
+        print("🧾 Zawartość HEA:\n\(text)")
 
-        let fs = Int(parts[2]) ?? 500
-        let nSamples = Int(parts[3]) ?? 0
+        guard let firstLine = lines.first else {
+            throw NSError(domain: "HEA_PARSE", code: 1, userInfo: [NSLocalizedDescriptionKey: "Brak pierwszej linii w pliku"])
+        }
+
+        let headerParts = firstLine.split(separator: " ")
+        guard headerParts.count >= 4 else {
+            throw NSError(domain: "HEA_PARSE", code: 2, userInfo: [NSLocalizedDescriptionKey: "Zbyt mało danych w nagłówku"])
+        }
+
+        let fs = Int(headerParts[2]) ?? 500
+        let nSamples = Int(headerParts[3]) ?? 0
 
         var leads = [String]()
         var gains = [Float]()
@@ -185,22 +226,34 @@ enum ECGLoader {
         var initVals = [Int]()
         var bitResolutions = [Int]()
 
-        for line in lines.dropFirst().filter({ !$0.starts(with: "#") }) {
-            let tokens = line.split(separator: " ")
-            guard tokens.count >= 10 else { continue }
+        for line in lines.dropFirst() where !line.trimmingCharacters(in: .whitespaces).hasPrefix("#") {
+            let tokens = line.split(separator: " ", omittingEmptySubsequences: true).map { String($0) }
 
-            datFilenames.append(String(tokens[0]))
-            formats.append(String(tokens[1]))
+            print("📤 Tokens: \(tokens)")
 
-            let gain = Float(tokens[2].split(separator: "/").first ?? "200") ?? 200
+            guard tokens.count >= 9 else {
+                print("⚠️ Pominięto niekompletną linię: \(tokens)")
+                continue
+            }
+
+            let datFilename = tokens[0]
+            let format = tokens[1]
+            let gainStr = tokens[2].split(separator: "/").first.map(String.init) ?? "200"
+            let gain = Float(gainStr) ?? 200
+            let bitRes = Int(tokens[3]) ?? 16
+            let zero = Int(tokens[4]) ?? 0
+            let initVal = Int(tokens[5]) ?? 0
+            let adcRes = Int(tokens[6]) ?? 200
+            let lead = tokens[8]
+
+            datFilenames.append(datFilename)
+            formats.append(format)
             gains.append(gain)
-
-            bitResolutions.append(Int(tokens[3]) ?? 16)
-            adcZeros.append(Int(tokens[4]) ?? 0)
-            initVals.append(Int(tokens[5]) ?? 0)
-            adcResolutions.append(Int(tokens[6]) ?? 200)
-
-            leads.append(String(tokens[9]))
+            bitResolutions.append(bitRes)
+            adcZeros.append(zero)
+            initVals.append(initVal)
+            adcResolutions.append(adcRes)
+            leads.append(lead)
         }
 
         return ECGSignalMetadata(
@@ -216,6 +269,10 @@ enum ECGLoader {
             bitResolutions: bitResolutions
         )
     }
+
+    
+    
+
 
     
     

@@ -10,10 +10,10 @@ struct SignalBrowserView: View {
     @State private var selectedFile: (url: URL, format: ECGFormat)? = nil
     @State private var showAlert = false
     
-    // SignalBrowserView.swift
     @State private var showImportSheet = false
+    @State private var alertMessage: String = ""
+    @State private var showDeleteAllAlert = false
 
-    
     
 
     var body: some View {
@@ -81,6 +81,16 @@ struct SignalBrowserView: View {
                         }
                     }
                 }
+                
+                ToolbarItem(placement: .bottomBar) {
+                    Button(role: .destructive) {
+                        showDeleteAllAlert = true
+                    } label: {
+                        Label("Delete ALL", systemImage: "trash")
+                    }
+                }
+
+                
             }
             .sheet(isPresented: $showImportSheet) {
                 SignalImportView { urls in
@@ -112,19 +122,51 @@ struct SignalBrowserView: View {
                     ActivityView(activityItems: fileToShareURLs)
                 }
             }
-
-            .alert("Invalid File", isPresented: $showAlert) {
+            
+            .alert("Błąd importu", isPresented: $showAlert) {
                 Button("OK", role: .cancel) { }
             } message: {
-                Text("This ECG recording is not valid and cannot be viewed.")
+                Text(alertMessage)
             }
+            
+            .alert("confirm deletion", isPresented: $showDeleteAllAlert) {
+                Button("delete all", role: .destructive) {
+
+                    deleteAllRecordings()
+                }
+                Button("cancel", role: .cancel) { }
+            } message: {
+                Text("you sure to **delete all** recordings?")
+            }
+
         }
     }
+    
+    
+    
+    private func deleteAllRecordings() {
+        let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        do {
+            let files = try FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil)
+            for file in files {
+                let ext = file.pathExtension.lowercased()
+                if ["json", "hea", "dat"].contains(ext) {
+                    try? FileManager.default.removeItem(at: file)
+                    print("🗑️ Usunięto: \(file.lastPathComponent)")
+                }
+            }
+            loadRecordings()
+        } catch {
+            print("❌ Błąd podczas usuwania wszystkich rekordów: \(error)")
+        }
+    }
+
 
     private func checkFileAndNavigate(_ fileURL: URL, format: ECGFormat) {
         print("🔎 Trying to open: \(fileURL.lastPathComponent) as \(format)")
 
-        if let _ = ECGLoader.loadMultiLead(from: fileURL, format: format) {
+        if let ecg = ECGLoader.loadMultiLead(from: fileURL, format: format),
+           ecg.signals.allSatisfy({ !$0.isEmpty }) {
             print("✅ Loaded. Setting selectedFile...")
             selectedFile = (fileURL, format)
         } else {
@@ -134,28 +176,18 @@ struct SignalBrowserView: View {
     }
 
 
-    
+        
     
     private func handleImportedFiles(_ urls: [URL]) {
         let docDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        var jsonSet = Set<String>()
-        var heaSet = Set<String>()
+        var importMap: [String: [URL]] = [:]
 
         for url in urls {
             let base = url.deletingPathExtension().lastPathComponent
-            let dest = docDir.appendingPathComponent(url.lastPathComponent)
-            try? FileManager.default.copyItem(at: url, to: dest)
-
-            if url.pathExtension.lowercased() == "json" {
-                jsonSet.insert(base)
-            } else if url.pathExtension.lowercased() == "hea" {
-                heaSet.insert(base)
-            }
+            importMap[base, default: []].append(url)
         }
 
-        let allBases = jsonSet.union(heaSet)
-
-        for base in allBases {
+        for (base, files) in importMap {
             let jsonURL = docDir.appendingPathComponent("\(base).json")
             let heaURL = docDir.appendingPathComponent("\(base).hea")
             let datURL = docDir.appendingPathComponent("\(base).dat")
@@ -164,9 +196,43 @@ struct SignalBrowserView: View {
             let heaExists = FileManager.default.fileExists(atPath: heaURL.path)
             let datExists = FileManager.default.fileExists(atPath: datURL.path)
 
-            // Jeśli JSON istnieje, ale brakuje HEA/DAT
-            if jsonExists && (!heaExists || !datExists) {
-                if let ecg = ECGLoader.loadMultiLead(from: jsonURL, format: .json),
+            // 🚫 Sprawdź konflikt nazw
+            if jsonExists || heaExists || datExists {
+                showImportError("⚠️ Rekord o nazwie '\(base)' już istnieje. Import został pominięty.")
+                continue
+            }
+
+            // Tymczasowe buforowanie plików lokalnie
+            var jsonSrc: URL? = nil
+            var heaSrc: URL? = nil
+            var datSrc: URL? = nil
+
+            for file in files {
+                let ext = file.pathExtension.lowercased()
+                if ext == "json" { jsonSrc = file }
+                if ext == "hea" { heaSrc = file }
+                if ext == "dat" { datSrc = file }
+            }
+
+            // ⛔️ Walidacja formatu HEA (przed kopiowaniem)
+            if let heaFile = heaSrc {
+                if let meta = try? ECGLoader.parseHeaFile(at: heaFile),
+                   !meta.format.allSatisfy({ ["16", "16+", "80"].contains($0) }) {
+                    let disallowed = meta.format.filter { !["16", "16+", "80"].contains($0) }
+                    showImportError("❌ Odrzucono '\(base)': niedozwolone formaty w HEA: \(disallowed.joined(separator: ", "))")
+                    continue
+                }
+            }
+
+            // ✅ Skopiuj tylko gdy wszystko OK
+            for file in files {
+                let dest = docDir.appendingPathComponent(file.lastPathComponent)
+                try? FileManager.default.copyItem(at: file, to: dest)
+            }
+
+            // 🔄 JSON → HEA + DAT
+            if let jsonFile = jsonSrc {
+                if let ecg = ECGLoader.loadMultiLead(from: jsonFile, format: .json),
                    let signal = ecg.signals.first, ecg.fs > 0 {
                     do {
                         try ECGFileSaver.saveDat(to: datURL, buffer: signal, gain: 200.0)
@@ -180,15 +246,15 @@ struct SignalBrowserView: View {
                                                  end: ecg.endTime ?? Date())
                         print("✅ From JSON → created .hea and .dat for \(base)")
                     } catch {
-                        print("❌ Failed to create .hea/.dat from JSON for \(base): \(error)")
+                        showImportError("❌ Nie udało się zapisać .hea/.dat dla '\(base)': \(error.localizedDescription)")
                     }
                 } else {
-                    print("❌ Could not load JSON or missing signal for \(base)")
+                    showImportError("❌ Błąd importu JSON: plik '\(base).json' jest nieprawidłowy lub brakuje danych.")
                 }
             }
 
-            // Jeśli HEA i DAT istnieją, ale brak JSON
-            if heaExists && datExists && !jsonExists {
+            // 🔄 HEA + DAT → JSON
+            if heaSrc != nil && datSrc != nil && jsonSrc == nil {
                 if let ecg = ECGLoader.loadMultiLead(from: heaURL, format: .wfdb),
                    let signal = ecg.signals.first, ecg.fs > 0 {
                     do {
@@ -200,17 +266,19 @@ struct SignalBrowserView: View {
                                                   end: ecg.endTime ?? Date())
                         print("✅ From HEA → created .json for \(base)")
                     } catch {
-                        print("❌ Failed to create .json from HEA for \(base): \(error)")
+                        showImportError("❌ Nie udało się zapisać .json dla '\(base)': \(error.localizedDescription)")
                     }
                 } else {
-                    print("❌ Could not load HEA or missing signal for \(base)")
+                    showImportError("❌ Nie udało się wczytać HEA lub brak danych dla '\(base)'")
                 }
             }
         }
+
+        loadRecordings()
     }
 
-
     
+
     
     
     private func loadRecordings() {
@@ -275,6 +343,12 @@ struct SignalBrowserView: View {
     }
 
     
+    
+    private func showImportError(_ message: String) {
+        alertMessage = message
+        showAlert = true
+    }
+
 
     private func shareFiles(urls: [URL]) {
         if urls.contains(where: { !FileManager.default.fileExists(atPath: $0.path) }) {
@@ -287,10 +361,20 @@ struct SignalBrowserView: View {
 
     private func deleteRecording(_ rec: ECGRecordingSet) {
         for url in [rec.json, rec.wfdbDat, rec.wfdbHea] {
-            try? FileManager.default.removeItem(at: url)
+            if FileManager.default.fileExists(atPath: url.path) {
+                do {
+                    try FileManager.default.removeItem(at: url)
+                    print("🗑️ Usunięto: \(url.lastPathComponent)")
+                } catch {
+                    print("❌ Błąd usuwania \(url.lastPathComponent): \(error)")
+                }
+            } else {
+                print("⚠️ Plik nie istnieje: \(url.lastPathComponent)")
+            }
         }
         loadRecordings()
     }
+
 
     private func deleteAtOffsets(_ offsets: IndexSet) {
         for index in offsets {

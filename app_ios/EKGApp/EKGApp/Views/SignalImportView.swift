@@ -9,9 +9,16 @@ struct SignalImportView: UIViewControllerRepresentable {
     }
 
     func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
-        let hea = UTType(filenameExtension: "hea") ?? .data
-        let dat = UTType(filenameExtension: "dat") ?? .data
-        let picker = UIDocumentPickerViewController(forOpeningContentTypes: [.json, hea, dat], asCopy: true)
+        // Dozwolone typy: tylko JSON, HEA, DAT
+        let json = UTType(filenameExtension: "json") ?? .json
+        let hea = UTType(filenameExtension: "hea") ?? .plainText  // tekstowy nagłówek
+        let dat = UTType(filenameExtension: "dat") ?? .data       // binarny plik sygnału
+
+        let picker = UIDocumentPickerViewController(
+            forOpeningContentTypes: [json, hea, dat],
+            asCopy: true
+        )
+
         picker.allowsMultipleSelection = true
         picker.delegate = context.coordinator
         return picker
@@ -21,12 +28,20 @@ struct SignalImportView: UIViewControllerRepresentable {
 
     class Coordinator: NSObject, UIDocumentPickerDelegate {
         var onImport: ([URL]) -> Void
+
         init(onImport: @escaping ([URL]) -> Void) {
             self.onImport = onImport
         }
 
         func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-            onImport(urls)
+            let allowedExtensions = ["json", "hea", "dat"]
+
+            // Filtrowanie tylko dopuszczalnych plików
+            let filtered = urls.filter { url in
+                allowedExtensions.contains(url.pathExtension.lowercased())
+            }
+
+            onImport(filtered)
         }
     }
 }

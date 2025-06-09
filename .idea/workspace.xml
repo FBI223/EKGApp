@@ -4,16 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="v 1.2.2 updated loading and savinf ( multiple formats )">
-      <change afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Views/SignalImportView.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/ECG_PROJ.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ECG_PROJ.iml" afterDir="false" />
+    <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="v 1.2.3 added importing and fixed load hea">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp.xcodeproj/project.xcworkspace/xcuserdata/marcinsztukowski.xcuserdatad/UserInterfaceState.xcuserstate" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp.xcodeproj/project.xcworkspace/xcuserdata/marcinsztukowski.xcuserdatad/UserInterfaceState.xcuserstate" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Info.plist" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Info.plist" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Utilities/ECGFileLoader.swift" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Utilities/ECGFileLoader.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Utilities/ECGFileSaver.swift" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Utilities/ECGFileSaver.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Views/SignalBrowserView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Views/SignalBrowserView.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Views/SignalPlaybackView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/app_ios/EKGApp/EKGApp/Views/SignalPlaybackView.swift" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -472,7 +464,7 @@
       <workItem from="1748867379371" duration="41244000" />
       <workItem from="1749016494555" duration="6850000" />
       <workItem from="1749023384187" duration="661000" />
-      <workItem from="1749395122656" duration="1912000" />
+      <workItem from="1749395122656" duration="2562000" />
     </task>
     <task id="LOCAL-00001" summary="quite ok model for recognizing 'N' 'V' 'A' 'S' 'L' 'R' classes">
       <option name="closed" value="true" />
@@ -762,7 +754,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749328261236</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="v 1.2.3 added importing and fixed load hea">
+      <option name="closed" value="true" />
+      <created>1749451343325</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1749451343325</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -790,7 +790,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="changed r_peak_detection mohamed/main.py" />
     <MESSAGE value="change yaml erquirements file and added inference for main model" />
     <MESSAGE value="small changes to mohamed" />
     <MESSAGE value="added arduino model , mobile model and multi model" />
@@ -815,7 +814,8 @@
     <MESSAGE value="v 1.2 added wave analysis model to ios app" />
     <MESSAGE value="v 1.2.1 updated saving files" />
     <MESSAGE value="v 1.2.2 updated loading and savinf ( multiple formats )" />
-    <option name="LAST_COMMIT_MESSAGE" value="v 1.2.2 updated loading and savinf ( multiple formats )" />
+    <MESSAGE value="v 1.2.3 added importing and fixed load hea" />
+    <option name="LAST_COMMIT_MESSAGE" value="v 1.2.3 added importing and fixed load hea" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ECG_PROJ$aami_smaller_model__1_.coverage" NAME="aami_smaller_model (1) Coverage Results" MODIFIED="1744731314107" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/arduino_smaller_model" />

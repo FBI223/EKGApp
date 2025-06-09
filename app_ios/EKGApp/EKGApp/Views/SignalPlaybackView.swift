@@ -52,7 +52,7 @@ struct SignalPlaybackView: View {
                         .foregroundColor(.gray)
                 }
 
-                Text("📈 FS: \(fs) Hz, Samples: \(currentSignal.count), Lead: \(leads.indices.contains(selectedLeadIndex) ? leads[selectedLeadIndex] : "—")")
+                Text("📈 FS: \(fs) Hz, Samples: \(currentSignal.count), Lead: \(selectedLeadIndex < leads.count ? leads[selectedLeadIndex] : "—")")
                     .font(.subheadline)
                     .foregroundColor(.gray)
 

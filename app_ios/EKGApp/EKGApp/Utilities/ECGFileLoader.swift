@@ -84,16 +84,13 @@ enum ECGLoader {
         return nil
     }
 
-   
     static func loadWFDBMultiLead(baseNameURL: URL) -> ECGLoadedMultiLeadData? {
         let heaURL = baseNameURL.appendingPathExtension("hea")
 
         do {
-            print("📄 Wczytuję HEA z: \(heaURL.path)")
             let meta = try parseHeaFile(at: heaURL)
             let dir = baseNameURL.deletingLastPathComponent()
             var leadsSignals = Array(repeating: [Float](), count: meta.leads.count)
-            print("✅ Parsowanie HEA OK — \(meta.leads.count) kanały: \(meta.leads)")
 
             var leadIndex = 0
             var datIndex = 0
@@ -103,9 +100,7 @@ enum ECGLoader {
                 let datFilename = meta.datFilenames[datIndex]
                 let datURL = dir.appendingPathComponent(datFilename)
 
-                // ❌ Unikaj przetwarzania tego samego pliku dwa razy
                 if visitedDATs.contains(datFilename) {
-                    print("⚠️ Pominięto powtórzony plik: \(datFilename)")
                     datIndex += 1
                     continue
                 }
@@ -113,49 +108,11 @@ enum ECGLoader {
 
                 let datData = try Data(contentsOf: datURL)
                 let format = meta.format[datIndex]
-                let gain = meta.gains[datIndex]
 
-                print("📦 Przetwarzam \(datFilename), format \(format), gain \(gain)")
-
-                if format == "212" {
-                    guard datData.count % 3 == 0 else {
-                        print("⚠️ Format 212: nieoczekiwana liczba bajtów (\(datData.count))")
-                        print("📦 Długość .dat: \(datData.count) bajtów → \(datData.count / 3) trójek")
-                        datIndex += 1
-                        leadIndex += 2
-                        continue
-                    }
-
-                    var signal1: [Float] = []
-                    var signal2: [Float] = []
-
-                    for j in stride(from: 0, to: datData.count, by: 3) {
-                        let byte0 = datData[j]
-                        let byte1 = datData[j + 1]
-                        let byte2 = datData[j + 2]
-
-                        // Dekoduj próbkę 1
-                        var value1 = Int16(Int(byte0) | ((Int(byte2 & 0x0F)) << 8))
-                        if value1 > 2047 { value1 -= 4096 }  // 12-bit signed
-
-                        // Dekoduj próbkę 2
-                        var value2 = Int16(Int(byte1) | ((Int(byte2 & 0xF0)) << 4))
-                        if value2 > 2047 { value2 -= 4096 }
-
-                        signal1.append(Float(value1) / gain)
-                        signal2.append(Float(value2) / gain)
-                    }
-
-
-                    if leadIndex < leadsSignals.count { leadsSignals[leadIndex] = signal1 }
-                    if (leadIndex + 1) < leadsSignals.count { leadsSignals[leadIndex + 1] = signal2 }
-
-                    print("📈 Kanały \(leadIndex), \(leadIndex + 1) → \(signal1.count) próbek")
-
-                    leadIndex += 2
-                    datIndex += 1
-                } else if format.hasPrefix("16") {
+                if format == "16" || format == "16+" || format == "80" {
                     var signal: [Float] = []
+                    let gain = meta.gains[leadIndex]
+
                     for j in stride(from: 0, to: datData.count, by: 2) {
                         if j + 1 >= datData.count { break }
                         let sample = datData[j..<j+2].withUnsafeBytes { $0.load(as: Int16.self) }
@@ -165,7 +122,6 @@ enum ECGLoader {
                     if leadIndex < leadsSignals.count {
                         leadsSignals[leadIndex] = signal
                     }
-                    print("📈 Kanał \(leadIndex) → \(signal.count) próbek")
 
                     leadIndex += 1
                     datIndex += 1
@@ -176,27 +132,48 @@ enum ECGLoader {
             }
 
             if leadsSignals.allSatisfy({ $0.isEmpty }) {
-                print("⚠️ Wszystkie sygnały są puste")
                 return nil
+            }
+
+            // 🕒 Wczytaj start_time i end_time z komentarzy .hea
+            let heaText = try String(contentsOf: heaURL)
+            let lines = heaText.components(separatedBy: .newlines)
+            let isoFormatter = ISO8601DateFormatter()
+            var startTime: Date? = nil
+            var endTime: Date? = nil
+
+            for line in lines {
+                if line.contains("# start_time:") {
+                    let raw = line.replacingOccurrences(of: "# start_time:", with: "").trimmingCharacters(in: .whitespaces)
+                    if let parsed = isoFormatter.date(from: raw) {
+                        startTime = parsed
+                    } else {
+                        print("⚠️ Błędny format daty start_time: \(raw)")
+                    }
+                }
+                if line.contains("# end_time:") {
+                    let raw = line.replacingOccurrences(of: "# end_time:", with: "").trimmingCharacters(in: .whitespaces)
+                    if let parsed = isoFormatter.date(from: raw) {
+                        endTime = parsed
+                    } else {
+                        print("⚠️ Błędny format daty end_time: \(raw)")
+                    }
+                }
             }
 
             return ECGLoadedMultiLeadData(
                 signals: leadsSignals,
                 fs: meta.fs,
                 leads: meta.leads,
-                startTime: nil,
-                endTime: nil
+                startTime: startTime,
+                endTime: endTime
             )
         } catch {
-            print("❌ Błąd ładowania WFDB: \(error)")
+            print("❌ Błąd podczas wczytywania WFDB: \(error)")
             return nil
         }
     }
 
-    
-
-    
-    
         
     static func parseHeaFile(at heaURL: URL) throws -> ECGSignalMetadata {
         let text = try String(contentsOf: heaURL)

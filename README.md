@@ -4,7 +4,7 @@
 
 # 📱 ECGApp – Mobile ECG Viewer & Classifier
 
-**ECGApp** is a cross-platform mobile application (iOS & Android) for real-time ECG signal acquisition, processing, and classification using deep learning models.
+**ECGApp** is a cross-platform mobile application (iOS ) for real-time ECG signal acquisition, processing, and classification using deep learning models.
 
 ---
 
@@ -393,5 +393,5 @@ MIT License — For research and non-commercial use only.
 
 ## Authors
 
-Marcin Sztukowski and Michal Naklicki
-students of Jagiellonian University in Krakow
+Marcin Sztukowski 
+student of Jagiellonian University in Krakow

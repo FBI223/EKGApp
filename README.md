@@ -8,6 +8,21 @@
 
 ---
 
+
+## 📚 Table of Contents
+- [Key Features](#-key-features)
+- [Used Deep Learning Models](#-used-deep-learning-models)
+- [Datasets Used](#-datasets-used)
+- [Evaluation & Metrics](#-evaluation--metrics)
+- [Signal Format](#-signal-format)
+- [Import & Interoperability](#-import--interoperability)
+- [Use Cases](#-use-cases)
+- [Tech Stack](#-tech-stack)
+- [Medical Disclaimer](#-medical-disclaimer)
+
+
+---
+
 ## 🧠 Key Features
 
 * 🔌 Connect to external BLE ECG sensors (e.g., ESP32, Arduino)
@@ -36,44 +51,53 @@ Lightweight SE-enhanced MobileNet 1D CNN with demographic inputs.
 #### Architecture Summary:
 
 ```
-SE_MobileNet1D_noLSTM:
-Input: ECG beat (B, 1, 600)
+→ Conv1D(1 → 16, kernel=7, stride=2, padding=3)
+  → BatchNorm1d(16)
+  → SiLU
 
-→ Conv1D(1 → 32, kernel=7, stride=2, padding=3)
-→ BatchNorm → ReLU
-
-→ ResidualBlock(32):
-    Conv1D(32, kernel=3, padding=1)
-    → BN → ReLU
-    → Conv1D(32, kernel=3, padding=1)
-    → BN → +skip → ReLU
-
+→ DepthwiseConv1D(16 → 16, kernel=5, stride=2, padding=2, groups=16)
+→ PointwiseConv1D(16 → 32, kernel=1)
+  → BatchNorm1d(32)
+  → SiLU
 → SEBlock(32):
-    → GlobalAvgPool1D → (B, 32, 1)
-    → Conv1D(32 → 4, kernel=1) → ReLU
-    → Conv1D(4 → 32, kernel=1) → Sigmoid
-    → scale input (B, 32, L)
+     → AdaptiveAvgPool1d(1)
+     → Linear(32 → 4) → ReLU
+     → Linear(4 → 32) → Sigmoid
+     → Multiply input × scale
+→ Dropout(0.1)
 
-→ Conv1D(32 → 64, kernel=5, stride=2, padding=2)
-→ BatchNorm → ReLU
-
-→ ResidualBlock(64):
-    Conv1D(64, kernel=3, padding=1)
-    → BN → ReLU
-    → Conv1D(64, kernel=3, padding=1)
-    → BN → +skip → ReLU
-
+→ DepthwiseConv1D(32 → 32, kernel=5, stride=2, padding=2, groups=32)
+→ PointwiseConv1D(32 → 64, kernel=1)
+  → BatchNorm1d(64)
+  → SiLU
 → SEBlock(64):
-    → GlobalAvgPool1D → (B, 64, 1)
-    → Conv1D(64 → 8, kernel=1) → ReLU
-    → Conv1D(8 → 64, kernel=1) → Sigmoid
-    → scale input (B, 64, L)
+     → AdaptiveAvgPool1d(1)
+     → Linear(64 → 8) → ReLU
+     → Linear(8 → 64) → Sigmoid
+     → Multiply input × scale
+→ Dropout(0.1)
 
-→ GlobalAvgPool1D → shape: (B, 64)
-→ Linear(64 → 32) → ReLU → Dropout(0.5)
-→ Linear(32 → num_classes)
+→ DepthwiseConv1D(64 → 64, kernel=5, stride=2, padding=2, groups=64)
+→ PointwiseConv1D(64 → 128, kernel=1)
+  → BatchNorm1d(128)
+  → SiLU
+→ SEBlock(128):
+     → AdaptiveAvgPool1d(1)
+     → Linear(128 → 16) → ReLU
+     → Linear(16 → 128) → Sigmoid
+     → Multiply input × scale
+→ Dropout(0.1)
 
-Output: Class logits (B, num_classes)
+→ DepthwiseConv1D(128 → 128, kernel=5, stride=1, padding=2, groups=128)
+→ PointwiseConv1D(128 → 128, kernel=1)
+  → BatchNorm1d(128)
+  → SiLU
+→ SEBlock(128):
+     → AdaptiveAvgPool1d(1)
+     → Linear(128 → 16) → ReLU
+     → Linear(16 → 128) → Sigmoid
+     → Multiply input × scale
+→ Dropout(0.1)
 
 
 ```
@@ -97,35 +121,59 @@ Trained on beats centered on QRS complexes from:
 #### Architecture Summary:
 
 ```
-Conv1D(1 → 32, kernel=7, stride=2, padding=3)
-→ BatchNorm → ReLU
+ECGClassifier:
+Input: (B, 1, T) (np. 540 próbek @ 360 Hz)
+
+
+
+FEATURE EXTRACTION
+→ Conv1D(1 → 32, kernel=7, stride=2, padding=3)
+→ BatchNorm1d(32) → ReLU
+
 → ResidualBlock(32):
-    Conv1D(32, kernel=3, padding=1)
-    → BN → ReLU
-    → Conv1D(32, kernel=3, padding=1)
-    → BN → +skip → ReLU
+  → Conv1D(32 → 32, kernel=3, padding=1)
+  → BatchNorm1d(32) → ReLU
+  → Conv1D(32 → 32, kernel=3, padding=1)
+  → BatchNorm1d(32)
+  → Skip connection + ReLU
+
 → SEBlock(32):
-    → GlobalAvgPool
-    → Conv1D(32 → 4) → ReLU → Conv1D(4 → 32) → Sigmoid
-    → scale input
+  → AdaptiveAvgPool1d(1)
+  → Conv1D(32 → 4, kernel=1) → ReLU
+  → Conv1D(4 → 32, kernel=1) → Sigmoid
+  → Multiply (channel-wise scaling)
+
 → Conv1D(32 → 64, kernel=5, stride=2, padding=2)
-→ BatchNorm → ReLU
+→ BatchNorm1d(64) → ReLU
+
 → ResidualBlock(64):
-    Conv1D(64, kernel=3, padding=1)
-    → BN → ReLU
-    → Conv1D(64, kernel=3, padding=1)
-    → BN → +skip → ReLU
+  → Conv1D(64 → 64, kernel=3, padding=1)
+  → BatchNorm1d(64) → ReLU
+  → Conv1D(64 → 64, kernel=3, padding=1)
+  → BatchNorm1d(64)
+  → Skip connection + ReLU
+
 → SEBlock(64):
-    → GlobalAvgPool
-    → Conv1D(64 → 8) → ReLU → Conv1D(8 → 64) → Sigmoid
-    → scale input
-→ GlobalAvgPool1D
-→ Flatten
-→ Linear(64 → 32) → ReLU → Dropout(0.5)
+  → AdaptiveAvgPool1d(1)
+  → Conv1D(64 → 8, kernel=1) → ReLU
+  → Conv1D(8 → 64, kernel=1) → Sigmoid
+  → Multiply (channel-wise scaling)
+
+
+
+
+CLASSIFICATION HEAD
+→ AdaptiveAvgPool1d(1)
+→ Flatten: (B, 64)
+
+→ Linear(64 → 32)
+→ ReLU
+→ Dropout(0.5)
+
 → Linear(32 → num_classes)
 
-Output: Class logits (B, num_classes)
-
+Output:
+→ Shape: (B, num_classes) – logits of classes.
 
 ```
 
@@ -149,38 +197,77 @@ Lightweight 1D U-Net model for per-sample waveform classification trained on LUD
 UNet1D:
 Input: (B, 1, 2000)
 
-→ Conv1D(1 → 4, kernel=9) → BN → ReLU
-→ Conv1D(4 → 4, kernel=9) → BN → ReLU
-→ MaxPool1d(2)
 
-→ Conv1D(4 → 8, kernel=9) → BN → ReLU
-→ Conv1D(8 → 8, kernel=9) → BN → ReLU
-→ MaxPool1d(2)
+ENCODER / DOWNSAMPLING
 
-→ Conv1D(8 → 16, kernel=9) → BN → ReLU
-→ Conv1D(16 → 16, kernel=9) → BN → ReLU
-→ MaxPool1d(2)
+→ Block 1:
+  → Conv1D(1 → 4, kernel=9, padding=4)
+  → BatchNorm1d(4) → ReLU
+  → Conv1D(4 → 4, kernel=9, padding=4)
+  → BatchNorm1d(4) → ReLU
+  → MaxPool1D(kernel=2)             # ↓ T/2
 
-→ Conv1D(16 → 32, kernel=9) → BN → ReLU
-→ Conv1D(32 → 32, kernel=9) → BN → ReLU
-→ MaxPool1d(2)
+→ Block 2:
+  → Conv1D(4 → 8, kernel=9, padding=4)
+  → BatchNorm1d(8) → ReLU
+  → Conv1D(8 → 8, kernel=9, padding=4)
+  → BatchNorm1d(8) → ReLU
+  → MaxPool1D(kernel=2)             # ↓ T/4
 
-→ Conv1D(32 → 64, kernel=9) → BN → ReLU
-→ Conv1D(64 → 64, kernel=9) → BN → ReLU
+→ Block 3:
+  → Conv1D(8 → 16, kernel=9, padding=4)
+  → BatchNorm1d(16) → ReLU
+  → Conv1D(16 → 16, kernel=9, padding=4)
+  → BatchNorm1d(16) → ReLU
+  → MaxPool1D(kernel=2)             # ↓ T/8
 
-→ UpConv1D(64 → 32) + concat
-→ Conv1D(64 → 32, kernel=9) → BN → ReLU → Conv1D(32 → 32)
+→ Block 4:
+  → Conv1D(16 → 32, kernel=9, padding=4)
+  → BatchNorm1d(32) → ReLU
+  → Conv1D(32 → 32, kernel=9, padding=4)
+  → BatchNorm1d(32) → ReLU
+  → MaxPool1D(kernel=2)             # ↓ T/16
 
-→ UpConv1D(32 → 16) + concat
-→ Conv1D(32 → 16, kernel=9) → BN → ReLU → Conv1D(16 → 16)
 
-→ UpConv1D(16 → 8) + concat
-→ Conv1D(16 → 8, kernel=9) → BN → ReLU → Conv1D(8 → 8)
 
-→ UpConv1D(8 → 4) + concat
-→ Conv1D(8 → 4, kernel=9) → BN → ReLU → Conv1D(4 → 4)
 
-→ Output: Conv1D(4 → 4, kernel=1) → (B, 4, 2000) → permute → (B, 2000, 4)
+BOTTLENECK
+
+→ Conv1D(32 → 64, kernel=9, padding=4)
+→ BatchNorm1d(64) → ReLU
+→ Conv1D(64 → 64, kernel=9, padding=4)
+→ BatchNorm1d(64) → ReLU
+
+
+
+
+DECODER / UPSAMPLING
+
+→ TransposedConv1D(64 → 32, kernel=8, stride=2, padding=3)
+→ Pad to match enc4 → Concat([up, enc4]) → (64 channels)
+→ Conv1D(64 → 32) → BN → ReLU → Conv1D → BN → ReLU
+
+→ TransposedConv1D(32 → 16, kernel=8, stride=2, padding=3)
+→ Pad to match enc3 → Concat([up, enc3]) → (32 channels)
+→ Conv1D(32 → 16) → BN → ReLU → Conv1D → BN → ReLU
+
+→ TransposedConv1D(16 → 8, kernel=8, stride=2, padding=3)
+→ Pad to match enc2 → Concat([up, enc2]) → (16 channels)
+→ Conv1D(16 → 8) → BN → ReLU → Conv1D → BN → ReLU
+
+→ TransposedConv1D(8 → 4, kernel=8, stride=2, padding=3)
+→ Pad to match enc1 → Concat([up, enc1]) → (8 channels)
+→ Conv1D(8 → 4) → BN → ReLU → Conv1D → BN → ReLU
+
+
+
+OUTPUT
+
+→ Final Conv1D(4 → num_classes, kernel=1)  # Pointwise convolution
+→ Output shape: (B, num_classes, T)
+→ Permute to (B, T, num_classes) for per-sample classification
+
+
 
 
 ```
@@ -203,6 +290,8 @@ Input: (B, 1, 2000)
 | INCARTDB        | Beat classification   | dat    | 12-lead, annotated                |
 | SVDB            | Beat classification   | dat    | Supraventricular focus            |
 | LUDB            | Wave classification   | dat    | Waves focus                       |
+
+
 All signals were:
 - Resampled to 500 Hz (rhythm and wave) or 360 Hz (beat)
 - Normalized and denoised using wavelet transform (`bior2.6`)

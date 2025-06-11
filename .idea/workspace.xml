@@ -6,6 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="15c046a0-6810-4b6e-8e29-88effbaef06f" name="Changes" comment="v 1.2.3 added importing and fixed load hea">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_model_rythm/single_class/main_single.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_model_rythm/single_class/main_single.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,7 +49,7 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/FBI223/ECG_PROJ&quot;,
+    &quot;url&quot;: &quot;https://github.com/FBI223/EKGApp.git&quot;,
     &quot;accountId&quot;: &quot;35fcbfd0-a946-443d-bb94-ea32878e9c0f&quot;
   }
 }</component>
@@ -329,7 +331,6 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-PY-251.25410.159" />
         <option value="bundled-python-sdk-e0ed3721d81e-36ea0e71a18c-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.25410.159" />
       </set>
     </attachedChunks>
@@ -465,6 +466,9 @@
       <workItem from="1749016494555" duration="6850000" />
       <workItem from="1749023384187" duration="661000" />
       <workItem from="1749395122656" duration="2562000" />
+      <workItem from="1749541010271" duration="1788000" />
+      <workItem from="1749566093798" duration="2397000" />
+      <workItem from="1749652373030" duration="1397000" />
     </task>
     <task id="LOCAL-00001" summary="quite ok model for recognizing 'N' 'V' 'A' 'S' 'L' 'R' classes">
       <option name="closed" value="true" />

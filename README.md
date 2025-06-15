@@ -11,6 +11,7 @@
 
 ## 📚 Table of Contents
 - [Key Features](#-key-features)
+- [App Settings](#-app-settings)
 - [Used Deep Learning Models](#-used-deep-learning-models)
 - [Datasets Used](#-datasets-used)
 - [Evaluation & Metrics](#-evaluation--metrics)
@@ -36,6 +37,23 @@
 * 📂 Browse, view, share or delete saved recordings
 
 ---
+
+---
+
+## ⚙️ App Settings
+
+ECGApp includes a configurable **Settings panel** for adjusting signal processing and model parameters:
+
+- 📶 **Sample Rate In**: Set to match your BLE ECG device (e.g., 128 Hz)
+- 🧍 **Demographics**: Select user age and sex (used in AI model input)
+- 📊 **Y-Axis Range**: Adjust ECG chart amplitude (±1 to ±10 mV)
+- 🌙 **Dark Mode**: Toggle light/dark UI
+- 🐞 **Debug Info**: Enable detailed internal logging
+
+> All settings are applied in real time. Correct configuration ensures accurate AI classification and visualization.
+
+---
+
 
 ## 📦 Used Deep Learning Models
 

@@ -9,12 +9,40 @@ class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPer
     @Published var connectedPeripheral: CBPeripheral?
     @Published var statusMessage = "Waiting for Bluetooth..."
     @Published var eventLogs: [String] = []
-    @Published var latestMetaMessage: String? = nil
 
 
     private var central: CBCentralManager!
-    private let serviceUUID = CBUUID(string: "bd37e8b4-1bcf-4f42-bdd1-bebea1a51a1a")
-    private let charUUID = CBUUID(string: "7a1e8b7d-9a3e-4657-927b-339adddc2a5b")
+    
+    
+    struct UUIDPair {
+        let service: CBUUID
+        let characteristic: CBUUID
+    }
+
+    private let allowedUUIDPairs: [UUIDPair] = [
+        UUIDPair(
+            service: CBUUID(string: "bd37e8b4-1bcf-4f42-bdd1-bebea1a51a1a"),
+            characteristic: CBUUID(string: "7a1e8b7d-9a3e-4657-927b-339adddc2a5b")
+        ),
+        UUIDPair(
+            service: CBUUID(string: "410de486-ba6e-47a9-85c8-715700eba0fa"),
+            characteristic: CBUUID(string: "9e79707a-a0aa-4e79-9009-96d643ef755a")
+        )
+    ]
+
+    
+    private let allowedUUIDs: [(service: CBUUID, characteristic: CBUUID)] = [
+        (
+            service: CBUUID(string: "bd37e8b4-1bcf-4f42-bdd1-bebea1a51a1a"),
+            characteristic: CBUUID(string: "7a1e8b7d-9a3e-4657-927b-339adddc2a5b")
+        ),
+        (
+            service: CBUUID(string: "410de486-ba6e-47a9-85c8-715700eba0fa"),
+            characteristic: CBUUID(string: "9e79707a-a0aa-4e79-9009-96d643ef755a")
+        )
+    ]
+
+    
     
     override init() {
         super.init()
@@ -48,7 +76,6 @@ class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPer
         rawBuffer.removeAll()
         isDeviceValid = false
         devices.removeAll()
-        latestMetaMessage = nil
         connectedPeripheral = nil
         central.delegate = self
         log("🔁 BLE Manager reset")
@@ -89,7 +116,6 @@ class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPer
         connectedPeripheral = nil
         rawBuffer.removeAll()
         devices.removeAll()
-        latestMetaMessage = nil
         statusMessage = "Disconnected"
         log("⛔ Disconnected")
 
@@ -118,43 +144,41 @@ class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPer
     func centralManager(_ c: CBCentralManager, didConnect p: CBPeripheral) {
         statusMessage = "Connected to \(p.name ?? "Unknown")"
         log("✅ Connected to \(p.name ?? "Unknown")")
-        p.discoverServices([serviceUUID])
+        let serviceUUIDs = allowedUUIDPairs.map { $0.service }
+        p.discoverServices(serviceUUIDs)
+
     }
 
     func peripheral(_ p: CBPeripheral, didDiscoverServices error: Error?) {
         p.services?.forEach { service in
-            if service.uuid == serviceUUID {
-                p.discoverCharacteristics([charUUID], for: service)
+            if let pair = allowedUUIDPairs.first(where: { $0.service == service.uuid }) {
+                p.discoverCharacteristics([pair.characteristic], for: service)
             }
         }
     }
 
     func peripheral(_ p: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         service.characteristics?.forEach { char in
-            if char.uuid == charUUID {
+            if let servicePair = allowedUUIDPairs.first(where: { $0.service == service.uuid && $0.characteristic == char.uuid }) {
                 p.setNotifyValue(true, for: char)
-                log("📡 Subscribed to EKG characteristic")
+                log("📡 Subscribed to EKG characteristic for service \(servicePair.service.uuidString)")
             }
         }
     }
 
     func peripheral(_ p: CBPeripheral, didUpdateValueFor char: CBCharacteristic, error: Error?) {
         guard let data = char.value else { return }
-
-        if let text = String(data: data, encoding: .utf8), text.starts(with: "META;") {
-            DispatchQueue.main.async { self.latestMetaMessage = text }
-            log("📥 Received META")
-        } else {
-            var value: Float = 0
-            _ = withUnsafeMutableBytes(of: &value) { data.copyBytes(to: $0) }
-            DispatchQueue.main.async {
-                if self.isDeviceValid {
-                    self.rawBuffer.append(value)
-                } else {
-                    self.tempBuffer.append(value)
-                }
+        
+        var value: Float = 0
+        _ = withUnsafeMutableBytes(of: &value) { data.copyBytes(to: $0) }
+        DispatchQueue.main.async {
+            if self.isDeviceValid {
+                self.rawBuffer.append(value)
+            } else {
+                self.tempBuffer.append(value)
             }
         }
+        
     }
 
 

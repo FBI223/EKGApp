@@ -16,6 +16,7 @@
 - [Datasets Used](#-datasets-used)
 - [On-Device Signal Processing](#-on-device-signal-processing)
 - [BLE Data Format](#-ble-data-format)
+- [Device Simulation](#-device-simulation)
 - [Evaluation & Metrics](#-evaluation--metrics)
 - [Signal Format](#-signal-format)
 - [Import & Interoperability](#-import--interoperability)
@@ -37,6 +38,7 @@
   * **Beat-type classification** near QRS centers (e.g. N, V, S)
    * **Waveform segmentation** per sample into `P`, `QRS`, `T` waves for morphological analysis
 * 📂 Browse, view, share or delete saved recordings
+* 🧪 Built-in device simulation – run every analysis on bundled ECG signals without any hardware
 
 ---
 
@@ -351,6 +353,42 @@ The app subscribes to a notify characteristic of one of the supported services:
 - Non-finite values (NaN/∞) are dropped
 - A device is accepted only if it delivers data within 1.5 s of connecting
 - Incoming data is buffered (max ~30 s at 500 Hz); each UI tick consumes the whole buffer, and the buffer is cleared when a stream starts, so latency does not accumulate
+
+---
+
+## 🧪 Device Simulation
+
+The **🧪 Simulation** menu lets you test the whole app without a BLE sensor. A selected signal is streamed
+in a loop at its own sample rate, exactly as if a validated ECG device were connected.
+
+1. Open **🧪 Simulation** and pick one of the bundled signals (preview of the first 5 s is shown)
+2. Open **Beat**, **Rhythm**, **Wave Analysis** or **Signal Recorder** – the screen connects to the simulated device automatically (orange *Simulation* label)
+3. Press **Start** as usual; **Disconnect** stops the simulation
+
+`Sample Rate In` is set automatically to the signal's sample rate when the simulation starts.
+
+**Bundled signals** – `app_ios/EKGApp/EKGApp/SimulationSignals/` (same records as the ESP32 simulator):
+
+| File           | Source                       | fs     | Length |
+|----------------|------------------------------|--------|--------|
+| `sim_802.json` | MIT-BIH SVDB record 802, lead 0 | 128 Hz | 5 min |
+| `sim_820.json` | MIT-BIH SVDB record 820, lead 0 | 128 Hz | 5 min |
+| `sim_823.json` | MIT-BIH SVDB record 823, lead 0 | 128 Hz | 5 min |
+
+**Adding your own signal** – drop a `sim_<name>.json` file into that folder (Xcode picks it up automatically):
+
+```json
+{
+  "name": "My signal",
+  "description": "optional text",
+  "fs": 128,
+  "leads": ["ECG"],
+  "signals": [[0.01, 0.02, 0.05]]
+}
+```
+
+`signals[0]` holds the samples in **mV**. The bundled files are generated from the ESP32 simulator headers with
+`python3 arduino/simulation/export_ios_sim_signals.py`.
 
 ---
 

@@ -14,9 +14,20 @@ class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPer
     @Published var connectedPeripheral: CBPeripheral?
     @Published var statusMessage = "Waiting for Bluetooth..."
     @Published var eventLogs: [String] = []
+    /// True while a (real or simulated) device is selected; views switch to the signal UI on this.
+    @Published var isConnected = false
+    @Published var connectedDeviceName: String?
 
+    /// When set, no Bluetooth is used: this signal is streamed in a loop at its own sample rate,
+    /// exactly as if a validated BLE ECG device were sending it.
+    let simulatedSignal: SimulatedSignal?
+    var isSimulation: Bool { simulatedSignal != nil }
+    private var simulationTimer: Timer?
+    private var simulationStart: Date?
+    private var simulationEmitted = 0
+    private var simulationPosition = 0
 
-    private var central: CBCentralManager!
+    private var central: CBCentralManager?
     
     
     struct UUIDPair {
@@ -36,22 +47,71 @@ class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPer
     ]
 
     
-    private let allowedUUIDs: [(service: CBUUID, characteristic: CBUUID)] = [
-        (
-            service: CBUUID(string: "bd37e8b4-1bcf-4f42-bdd1-bebea1a51a1a"),
-            characteristic: CBUUID(string: "7a1e8b7d-9a3e-4657-927b-339adddc2a5b")
-        ),
-        (
-            service: CBUUID(string: "410de486-ba6e-47a9-85c8-715700eba0fa"),
-            characteristic: CBUUID(string: "9e79707a-a0aa-4e79-9009-96d643ef755a")
-        )
-    ]
-
-    
-    
-    override init() {
+    init(simulatedSignal: SimulatedSignal? = nil) {
+        self.simulatedSignal = simulatedSignal
         super.init()
-        central = CBCentralManager(delegate: self, queue: nil)
+        // In simulation mode the stream starts on the view's onAppear → startScan()
+        // (not here, to avoid publishing state changes during view construction).
+        if simulatedSignal == nil {
+            central = CBCentralManager(delegate: self, queue: nil)
+        }
+    }
+
+    deinit {
+        simulationTimer?.invalidate()
+    }
+
+    // MARK: - Simulation
+
+    /// "Connects" to the simulated device and starts streaming samples.
+    private func startSimulation() {
+        guard let signal = simulatedSignal, simulationTimer == nil else { return }
+
+        // Analyses derive window lengths and resampling from this setting
+        if AppSettings.shared.sampleRateIn != signal.fs {
+            AppSettings.shared.sampleRateIn = signal.fs
+        }
+
+        rawBuffer.removeAll()
+        tempBuffer.removeAll()
+        simulationStart = Date()
+        simulationEmitted = 0
+        isDeviceValid = true
+        isConnected = true
+        connectedDeviceName = "🧪 \(signal.name)"
+        statusMessage = "Simulating \(signal.name) @ \(signal.fs) Hz"
+        log("🧪 Simulation started: \(signal.name), \(signal.samples.count) samples @ \(signal.fs) Hz")
+
+        // Emit in small packets (like batched BLE notifications); timing based on wall clock, so no drift
+        let timer = Timer(timeInterval: 0.02, repeats: true) { [weak self] _ in
+            self?.simulationTick()
+        }
+        RunLoop.main.add(timer, forMode: .common)
+        simulationTimer = timer
+    }
+
+    private func stopSimulation() {
+        guard simulationTimer != nil else { return }
+        simulationTimer?.invalidate()
+        simulationTimer = nil
+        log("🧪 Simulation stopped")
+    }
+
+    private func simulationTick() {
+        guard let signal = simulatedSignal, let start = simulationStart, !signal.samples.isEmpty else { return }
+        let due = Int(Date().timeIntervalSince(start) * Double(signal.fs))
+        var count = due - simulationEmitted
+        guard count > 0 else { return }
+        count = min(count, signal.fs * 2)   // after a long stall (e.g. app in background) skip ahead
+
+        var packet = [Float]()
+        packet.reserveCapacity(count)
+        for _ in 0..<count {
+            packet.append(signal.samples[simulationPosition])
+            simulationPosition = (simulationPosition + 1) % signal.samples.count   // loop forever
+        }
+        simulationEmitted = due
+        appendSamples(packet)
     }
     
     
@@ -108,12 +168,15 @@ class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPer
         isDeviceValid = false
         devices.removeAll()
         connectedPeripheral = nil
-        central.delegate = self
         log("🔁 BLE Manager reset")
     }
 
     func startScan() {
-        guard central.state == .poweredOn else {
+        if isSimulation {
+            startSimulation()
+            return
+        }
+        guard let central, central.state == .poweredOn else {
             statusMessage = "Bluetooth not available"
             log("❌ Cannot scan, Bluetooth not powered on")
             return
@@ -126,13 +189,17 @@ class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPer
     }
 
     func stopScan() {
+        guard let central else { return }
         central.stopScan()
         log("🛑 Stopped scanning")
     }
 
     func connect(to device: CBPeripheral) {
+        guard let central else { return }
         stopScan()
         connectedPeripheral = device
+        connectedDeviceName = device.name ?? "Unknown"
+        isConnected = true
         device.delegate = self
         central.connect(device, options: nil)
         statusMessage = "Connecting to \(device.name ?? "Unknown")..."
@@ -140,19 +207,31 @@ class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPer
     }
 
     func disconnect() {
+        if isSimulation {
+            stopSimulation()
+            rawBuffer.removeAll()
+            isDeviceValid = false
+            isConnected = false
+            connectedDeviceName = nil
+            statusMessage = "Disconnected"
+            return
+        }
+
         if let peripheral = connectedPeripheral {
             peripheral.delegate = nil
-            central.cancelPeripheralConnection(peripheral)
+            central?.cancelPeripheralConnection(peripheral)
         }
         connectedPeripheral = nil
+        isConnected = false
+        connectedDeviceName = nil
         rawBuffer.removeAll()
         devices.removeAll()
         statusMessage = "Disconnected"
         log("⛔ Disconnected")
 
         // Optional restart after short delay to ensure clean state
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.startScan()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.startScan()
         }
     }
 
@@ -178,6 +257,24 @@ class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPer
         let serviceUUIDs = allowedUUIDPairs.map { $0.service }
         p.discoverServices(serviceUUIDs)
 
+    }
+
+    func centralManager(_ c: CBCentralManager, didDisconnectPeripheral p: CBPeripheral, error: Error?) {
+        guard p.identifier == connectedPeripheral?.identifier else { return }
+        log("⚠️ Device disconnected: \(p.name ?? "Unknown")")
+        connectedPeripheral = nil
+        isConnected = false
+        connectedDeviceName = nil
+        isDeviceValid = false
+        statusMessage = "Device disconnected"
+    }
+
+    func centralManager(_ c: CBCentralManager, didFailToConnect p: CBPeripheral, error: Error?) {
+        log("❌ Failed to connect: \(error?.localizedDescription ?? "unknown error")")
+        connectedPeripheral = nil
+        isConnected = false
+        connectedDeviceName = nil
+        statusMessage = "Connection failed"
     }
 
     func peripheral(_ p: CBPeripheral, didDiscoverServices error: Error?) {

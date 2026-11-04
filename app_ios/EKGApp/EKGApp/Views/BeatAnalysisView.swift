@@ -4,6 +4,11 @@ import Combine
 
 struct BeatAnalysisView: View {
     @StateObject private var ble = EKGBLEManager()
+
+    /// Pass a signal to run this screen against the built-in device simulator instead of Bluetooth.
+    init(simulatedSignal: SimulatedSignal? = nil) {
+        _ble = StateObject(wrappedValue: EKGBLEManager(simulatedSignal: simulatedSignal))
+    }
     @State private var samples: [Float] = []
     @State private var recordingBuffer: [Float] = []
     @State private var timer: AnyCancellable?
@@ -35,7 +40,12 @@ struct BeatAnalysisView: View {
         GeometryReader { geometry in
             ScrollView {
                 VStack(spacing: 16) {
-                    if ble.connectedPeripheral == nil {
+                    if ble.isSimulation, ble.isConnected {
+                        Label("Simulation: \(ble.connectedDeviceName ?? "")", systemImage: "testtube.2")
+                            .font(.caption)
+                            .foregroundColor(.orange)
+                    }
+                    if !ble.isConnected {
                         VStack(spacing: 10) {
                             Text("Select ECG Device")
                                 .font(.headline)

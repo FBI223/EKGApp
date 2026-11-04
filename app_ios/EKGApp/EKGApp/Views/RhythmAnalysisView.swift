@@ -5,6 +5,11 @@ import Combine
 struct RhythmAnalysisView: View {
     @StateObject private var ble = EKGBLEManager()
 
+    /// Pass a signal to run this screen against the built-in device simulator instead of Bluetooth.
+    init(simulatedSignal: SimulatedSignal? = nil) {
+        _ble = StateObject(wrappedValue: EKGBLEManager(simulatedSignal: simulatedSignal))
+    }
+
     @State private var rhythmBuffer: [Float] = []
     @State private var prediction: String = "—"
     @State private var rhythmClassCounts: [String: Int] = [
@@ -53,7 +58,12 @@ struct RhythmAnalysisView: View {
         GeometryReader { geometry in
             ScrollView {
                 VStack(spacing: 16) {
-                    if ble.connectedPeripheral == nil {
+                    if ble.isSimulation, ble.isConnected {
+                        Label("Simulation: \(ble.connectedDeviceName ?? "")", systemImage: "testtube.2")
+                            .font(.caption)
+                            .foregroundColor(.orange)
+                    }
+                    if !ble.isConnected {
                         VStack(spacing: 10) {
                             Text("Select ECG Device")
                                 .font(.headline)

@@ -479,7 +479,7 @@ Each model is evaluated with task-specific metrics:
 ### Saved recordings are stored in `.hea` format:
 ```
 record123 1 500 5000
-record123.dat 16 1000 16 0 0 200 0 II
+record123.dat 16 200 16 0 12 8303 0 II
 # age: 26
 # sex: M
 # duration: 10 seconds
@@ -489,7 +489,7 @@ record123.dat 16 1000 16 0 0 200 0 II
 
 ```
 * **Line** 1: <record_name> <n_signals> <fs> <n_samples>
-* **Line** 2: <file> <format> <gain> <bit_res> <adc_zero> <init_val> <adc_resolution> 0 <lead>
+* **Line** 2: <file> <format> <gain> <adc_resolution> <adc_zero> <init_val> <checksum> <block_size> <lead> (WFDB standard; `init_val` = first sample, `checksum` = 16-bit signed sum of all samples)
 * **Comments** (#) include age, sex, start/end time, duration
 ---
 ### Saved recordings are stored in `.dat` format:

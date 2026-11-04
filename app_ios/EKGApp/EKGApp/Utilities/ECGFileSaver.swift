@@ -9,14 +9,26 @@ struct ECGFileSaver {
         try saveJSON(to: dir.appendingPathComponent("\(baseName).json"), buffer: buffer, fs: fs, leadName: leadName, start: start, end: end)
     }
     
-    static func saveDat(to url: URL, buffer: [Float], gain: Float) throws {
-        // Int16(_:) traps on NaN/inf or out-of-range values, so sanitize and clamp first
-        let int16Signal: [Int16] = buffer.map { value in
+    /// Converts mV samples to the digital (ADC) values stored in the .dat file.
+    /// Int16(_:) traps on NaN/inf or out-of-range values, so sanitize and clamp first.
+    static func digitize(_ buffer: [Float], gain: Float) -> [Int16] {
+        buffer.map { value in
             let scaled = value * gain
             guard scaled.isFinite else { return 0 }
             let clamped = min(max(scaled.rounded(), Float(Int16.min)), Float(Int16.max))
             return Int16(clamped)
         }
+    }
+
+    /// WFDB checksum: 16-bit signed sum of all samples of the signal.
+    static func wfdbChecksum(_ samples: [Int16]) -> Int16 {
+        var sum: Int16 = 0
+        for s in samples { sum &+= s }   // wrapping addition = sum modulo 2^16
+        return sum
+    }
+
+    static func saveDat(to url: URL, buffer: [Float], gain: Float) throws {
+        let int16Signal = digitize(buffer, gain: gain)
         var datData = Data()
         for sample in int16Signal {
             var le = sample.littleEndian
@@ -33,11 +45,13 @@ struct ECGFileSaver {
         let sex = settings.userSex == 0 ? "M" : "F"
         let age = settings.userAge
 
-        let resolution = 16         // ilość bitów
-        let adcRes = 200            // ADC resolution
-        let adcZero = 0             // zero ADC
-        let initVal = 0             // initial value
-        let bitResolution = 16      // liczba bitów (powtórzone)
+        // Must match exactly what saveDat writes, so initVal and checksum are consistent with the .dat file
+        let digital = digitize(buffer, gain: gain)
+        let adcResolution = 16                        // bits
+        let adcZero = 0
+        let initVal = Int(digital.first ?? 0)         // value of the first sample
+        let checksum = Int(wfdbChecksum(digital))
+        let blockSize = 0
         let gainInt = Int(gain)
 
         let startStr = ISO8601DateFormatter().string(from: start)
@@ -46,8 +60,8 @@ struct ECGFileSaver {
 
         let mainLine = "\(baseName) 1 \(fs) \(nSamples)"
 
-        // dokładnie 9 pól: filename format gain bitRes zero initVal adcRes leadName
-        let signalLine = "\(baseName).dat 16 \(gainInt) \(bitResolution) \(adcZero) \(initVal) \(adcRes) 0 \(leadName)"
+        // WFDB signal line: file format gain adcres adczero initval checksum blocksize description
+        let signalLine = "\(baseName).dat 16 \(gainInt) \(adcResolution) \(adcZero) \(initVal) \(checksum) \(blockSize) \(leadName)"
 
         let comments = [
             "# age: \(age)",

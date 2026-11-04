@@ -5,7 +5,7 @@ class WaveformClassifier {
     private let settings = AppSettings.shared
 
     init() {
-        let config = MLModelConfiguration()
+        let config = MLModelConfiguration.appDefault
         self.model = try! WaveModel(configuration: config)
     }
 

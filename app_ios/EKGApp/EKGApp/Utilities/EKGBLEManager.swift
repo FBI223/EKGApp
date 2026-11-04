@@ -189,13 +189,14 @@ class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPer
     }
 
     func stopScan() {
-        guard let central else { return }
+        // CoreBluetooth only accepts commands while powered on (logs "API MISUSE" otherwise)
+        guard let central, central.state == .poweredOn else { return }
         central.stopScan()
         log("🛑 Stopped scanning")
     }
 
     func connect(to device: CBPeripheral) {
-        guard let central else { return }
+        guard let central, central.state == .poweredOn else { return }
         stopScan()
         connectedPeripheral = device
         connectedDeviceName = device.name ?? "Unknown"
@@ -219,7 +220,9 @@ class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPer
 
         if let peripheral = connectedPeripheral {
             peripheral.delegate = nil
-            central?.cancelPeripheralConnection(peripheral)
+            if let central, central.state == .poweredOn {
+                central.cancelPeripheralConnection(peripheral)
+            }
         }
         connectedPeripheral = nil
         isConnected = false

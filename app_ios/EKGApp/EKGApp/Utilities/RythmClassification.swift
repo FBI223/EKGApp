@@ -14,7 +14,7 @@ class RhythmClassifier{
     ]
 
     init() {
-        let config = MLModelConfiguration()
+        let config = MLModelConfiguration.appDefault
         self.model = try! RythmClassifier(configuration: config)
     }
 

@@ -6,7 +6,7 @@ class EKGClassifier {
     private let settings = AppSettings.shared
 
     init() {
-        let config = MLModelConfiguration()
+        let config = MLModelConfiguration.appDefault
         self.model = try! ECGClassifier(configuration: config)
     }
 

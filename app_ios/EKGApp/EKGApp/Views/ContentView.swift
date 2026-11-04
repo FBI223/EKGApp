@@ -71,6 +71,16 @@ struct ContentView: View {
                             .cornerRadius(14)
                     }
 
+                    NavigationLink(destination: SimulationView()) {
+                        Text("🧪 Simulation")
+                            .font(.title3)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background(Color(red: 0.39, green: 0.0, blue: 0.0))
+                            .foregroundColor(.white)
+                            .cornerRadius(14)
+                    }
+
                     NavigationLink(destination: SignalBrowserView()) {
                         Text("📁 Record Browser")
                             .font(.title3)

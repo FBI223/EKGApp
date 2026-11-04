@@ -5,7 +5,7 @@ class WaveformClassifier {
     private let settings = AppSettings.shared
 
     init() {
-        let config = MLModelConfiguration()
+        let config = MLModelConfiguration.appDefault
         self.model = try! WaveModel(configuration: config)
     }
 
@@ -16,9 +16,12 @@ class WaveformClassifier {
             return []
         }
 
+        // Training used per-segment z-score normalization
+        let normalized = SignalNormalizer.zScore(input)
+
         let mlArray = try! MLMultiArray(shape: [1, 1, 2000], dataType: .float32)
         for i in 0..<2000 {
-            mlArray[i] = NSNumber(value: input[i])
+            mlArray[i] = NSNumber(value: normalized[i])
         }
 
         guard let output = try? model.prediction(ecg: mlArray).var_464 else {

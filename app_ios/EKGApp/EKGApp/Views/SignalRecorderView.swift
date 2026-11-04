@@ -9,6 +9,11 @@ private let resolutionBits = 16
 
 struct SignalRecorderView: View {
     @StateObject private var ble = EKGBLEManager()
+
+    /// Pass a signal to run this screen against the built-in device simulator instead of Bluetooth.
+    init(simulatedSignal: SimulatedSignal? = nil) {
+        _ble = StateObject(wrappedValue: EKGBLEManager(simulatedSignal: simulatedSignal))
+    }
     @ObservedObject private var settings = AppSettings.shared
 
     @State private var samples: [Float] = []
@@ -28,7 +33,6 @@ struct SignalRecorderView: View {
     @Environment(\.dismiss) var dismiss
 
     let maxWindowSize = 1000
-    let samplesPerTick = 10
     let updateInterval = 0.05
     let maxSamples = 5000
 
@@ -39,7 +43,12 @@ struct SignalRecorderView: View {
         GeometryReader { geometry in
             ScrollView {
                 VStack(spacing: 16) {
-                    if ble.connectedPeripheral == nil {
+                    if ble.isSimulation, ble.isConnected {
+                        Label("Simulation: \(ble.connectedDeviceName ?? "")", systemImage: "testtube.2")
+                            .font(.caption)
+                            .foregroundColor(.orange)
+                    }
+                    if !ble.isConnected {
                         deviceSelectionView(height: geometry.size.height)
                     } else {
                         signalRecordingView(height: geometry.size.height)
@@ -204,6 +213,7 @@ struct SignalRecorderView: View {
     private func startStream() {
         samples = []
         recordingBuffer = []
+        ble.clearBuffer()
         isProcessing = true
         timer = Timer.publish(every: updateInterval, on: .main, in: .common)
             .autoconnect()
@@ -216,16 +226,12 @@ struct SignalRecorderView: View {
     }
 
     private func tick() {
-        guard isProcessing, !ble.rawBuffer.isEmpty else { return }
+        guard isProcessing else { return }
 
-        var chunk: [Float] = []
-        for _ in 0..<samplesPerTick {
-            if let v = ble.rawBuffer.first {
-                ble.rawBuffer.removeFirst()
-                samples.append(v)
-                chunk.append(v)
-            }
-        }
+        // Consume everything that arrived since the last tick so latency never accumulates
+        let chunk = ble.drainBuffer()
+        guard !chunk.isEmpty else { return }
+        samples.append(contentsOf: chunk)
 
         if samples.count > maxSamples {
             samples.removeFirst(samples.count - maxSamples)

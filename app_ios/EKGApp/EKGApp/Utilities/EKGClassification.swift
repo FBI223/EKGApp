@@ -6,43 +6,25 @@ class EKGClassifier {
     private let settings = AppSettings.shared
 
     init() {
-        let config = MLModelConfiguration()
+        let config = MLModelConfiguration.appDefault
         self.model = try! ECGClassifier(configuration: config)
     }
 
+    /// `input`: one beat segment at 360 Hz, `windowLengthBeatResampled` (540) samples centred on R.
     func predict(input: [Float]) -> String {
-        let resampled = input  // ✅ wejście już jest w 360 Hz i ma 540 próbek
+        let length = settings.windowLengthBeatResampled
+        guard input.count >= length else { return "?" }
 
+        // Training used z-score normalization (global over the dataset); per-segment is the closest equivalent
+        let normalized = SignalNormalizer.zScore(Array(input.prefix(length)))
 
-        let mlArray = try! MLMultiArray(shape: [1, 1, NSNumber(value: settings.windowLengthBeatResampled)], dataType: .float32)
-        for i in 0..<settings.windowLengthBeatResampled {
-            mlArray[i] = NSNumber(value: resampled[i])
+        let mlArray = try! MLMultiArray(shape: [1, 1, NSNumber(value: length)], dataType: .float32)
+        for i in 0..<length {
+            mlArray[i] = NSNumber(value: normalized[i])
         }
 
         let output = try! model.prediction(input: ECGClassifierInput(input: mlArray)).output
         let maxIdx = (0..<5).max { output[$0].floatValue < output[$1].floatValue }!
         return invClassMap[maxIdx] ?? "?"
     }
-
-    private func resampleLinear(signal: [Float], from srcHz: Float, to dstHz: Float, outputCount: Int) -> [Float] {
-        let scale = dstHz / srcHz
-        guard signal.count >= 2 else {
-            return Array(repeating: signal.first ?? 0.0, count: outputCount)
-        }
-
-        var result = [Float](repeating: 0, count: outputCount)
-        let maxIndex = signal.count - 1
-
-        for i in 0..<outputCount {
-            let index = Float(i) / scale
-            let low = Int(floor(index))
-            let high = min(low + 1, maxIndex)
-            let t = index - Float(low)
-
-            result[i] = (1 - t) * signal[low] + t * signal[high]
-        }
-
-        return result
-    }
 }
-

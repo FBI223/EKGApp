@@ -14,6 +14,9 @@
 - [App Settings](#-app-settings)
 - [Used Deep Learning Models](#-used-deep-learning-models)
 - [Datasets Used](#-datasets-used)
+- [On-Device Signal Processing](#-on-device-signal-processing)
+- [BLE Data Format](#-ble-data-format)
+- [Device Simulation](#-device-simulation)
 - [Evaluation & Metrics](#-evaluation--metrics)
 - [Signal Format](#-signal-format)
 - [Import & Interoperability](#-import--interoperability)
@@ -35,6 +38,7 @@
   * **Beat-type classification** near QRS centers (e.g. N, V, S)
    * **Waveform segmentation** per sample into `P`, `QRS`, `T` waves for morphological analysis
 * 📂 Browse, view, share or delete saved recordings
+* 🧪 Built-in device simulation – run every analysis on bundled ECG signals without any hardware
 
 ---
 
@@ -44,7 +48,7 @@
 
 ECGApp includes a configurable **Settings panel** for adjusting signal processing and model parameters:
 
-- 📶 **Sample Rate In**: Set to match your BLE ECG device (e.g., 128 Hz)
+- 📶 **Sample Rate In**: Set to match your BLE ECG device (e.g., 128 Hz). All analyses (rhythm window length, beat/wave resampling, BPM) are derived from this value, so a mismatch distorts every result
 - 🧍 **Demographics**: Select user age and sex (used in AI model input)
 - 📊 **Y-Axis Range**: Adjust ECG chart amplitude (±1 to ±10 mV)
 - 🌙 **Dark Mode**: Toggle light/dark UI
@@ -310,10 +314,84 @@ OUTPUT
 | LUDB            | Wave classification   | dat    | Waves focus                       |
 
 
-All signals were:
+All training signals were:
 - Resampled to 500 Hz (rhythm and wave) or 360 Hz (beat)
 - Normalized and denoised using wavelet transform (`bior2.6`)
 - Lead II extracted and used as input
+
+---
+
+## 🔬 On-Device Signal Processing
+
+Before inference the app reproduces the training preprocessing as closely as possible:
+
+| Analysis | Input window                  | Resampled to          | Normalization              |
+|----------|-------------------------------|-----------------------|----------------------------|
+| Rhythm   | 10 s at `Sample Rate In`      | 500 Hz → 5000 samples (FFT) | wavelet denoising (`bior2.6`) + z-score over the window |
+| Beat     | 540 samples centred on R peak | 360 Hz                | z-score per beat segment   |
+| Wave     | 4 s at `Sample Rate In`       | 500 Hz → 2000 samples | z-score over the segment   |
+
+- **Resampling**: rhythm uses Fourier resampling (`Resampler.resampleFFT`, equivalent to `scipy.signal.resample`); beat and wave use linear interpolation (`Resampler.resample`)
+- **Wavelet denoising** (`WaveletDenoiser`, rhythm only): Swift port of the training `wavelet_denoise` – `bior2.6`, 8 levels, soft threshold on detail levels from 4 on; matches PyWavelets to ~1e-7
+- **R-peak detection** (`RPeakDetector`): Pan–Tompkins-style pipeline — 5-point derivative → squaring → centred 150 ms moving-window integration → adaptive threshold with 200 ms refractory period → peak refined to the true R location in the raw signal
+- **BPM**: mean R–R interval of the analysed window
+
+> ⚠️ Known difference from training: the beat model was trained with dataset-wide z-score statistics, approximated in the app by per-segment z-score.
+>
+> Matching the rhythm preprocessing matters: on SVDB record 820 (contains supraventricular ectopic beats) linear resampling without denoising gives `AV_BLOCK` in 30/30 windows, the training pipeline gives `PAC` in 26/30.
+
+---
+
+## 📡 BLE Data Format
+
+The app subscribes to a notify characteristic of one of the supported services:
+
+| Device                 | Service UUID                           | Characteristic UUID                    |
+|------------------------|----------------------------------------|----------------------------------------|
+| ESP32 sensor (`ESP32_EKG`)        | `bd37e8b4-1bcf-4f42-bdd1-bebea1a51a1a` | `7a1e8b7d-9a3e-4657-927b-339adddc2a5b` |
+| ESP32 simulator (`ESP32_EKG_SIMULATOR`) | `410de486-ba6e-47a9-85c8-715700eba0fa` | `9e79707a-a0aa-4e79-9009-96d643ef755a` |
+
+- Each notification carries **one or more `float32` samples** (little-endian, in **mV**) — packet length must be a multiple of 4 bytes
+- Batching several samples per notification (e.g., 10–20) is supported and recommended at higher sample rates
+- Non-finite values (NaN/∞) are dropped
+- A device is accepted only if it delivers data within 1.5 s of connecting
+- Incoming data is buffered (max ~30 s at 500 Hz); each UI tick consumes the whole buffer, and the buffer is cleared when a stream starts, so latency does not accumulate
+
+---
+
+## 🧪 Device Simulation
+
+The **🧪 Simulation** menu lets you test the whole app without a BLE sensor. A selected signal is streamed
+in a loop at its own sample rate, exactly as if a validated ECG device were connected.
+
+1. Open **🧪 Simulation** and pick one of the bundled signals (preview of the first 5 s is shown)
+2. Open **Beat**, **Rhythm**, **Wave Analysis** or **Signal Recorder** – the screen connects to the simulated device automatically (orange *Simulation* label)
+3. Press **Start** as usual; **Disconnect** stops the simulation
+
+`Sample Rate In` is set automatically to the signal's sample rate when the simulation starts.
+
+**Bundled signals** – `app_ios/EKGApp/EKGApp/SimulationSignals/` (same records as the ESP32 simulator):
+
+| File           | Source                       | fs     | Length |
+|----------------|------------------------------|--------|--------|
+| `sim_802.json` | MIT-BIH SVDB record 802, lead 0 | 128 Hz | 5 min |
+| `sim_820.json` | MIT-BIH SVDB record 820, lead 0 | 128 Hz | 5 min |
+| `sim_823.json` | MIT-BIH SVDB record 823, lead 0 | 128 Hz | 5 min |
+
+**Adding your own signal** – drop a `sim_<name>.json` file into that folder (Xcode picks it up automatically):
+
+```json
+{
+  "name": "My signal",
+  "description": "optional text",
+  "fs": 128,
+  "leads": ["ECG"],
+  "signals": [[0.01, 0.02, 0.05]]
+}
+```
+
+`signals[0]` holds the samples in **mV**. The bundled files are generated from the ESP32 simulator headers with
+`python3 arduino/simulation/export_ios_sim_signals.py`.
 
 ---
 
@@ -404,7 +482,7 @@ Each model is evaluated with task-specific metrics:
 ### Saved recordings are stored in `.hea` format:
 ```
 record123 1 500 5000
-record123.dat 16 1000 16 0 0 200 0 II
+record123.dat 16 200 16 0 12 8303 0 II
 # age: 26
 # sex: M
 # duration: 10 seconds
@@ -414,12 +492,12 @@ record123.dat 16 1000 16 0 0 200 0 II
 
 ```
 * **Line** 1: <record_name> <n_signals> <fs> <n_samples>
-* **Line** 2: <file> <format> <gain> <bit_res> <adc_zero> <init_val> <adc_resolution> 0 <lead>
+* **Line** 2: <file> <format> <gain> <adc_resolution> <adc_zero> <init_val> <checksum> <block_size> <lead> (WFDB standard; `init_val` = first sample, `checksum` = 16-bit signed sum of all samples)
 * **Comments** (#) include age, sex, start/end time, duration
 ---
 ### Saved recordings are stored in `.dat` format:
 
-Signal samples saved as Int16, scaled by gain
+Signal samples saved as Int16, scaled by gain (values outside the Int16 range are clamped, NaN/∞ stored as 0)
 Written in little-endian format
 Lead order matches .hea
 

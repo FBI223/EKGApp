@@ -4,36 +4,45 @@ class RhythmClassifier{
     private let model: RythmClassifier
     private let settings = AppSettings.shared
 
+    static let windowSeconds: Float = 10
+    static let modelFs: Float = 500
+    static let modelLength = 5000
+
     let classNames = [
         "NSR", "AF_FLUTTER", "PAC", "PVC",
         "BBB", "SVT", "AV_BLOCK", "TORSADES"
     ]
 
     init() {
-        let config = MLModelConfiguration()
+        let config = MLModelConfiguration.appDefault
         self.model = try! RythmClassifier(configuration: config)
     }
 
+    /// `ecgInput` should hold 10 s of signal at `settings.sampleRateIn`.
     func predict(ecgInput: [Float], age: Float, sex: Float) -> String {
         let inputHz = Float(settings.sampleRateIn)
-        let outputHz: Float = 500.0
-        let outputLength = 5000
 
-        // Resample from inputHz (e.g. 128Hz) to 500Hz → 5000 samples
-        let resampled = resampleLinear(
-            signal: ecgInput,
-            from: inputHz,
-            to: outputHz,
-            outputCount: outputLength
-        )
+        // Same pipeline as training (main_single.py: load_and_process_signal):
+        // FFT resample to 500 Hz → wavelet denoise (bior2.6) → z-score.
+        // Linear resampling / no denoising measurably changes predictions (e.g. SVDB 820: AV_BLOCK instead of PAC).
+        let expectedInput = Int(Self.windowSeconds * inputHz)
+        // FFT resampling maps the whole input onto 10 s, so force exactly 10 s of input
+        // (same rate in/out = truncate, or repeat the last sample if too short)
+        let window = ecgInput.count == expectedInput
+            ? ecgInput
+            : Resampler.resample(input: ecgInput, srcRate: inputHz, dstRate: inputHz, outputCount: expectedInput)
+        let resampled = Resampler.resampleFFT(input: window, outputCount: Self.modelLength)
+        let denoised = WaveletDenoiser.denoise(resampled)
+        let normalized = SignalNormalizer.zScore(denoised)
 
-        let ecgArray = try! MLMultiArray(shape: [1, 1, 5000], dataType: .float32)
+        let ecgArray = try! MLMultiArray(shape: [1, 1, NSNumber(value: Self.modelLength)], dataType: .float32)
         let demoArray = try! MLMultiArray(shape: [1, 2], dataType: .float32)
 
-        for i in 0..<5000 {
-            ecgArray[i] = NSNumber(value: resampled[i])
+        for i in 0..<Self.modelLength {
+            ecgArray[i] = NSNumber(value: normalized[i])
         }
 
+        // Model divides age by 110 internally
         demoArray[0] = NSNumber(value: age)
         demoArray[1] = NSNumber(value: sex)
 
@@ -53,25 +62,5 @@ class RhythmClassifier{
         }
 
         return classNames[bestIndex]
-    }
-
-    private func resampleLinear(signal: [Float], from srcHz: Float, to dstHz: Float, outputCount: Int) -> [Float] {
-        let scale = dstHz / srcHz
-        guard signal.count >= 2 else {
-            return Array(repeating: signal.first ?? 0.0, count: outputCount)
-        }
-
-        var result = [Float](repeating: 0, count: outputCount)
-        let maxIndex = signal.count - 1
-
-        for i in 0..<outputCount {
-            let index = Float(i) / scale
-            let low = Int(floor(index))
-            let high = min(low + 1, maxIndex)
-            let t = index - Float(low)
-            result[i] = (1 - t) * signal[low] + t * signal[high]
-        }
-
-        return result
     }
 }

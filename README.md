@@ -327,15 +327,18 @@ Before inference the app reproduces the training preprocessing as closely as pos
 
 | Analysis | Input window                  | Resampled to          | Normalization              |
 |----------|-------------------------------|-----------------------|----------------------------|
-| Rhythm   | 10 s at `Sample Rate In`      | 500 Hz → 5000 samples | z-score over the window    |
+| Rhythm   | 10 s at `Sample Rate In`      | 500 Hz → 5000 samples (FFT) | wavelet denoising (`bior2.6`) + z-score over the window |
 | Beat     | 540 samples centred on R peak | 360 Hz                | z-score per beat segment   |
 | Wave     | 4 s at `Sample Rate In`       | 500 Hz → 2000 samples | z-score over the segment   |
 
-- **Resampling**: linear interpolation (`Resampler`), bounds-safe for any input rate
+- **Resampling**: rhythm uses Fourier resampling (`Resampler.resampleFFT`, equivalent to `scipy.signal.resample`); beat and wave use linear interpolation (`Resampler.resample`)
+- **Wavelet denoising** (`WaveletDenoiser`, rhythm only): Swift port of the training `wavelet_denoise` – `bior2.6`, 8 levels, soft threshold on detail levels from 4 on; matches PyWavelets to ~1e-7
 - **R-peak detection** (`RPeakDetector`): Pan–Tompkins-style pipeline — 5-point derivative → squaring → centred 150 ms moving-window integration → adaptive threshold with 200 ms refractory period → peak refined to the true R location in the raw signal
 - **BPM**: mean R–R interval of the analysed window
 
-> ⚠️ Known differences from training: the app does **not** apply wavelet denoising (used for the rhythm model), and the beat model was trained with dataset-wide z-score statistics, approximated in the app by per-segment z-score.
+> ⚠️ Known difference from training: the beat model was trained with dataset-wide z-score statistics, approximated in the app by per-segment z-score.
+>
+> Matching the rhythm preprocessing matters: on SVDB record 820 (contains supraventricular ectopic beats) linear resampling without denoising gives `AV_BLOCK` in 30/30 windows, the training pipeline gives `PAC` in 26/30.
 
 ---
 

@@ -22,14 +22,18 @@ class RhythmClassifier{
     func predict(ecgInput: [Float], age: Float, sex: Float) -> String {
         let inputHz = Float(settings.sampleRateIn)
 
-        // Resample to 500 Hz → 5000 samples, then z-score (as in training)
-        let resampled = Resampler.resample(
-            input: ecgInput,
-            srcRate: inputHz,
-            dstRate: Self.modelFs,
-            outputCount: Self.modelLength
-        )
-        let normalized = SignalNormalizer.zScore(resampled)
+        // Same pipeline as training (main_single.py: load_and_process_signal):
+        // FFT resample to 500 Hz → wavelet denoise (bior2.6) → z-score.
+        // Linear resampling / no denoising measurably changes predictions (e.g. SVDB 820: AV_BLOCK instead of PAC).
+        let expectedInput = Int(Self.windowSeconds * inputHz)
+        // FFT resampling maps the whole input onto 10 s, so force exactly 10 s of input
+        // (same rate in/out = truncate, or repeat the last sample if too short)
+        let window = ecgInput.count == expectedInput
+            ? ecgInput
+            : Resampler.resample(input: ecgInput, srcRate: inputHz, dstRate: inputHz, outputCount: expectedInput)
+        let resampled = Resampler.resampleFFT(input: window, outputCount: Self.modelLength)
+        let denoised = WaveletDenoiser.denoise(resampled)
+        let normalized = SignalNormalizer.zScore(denoised)
 
         let ecgArray = try! MLMultiArray(shape: [1, 1, NSNumber(value: Self.modelLength)], dataType: .float32)
         let demoArray = try! MLMultiArray(shape: [1, 2], dataType: .float32)

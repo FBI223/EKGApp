@@ -14,6 +14,8 @@
 - [App Settings](#-app-settings)
 - [Used Deep Learning Models](#-used-deep-learning-models)
 - [Datasets Used](#-datasets-used)
+- [On-Device Signal Processing](#-on-device-signal-processing)
+- [BLE Data Format](#-ble-data-format)
 - [Evaluation & Metrics](#-evaluation--metrics)
 - [Signal Format](#-signal-format)
 - [Import & Interoperability](#-import--interoperability)
@@ -44,7 +46,7 @@
 
 ECGApp includes a configurable **Settings panel** for adjusting signal processing and model parameters:
 
-- 📶 **Sample Rate In**: Set to match your BLE ECG device (e.g., 128 Hz)
+- 📶 **Sample Rate In**: Set to match your BLE ECG device (e.g., 128 Hz). All analyses (rhythm window length, beat/wave resampling, BPM) are derived from this value, so a mismatch distorts every result
 - 🧍 **Demographics**: Select user age and sex (used in AI model input)
 - 📊 **Y-Axis Range**: Adjust ECG chart amplitude (±1 to ±10 mV)
 - 🌙 **Dark Mode**: Toggle light/dark UI
@@ -310,10 +312,45 @@ OUTPUT
 | LUDB            | Wave classification   | dat    | Waves focus                       |
 
 
-All signals were:
+All training signals were:
 - Resampled to 500 Hz (rhythm and wave) or 360 Hz (beat)
 - Normalized and denoised using wavelet transform (`bior2.6`)
 - Lead II extracted and used as input
+
+---
+
+## 🔬 On-Device Signal Processing
+
+Before inference the app reproduces the training preprocessing as closely as possible:
+
+| Analysis | Input window                  | Resampled to          | Normalization              |
+|----------|-------------------------------|-----------------------|----------------------------|
+| Rhythm   | 10 s at `Sample Rate In`      | 500 Hz → 5000 samples | z-score over the window    |
+| Beat     | 540 samples centred on R peak | 360 Hz                | z-score per beat segment   |
+| Wave     | 4 s at `Sample Rate In`       | 500 Hz → 2000 samples | z-score over the segment   |
+
+- **Resampling**: linear interpolation (`Resampler`), bounds-safe for any input rate
+- **R-peak detection** (`RPeakDetector`): Pan–Tompkins-style pipeline — 5-point derivative → squaring → centred 150 ms moving-window integration → adaptive threshold with 200 ms refractory period → peak refined to the true R location in the raw signal
+- **BPM**: mean R–R interval of the analysed window
+
+> ⚠️ Known differences from training: the app does **not** apply wavelet denoising (used for the rhythm model), and the beat model was trained with dataset-wide z-score statistics, approximated in the app by per-segment z-score.
+
+---
+
+## 📡 BLE Data Format
+
+The app subscribes to a notify characteristic of one of the supported services:
+
+| Device                 | Service UUID                           | Characteristic UUID                    |
+|------------------------|----------------------------------------|----------------------------------------|
+| ESP32 sensor (`ESP32_EKG`)        | `bd37e8b4-1bcf-4f42-bdd1-bebea1a51a1a` | `7a1e8b7d-9a3e-4657-927b-339adddc2a5b` |
+| ESP32 simulator (`ESP32_EKG_SIMULATOR`) | `410de486-ba6e-47a9-85c8-715700eba0fa` | `9e79707a-a0aa-4e79-9009-96d643ef755a` |
+
+- Each notification carries **one or more `float32` samples** (little-endian, in **mV**) — packet length must be a multiple of 4 bytes
+- Batching several samples per notification (e.g., 10–20) is supported and recommended at higher sample rates
+- Non-finite values (NaN/∞) are dropped
+- A device is accepted only if it delivers data within 1.5 s of connecting
+- Incoming data is buffered (max ~30 s at 500 Hz); each UI tick consumes the whole buffer, and the buffer is cleared when a stream starts, so latency does not accumulate
 
 ---
 
@@ -419,7 +456,7 @@ record123.dat 16 1000 16 0 0 200 0 II
 ---
 ### Saved recordings are stored in `.dat` format:
 
-Signal samples saved as Int16, scaled by gain
+Signal samples saved as Int16, scaled by gain (values outside the Int16 range are clamped, NaN/∞ stored as 0)
 Written in little-endian format
 Lead order matches .hea
 

@@ -41,7 +41,8 @@ struct RhythmAnalysisView: View {
     var foregroundColor: Color { settings.darkModeEnabled ? .white : .black }
     var chartColor: Color { settings.darkModeEnabled ? .cyan : .blue }
 
-    let windowLength = 1280
+    /// 10 s of signal at the configured input sample rate (1280 @ 128 Hz)
+    var windowLength: Int { Int(RhythmClassifier.windowSeconds) * settings.sampleRateIn }
     private let model = RhythmClassifier()
 
 
@@ -222,6 +223,7 @@ struct RhythmAnalysisView: View {
         rhythmBuffer = []
         prediction = "—"
         rhythmClassCounts =  ["NSR" : 0, "AF_FLUTTER" : 0 , "PAC" : 0, "PVC" : 0, "BBB" : 0, "SVT" : 0, "AV_BLOCK" : 0, "TORSADES" : 0]
+        ble.clearBuffer()
         isProcessing = true
 
         timer = Timer.publish(every: 0.05, on: .main, in: .common)
@@ -246,36 +248,36 @@ struct RhythmAnalysisView: View {
 
     
     func updateRhythm() {
-        guard isProcessing, !ble.rawBuffer.isEmpty else { return }
+        guard isProcessing else { return }
 
-        for _ in 0..<10 {
-            if let v = ble.rawBuffer.first {
-                ble.rawBuffer.removeFirst()
-                rhythmBuffer.append(v)
-                if rhythmBuffer.count > 5000 {
-                    rhythmBuffer.removeFirst(rhythmBuffer.count - 5000)
-                }
-            }
+        let incoming = ble.drainBuffer()
+        guard !incoming.isEmpty else { return }
+        rhythmBuffer.append(contentsOf: incoming)
+
+        let window = windowLength
+        let fs = settings.sampleRateIn
+        let maxBuffered = max(5000, 2 * window)
+        if rhythmBuffer.count > maxBuffered {
+            rhythmBuffer.removeFirst(rhythmBuffer.count - maxBuffered)
         }
 
-        if rhythmBuffer.count >= windowLength {
-            let ecg1280 = Array(rhythmBuffer.suffix(windowLength))
+        while rhythmBuffer.count >= window {
+            let ecgWindow = Array(rhythmBuffer.prefix(window))
             let age = settings.userAge
             let sex = settings.userSex
 
             // === Klasyfikacja rytmu ===
-            let predictedClass = model.predict(ecgInput: ecg1280, age: Float(age), sex: Float(sex))
+            let predictedClass = model.predict(ecgInput: ecgWindow, age: Float(age), sex: Float(sex))
             prediction = predictedClass
             rhythmClassCounts[predictedClass, default: 0] += 1
             print("[Rhythm] 10s classified as \(predictedClass)")
 
             // === Obliczenie BPM i klasy HR ===
-            bpm = computeBPM(signal: ecg1280, fs: 128)
-            isBradycardia = bpm < 60
+            bpm = computeBPM(signal: ecgWindow, fs: fs)
+            isBradycardia = bpm > 0 && bpm < 60
             isTachycardia = bpm > 100
 
-
-            rhythmBuffer.removeFirst(windowLength)
+            rhythmBuffer.removeFirst(window)
         }
 
     }

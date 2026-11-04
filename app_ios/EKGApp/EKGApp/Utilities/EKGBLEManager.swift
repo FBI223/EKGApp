@@ -2,8 +2,13 @@ import Foundation
 import CoreBluetooth
 
 class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeripheralDelegate {
-    @Published var rawBuffer = [Float]()
+    /// Incoming samples waiting to be consumed. Not @Published: appending at the sample
+    /// rate would re-render every observing view. Consume it with `drainBuffer()`.
+    private(set) var rawBuffer = [Float]()
     private var tempBuffer = [Float]()
+    /// Upper bound on buffered samples (~30 s at 500 Hz) so the buffer cannot grow forever
+    /// while nobody is consuming it (e.g. before Start is pressed).
+    private let maxBufferedSamples = 15_000
     @Published var isDeviceValid = false
     @Published var devices: [CBPeripheral] = []
     @Published var connectedPeripheral: CBPeripheral?
@@ -69,6 +74,32 @@ class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPer
     }
 
 
+
+    /// Returns all buffered samples and empties the buffer.
+    func drainBuffer() -> [Float] {
+        let samples = rawBuffer
+        rawBuffer.removeAll(keepingCapacity: true)
+        return samples
+    }
+
+    /// Discards stale samples (call when starting a new stream).
+    func clearBuffer() {
+        rawBuffer.removeAll(keepingCapacity: true)
+    }
+
+    private func appendSamples(_ values: [Float]) {
+        if isDeviceValid {
+            rawBuffer.append(contentsOf: values)
+            if rawBuffer.count > maxBufferedSamples {
+                rawBuffer.removeFirst(rawBuffer.count - maxBufferedSamples)
+            }
+        } else {
+            tempBuffer.append(contentsOf: values)
+            if tempBuffer.count > maxBufferedSamples {
+                tempBuffer.removeFirst(tempBuffer.count - maxBufferedSamples)
+            }
+        }
+    }
 
     func reset() {
         stopScan()
@@ -167,18 +198,22 @@ class EKGBLEManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPer
     }
 
     func peripheral(_ p: CBPeripheral, didUpdateValueFor char: CBCharacteristic, error: Error?) {
-        guard let data = char.value else { return }
-        
-        var value: Float = 0
-        _ = withUnsafeMutableBytes(of: &value) { data.copyBytes(to: $0) }
-        DispatchQueue.main.async {
-            if self.isDeviceValid {
-                self.rawBuffer.append(value)
-            } else {
-                self.tempBuffer.append(value)
+        guard let data = char.value, data.count >= 4 else { return }
+
+        // Packet = one or more little-endian Float32 samples (supports batched notifications)
+        let count = data.count / 4
+        var values = [Float](repeating: 0, count: count)
+        data.withUnsafeBytes { raw in
+            for i in 0..<count {
+                values[i] = raw.loadUnaligned(fromByteOffset: i * 4, as: Float.self)
             }
         }
-        
+        let finite = values.filter { $0.isFinite }
+        guard !finite.isEmpty else { return }
+
+        DispatchQueue.main.async {
+            self.appendSamples(finite)
+        }
     }
 
 

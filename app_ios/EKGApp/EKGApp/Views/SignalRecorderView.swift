@@ -28,7 +28,6 @@ struct SignalRecorderView: View {
     @Environment(\.dismiss) var dismiss
 
     let maxWindowSize = 1000
-    let samplesPerTick = 10
     let updateInterval = 0.05
     let maxSamples = 5000
 
@@ -204,6 +203,7 @@ struct SignalRecorderView: View {
     private func startStream() {
         samples = []
         recordingBuffer = []
+        ble.clearBuffer()
         isProcessing = true
         timer = Timer.publish(every: updateInterval, on: .main, in: .common)
             .autoconnect()
@@ -216,16 +216,12 @@ struct SignalRecorderView: View {
     }
 
     private func tick() {
-        guard isProcessing, !ble.rawBuffer.isEmpty else { return }
+        guard isProcessing else { return }
 
-        var chunk: [Float] = []
-        for _ in 0..<samplesPerTick {
-            if let v = ble.rawBuffer.first {
-                ble.rawBuffer.removeFirst()
-                samples.append(v)
-                chunk.append(v)
-            }
-        }
+        // Consume everything that arrived since the last tick so latency never accumulates
+        let chunk = ble.drainBuffer()
+        guard !chunk.isEmpty else { return }
+        samples.append(contentsOf: chunk)
 
         if samples.count > maxSamples {
             samples.removeFirst(samples.count - maxSamples)

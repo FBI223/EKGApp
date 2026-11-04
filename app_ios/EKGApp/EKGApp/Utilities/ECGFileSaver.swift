@@ -10,7 +10,13 @@ struct ECGFileSaver {
     }
     
     static func saveDat(to url: URL, buffer: [Float], gain: Float) throws {
-        let int16Signal = buffer.map { Int16($0 * gain) }
+        // Int16(_:) traps on NaN/inf or out-of-range values, so sanitize and clamp first
+        let int16Signal: [Int16] = buffer.map { value in
+            let scaled = value * gain
+            guard scaled.isFinite else { return 0 }
+            let clamped = min(max(scaled.rounded(), Float(Int16.min)), Float(Int16.max))
+            return Int16(clamped)
+        }
         var datData = Data()
         for sample in int16Signal {
             var le = sample.littleEndian

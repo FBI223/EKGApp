@@ -8,6 +8,7 @@ struct WaveAnalysisView: View {
     @ObservedObject private var settings = AppSettings.shared
 
     @State private var samples: [Float] = []
+    @State private var pendingSamples: [Float] = []
     @State private var predictedClasses: [Int] = []
     @State private var isProcessing = false
     @State private var timer: AnyCancellable?
@@ -133,7 +134,9 @@ struct WaveAnalysisView: View {
 
     func start() {
         samples = []
+        pendingSamples = []
         predictedClasses = []
+        ble.clearBuffer()
         isProcessing = true
 
         timer = Timer.publish(every: 0.05, on: .main, in: .common)
@@ -148,12 +151,14 @@ struct WaveAnalysisView: View {
 
     func processSamples() {
         let inputFs = settings.sampleRateIn
-        let inputLen = 512  // zamiast 4s – reaguj od razu
+        let inputLen = 4 * inputFs  // 4 s → 2000 samples after resampling to 500 Hz
 
-        guard ble.rawBuffer.count >= inputLen else { return }
+        pendingSamples.append(contentsOf: ble.drainBuffer())
+        guard pendingSamples.count >= inputLen else { return }
 
-        let segment = Array(ble.rawBuffer.prefix(inputLen))
-        ble.rawBuffer.removeFirst(inputLen)
+        // Use the most recent 4 s; drop any older backlog so latency does not accumulate
+        let segment = Array(pendingSamples.suffix(inputLen))
+        pendingSamples.removeAll(keepingCapacity: true)
 
         var resampled = Resampler.resample(input: segment, srcRate: Float(inputFs), dstRate: 500.0)
 

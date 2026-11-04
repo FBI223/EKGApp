@@ -26,7 +26,6 @@ struct BeatAnalysisView: View {
     
     let maxWindowSize = 700
     let maxTotalSamples = 5000
-    let samplesPerTick = 10
     let updateInterval = 0.05
     let segmentRadius = 96
     
@@ -168,6 +167,7 @@ struct BeatAnalysisView: View {
         recordingBuffer = []
         qrsCount = 0
         classCounts = ["N": 0, "S": 0, "V": 0, "F": 0, "Q": 0]
+        ble.clearBuffer()
         isProcessing = true
         
         timer = Timer.publish(every: updateInterval, on: .main, in: .common)
@@ -196,16 +196,13 @@ struct BeatAnalysisView: View {
     
     
     private func updateSamples() {
-        guard isProcessing, !ble.rawBuffer.isEmpty else { return }
-        
-        for _ in 0..<samplesPerTick {
-            if let v = ble.rawBuffer.first {
-                ble.rawBuffer.removeFirst()
-                samples.append(v)
-                if samples.count > maxTotalSamples {
-                    samples.removeFirst(samples.count - maxTotalSamples)
-                }
-            }
+        guard isProcessing else { return }
+
+        let incoming = ble.drainBuffer()
+        guard !incoming.isEmpty else { return }
+        samples.append(contentsOf: incoming)
+        if samples.count > maxTotalSamples {
+            samples.removeFirst(samples.count - maxTotalSamples)
         }
         
         while samples.count >= maxWindowSize {
@@ -217,8 +214,9 @@ struct BeatAnalysisView: View {
     
     
     private func classifyWindow(_ window: [Float]) {
-        // 1. Resample from 128 Hz → 360 Hz
-        let resampled = Resampler.resample(input: window, srcRate: 128, dstRate: 360)
+        // 1. Resample from input rate (Settings) → 360 Hz
+        let inputFs = Float(settings.sampleRateIn)
+        let resampled = Resampler.resample(input: window, srcRate: inputFs, dstRate: 360)
 
         // 2. Detect R-peaks
         let peaks = RPeakDetector.detectRPeaks(signal: resampled, fs: 360, sensitivity: 0.7)
